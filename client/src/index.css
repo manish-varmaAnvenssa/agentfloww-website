@@ -1,0 +1,684 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Prevent scroll restoration and ensure header stays at top */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 0;
+}
+
+body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  /* Prevent any unwanted scroll behavior */
+  scroll-padding-top: 0;
+  scroll-padding-bottom: 0;
+}
+
+/* Prevent auto-scroll on page load */
+html, body {
+  scroll-behavior: auto;
+}
+
+/* Ensure home page starts at top */
+.home-page {
+  scroll-behavior: auto;
+}
+
+/* AI Sales Agent Page Styles */
+.ai-sales-agent-page {
+  scroll-behavior: auto;
+}
+
+.ai-sales-agent-page .gradient-bg {
+  background: linear-gradient(45deg, 
+    var(--gradientColorZero) 0%, 
+    var(--gradientColorOne) 20%, 
+    var(--gradientColorTwo) 40%, 
+    var(--gradientColorThree) 60%, 
+    var(--gradientColorFour) 80%, 
+    var(--gradientColorFive) 100%
+  );
+  background-size: 500% 300%;
+  background-position: top left;
+  animation: gradientFlow 20s ease infinite;
+}
+
+/* Custom CSS for rich text editor */
+.ql-editor {
+  min-height: 300px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.ql-editor h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+.ql-editor h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.ql-editor h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.ql-editor p {
+  margin-bottom: 1rem;
+}
+
+.ql-editor ul, .ql-editor ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.ql-editor blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* Prose styles for blog content */
+.prose {
+  max-width: none;
+  color: #374151;
+}
+
+.prose h1 {
+  color: #111827;
+  font-weight: 700;
+  font-size: 2.25rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.prose h2 {
+  color: #111827;
+  font-weight: 600;
+  font-size: 1.875rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.prose h3 {
+  color: #111827;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.prose p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.prose ul, .prose ol {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.prose blockquote {
+  font-weight: 500;
+  font-style: italic;
+  color: #6b7280;
+  border-left-width: 0.25rem;
+  border-left-color: #3b82f6;
+  quotes: "\201C""\201D""\2018""\2019";
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+}
+
+.prose blockquote p:first-of-type::before {
+  content: open-quote;
+}
+
+.prose blockquote p:last-of-type::after {
+  content: close-quote;
+}
+
+.prose img {
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose a {
+  color: #3b82f6;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.prose a:hover {
+  color: #2563eb;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* CSS Custom Properties for gradient control */
+:root {
+  --gradientAngle: -20deg;
+  --gradientColorZero: #667eea;
+  --gradientColorOne: #764ba2;
+  --gradientColorTwo: #f093fb;
+  --gradientColorThree: #f5576c;
+  --gradientColorFour: #4facfe;
+  --gradientColorFive: #00f2fe;
+  --transformOriginX: -60px;
+}
+
+/* Gradient background - Diagonal flow with shorter right side */
+.gradient-bg {
+  background: linear-gradient(45deg, 
+    var(--gradientColorZero) 0%, 
+    var(--gradientColorOne) 20%, 
+    var(--gradientColorTwo) 40%, 
+    var(--gradientColorThree) 60%, 
+    var(--gradientColorFour) 80%, 
+    var(--gradientColorFive) 100%
+  );
+  background-size: 500% 300%;
+  background-position: top left;
+  animation: gradientFlow 20s ease infinite;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Skewed background overlay */
+.gradient-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    var(--gradientColorZero) 0%, 
+    var(--gradientColorOne) 20%, 
+    var(--gradientColorTwo) 40%, 
+    var(--gradientColorThree) 60%, 
+    var(--gradientColorFour) 80%, 
+    var(--gradientColorFive) 100%
+  );
+  background-size: 500% 300%;
+  background-position: top left;
+  animation: gradientFlow 15s ease infinite;
+  transform: skewY(var(--gradientAngle));
+  transform-origin: var(--transformOriginX) 100%;
+  z-index: -1;
+}
+
+/* Ensure content container is straight */
+.gradient-bg > * {
+  position: relative;
+  z-index: 1;
+  transform: none;
+}
+
+/* Canvas-style gradient animation with diagonal flow */
+@keyframes gradientFlow {
+  0% {
+    background-position: top left;
+  }
+  25% {
+    background-position: top right;
+  }
+  50% {
+    background-position: bottom right;
+  }
+  75% {
+    background-position: bottom left;
+  }
+  100% {
+    background-position: top left;
+  }
+}
+
+/* Enhanced text gradient with new colors */
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Enhanced button with new gradient colors */
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* Plain background for other pages */
+.page-bg {
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* Header uses the same gradient as homepage for consistency */
+
+/* Header glassmorphism effect */
+/* Client header styles - only apply to main site header */
+header:not(.admin-header) {
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  position: fixed !important;
+  z-index: 50 !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  min-height: auto !important;
+  height: auto !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+}
+
+/* Enhanced gradient text for brand names */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Enhanced button gradients */
+.btn-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 4px 6px -1px rgba(102, 126, 234, 0.3);
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 100% 50%;
+  }
+  25% {
+    background-position: 75% 50%;
+  }
+  50% {
+    background-position: 50% 50%;
+  }
+  75% {
+    background-position: 25% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* New attractive animations */
+@keyframes rainbowShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes neonPulse {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes auroraFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes sunsetGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes oceanWave {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Card styles */
+.card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* New attractive color schemes */
+.rainbow-gradient {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff);
+  background-size: 400% 400%;
+  animation: rainbowShift 8s ease infinite;
+}
+
+.neon-gradient {
+  background: linear-gradient(45deg, #ff0080, #7928ca, #ff0080);
+  background-size: 200% 200%;
+  animation: neonPulse 3s ease infinite;
+}
+
+.aurora-gradient {
+  background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+  background-size: 300% 300%;
+  animation: auroraFlow 12s ease infinite;
+}
+
+.sunset-gradient {
+  background: linear-gradient(45deg, #fa709a, #fee140, #fa709a);
+  background-size: 200% 200%;
+  animation: sunsetGlow 6s ease infinite;
+}
+
+.ocean-gradient {
+  background: linear-gradient(45deg, #667eea, #764ba2, #4facfe, #00f2fe, #667eea);
+  background-size: 300% 300%;
+  animation: oceanWave 10s ease infinite;
+}
+
+/* Button styles */
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+/* Input field styles */
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-field::placeholder {
+  color: #9ca3af;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 2;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 3;
+}
+
+/* Animation utilities */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .card {
+    padding: 1.5rem;
+  }
+  
+  .btn-primary, .btn-secondary {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .input-field {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Logo Carousel Animations */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 20s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 20s linear infinite;
+}
+
+/* Additional attractive effects */
+.glow-effect {
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.glow-effect:hover {
+  box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);
+  transform: translateY(-2px);
+}
+
+.neon-glow {
+  box-shadow: 0 0 10px rgba(255, 0, 128, 0.5), 0 0 20px rgba(255, 0, 128, 0.3), 0 0 30px rgba(255, 0, 128, 0.1);
+}
+
+.rainbow-glow {
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.3), 0 0 40px rgba(78, 205, 196, 0.2), 0 0 60px rgba(69, 183, 209, 0.1);
+}
+
+.aurora-glow {
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3), 0 0 40px rgba(118, 75, 162, 0.2), 0 0 60px rgba(240, 147, 251, 0.1);
+}
+
+.sunset-glow {
+  box-shadow: 0 0 20px rgba(250, 112, 154, 0.3), 0 0 40px rgba(254, 225, 64, 0.2), 0 0 60px rgba(250, 112, 154, 0.1);
+}
+
+.ocean-glow {
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3), 0 0 40px rgba(79, 172, 254, 0.2), 0 0 60px rgba(0, 242, 254, 0.1);
+}
+
+/* Text effects */
+.text-neon {
+  text-shadow: 0 0 5px rgba(255, 0, 128, 0.5), 0 0 10px rgba(255, 0, 128, 0.3), 0 0 15px rgba(255, 0, 128, 0.1);
+}
+
+.text-rainbow {
+  text-shadow: 0 0 5px rgba(255, 107, 107, 0.5), 0 0 10px rgba(78, 205, 196, 0.3), 0 0 15px rgba(69, 183, 209, 0.1);
+}
+
+.text-aurora {
+  text-shadow: 0 0 5px rgba(102, 126, 234, 0.5), 0 0 10px rgba(118, 75, 162, 0.3), 0 0 15px rgba(240, 147, 251, 0.1);
+}
+
+/* Border effects */
+.border-neon {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box, linear-gradient(45deg, #ff0080, #7928ca) border-box;
+}
+
+.border-rainbow {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box, linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff) border-box;
+}
+
+.border-aurora {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box, linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe) border-box;
+} 

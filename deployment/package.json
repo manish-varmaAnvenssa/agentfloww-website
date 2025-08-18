@@ -1,0 +1,33 @@
+{
+  "name": "anvenssa-website",
+  "version": "1.0.0",
+  "description": "Modern company website with blog, newsroom, and contact system",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "start": "cd server && npm start"
+  },
+  "keywords": [
+    "react",
+    "vite",
+    "mongodb",
+    "express",
+    "blog",
+    "newsroom"
+  ],
+  "author": "Anvenssa",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.6.1",
+    "@react-three/fiber": "^9.3.0",
+    "axios": "^1.10.0",
+    "three": "^0.178.0"
+  }
+}
