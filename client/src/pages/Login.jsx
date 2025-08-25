@@ -5,11 +5,13 @@ import { toast } from 'react-hot-toast'
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { login } = useAuth()
+  const navigate = useNavigate()
 
   const {
     register,
@@ -20,7 +22,15 @@ const Login = () => {
   const onSubmit = async (data) => {
     setIsSubmitting(true)
     try {
-      await login(data.email, data.password)
+      const result = await login(data.email, data.password)
+      if (result.success) {
+        // Navigate based on user role
+        if (result.user.role === 'admin') {
+          navigate('/admin')
+        } else {
+          navigate('/')
+        }
+      }
     } catch (error) {
       // Error handling is done in the auth context
     } finally {
@@ -31,8 +41,8 @@ const Login = () => {
   return (
     <>
       <Helmet>
-        <title>Sign In - Anvenssa</title>
-        <meta name="description" content="Sign in to access the Anvenssa admin dashboard." />
+        <title>Sign In - Agentflow</title>
+        <meta name="description" content="Sign in to access the Agentflow admin dashboard." />
       </Helmet>
 
       <div className="min-h-screen gradient-bg flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

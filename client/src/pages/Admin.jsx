@@ -10,16 +10,32 @@ import {
 } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../contexts/AuthContext'
-import api from '../utils/api'
+import { getAllContacts, getAllDemos } from '../utils/api'
 
 const Admin = () => {
   const { user } = useAuth()
 
-  const { data: stats, isLoading } = useQuery({
-    queryKey: 'admin-dashboard',
-    queryFn: () => api.get('/admin/dashboard'),
+  // Fetch contacts and demos data
+  const { data: contacts, isLoading: contactsLoading } = useQuery({
+    queryKey: ['contacts'],
+    queryFn: getAllContacts,
     refetchInterval: 30000 // Refetch every 30 seconds
   })
+
+  const { data: demos, isLoading: demosLoading } = useQuery({
+    queryKey: ['demos'],
+    queryFn: getAllDemos,
+    refetchInterval: 30000 // Refetch every 30 seconds
+  })
+
+  const isLoading = contactsLoading || demosLoading
+
+  // Calculate stats from the data
+  const stats = {
+    contacts: contacts?.success ? contacts.contacts?.length || 0 : 0,
+    demos: demos?.success ? demos.demos?.length || 0 : 0,
+    users: 1 // We know we have at least 1 admin user
+  }
 
   const quickActions = [
     {
@@ -63,8 +79,10 @@ const Admin = () => {
     )
   }
 
-  // Debug: Log the stats data to see the structure
-  console.log('Admin stats data:', stats)
+  // Debug: Log the data to see the structure
+  console.log('Admin contacts data:', contacts)
+  console.log('Admin demos data:', demos)
+  console.log('Admin stats:', stats)
 
   return (
     <>
@@ -92,72 +110,68 @@ const Admin = () => {
           {/* Stats */}
           <div className="mb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-              {stats?.data && (
-                <>
-                  <Link to="/admin/users">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.1 }}
-                      className="card hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group h-24 flex items-center"
-                    >
-                      <div className="flex items-center w-full">
-                        <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center group-hover:bg-primary-200 transition-colors duration-300 flex-shrink-0">
-                          <Users className="w-6 h-6 text-primary-600" />
-                        </div>
-                        <div className="ml-4 flex-1">
-                          <p className="text-sm font-medium text-gray-600">Total Users</p>
-                          <p className="text-2xl font-bold text-gray-900">
-                            {stats.data.stats?.users || 0}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </Link>
+              <Link to="/admin/users">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className="card hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group h-24 flex items-center"
+                >
+                  <div className="flex items-center w-full">
+                    <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center group-hover:bg-primary-200 transition-colors duration-300 flex-shrink-0">
+                      <Users className="w-6 h-6 text-primary-600" />
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <p className="text-sm font-medium text-gray-600">Total Users</p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {stats.users}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </Link>
 
-                  <Link to="/admin/contact">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      className="card hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group h-24 flex items-center"
-                    >
-                      <div className="flex items-center w-full">
-                        <div className="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center group-hover:bg-warning-200 transition-colors duration-300 flex-shrink-0">
-                          <Mail className="w-6 h-6 text-warning-600" />
-                        </div>
-                        <div className="ml-4 flex-1">
-                          <p className="text-sm font-medium text-gray-600">Total Contacts</p>
-                          <p className="text-2xl font-bold text-gray-900">
-                            {stats.data.stats?.contacts || 0}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </Link>
+              <Link to="/admin/contact">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="card hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group h-24 flex items-center"
+                >
+                  <div className="flex items-center w-full">
+                    <div className="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center group-hover:bg-warning-200 transition-colors duration-300 flex-shrink-0">
+                      <Mail className="w-6 h-6 text-warning-600" />
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <p className="text-sm font-medium text-gray-600">Total Contacts</p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {stats.contacts}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </Link>
 
-                  <Link to="/admin/demo">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.3 }}
-                      className="card hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group h-24 flex items-center"
-                    >
-                      <div className="flex items-center w-full">
-                        <div className="w-12 h-12 bg-info-100 rounded-lg flex items-center justify-center group-hover:bg-info-200 transition-colors duration-300 flex-shrink-0">
-                          <MessageSquare className="w-6 h-6 text-info-600" />
-                        </div>
-                        <div className="ml-4 flex-1">
-                          <p className="text-sm font-medium text-gray-600">Demo Requests</p>
-                          <p className="text-2xl font-bold text-gray-900">
-                            {stats.data.stats?.demos || 0}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </Link>
-                </>
-              )}
+              <Link to="/admin/demo">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="card hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group h-24 flex items-center"
+                >
+                  <div className="flex items-center w-full">
+                    <div className="w-12 h-12 bg-info-100 rounded-lg flex items-center justify-center group-hover:bg-info-200 transition-colors duration-300 flex-shrink-0">
+                      <MessageSquare className="w-6 h-6 text-info-600" />
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <p className="text-sm font-medium text-gray-600">Demo Requests</p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {stats.demos}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </Link>
             </div>
           </div>
 

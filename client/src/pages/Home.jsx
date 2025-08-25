@@ -68,7 +68,8 @@ const Home = () => {
       href: '/compare',
       hasDropdown: false,
     },
-    { name: 'Pricing', href: '/pricing' },
+    { name: 'About Us', href: '/about' },
+    // { name: 'Pricing', href: '/pricing' },
     { name: 'Contact', href: '/contact' },
     { name: 'Live Demo', href: '/live-demo' },
   ]
@@ -279,16 +280,18 @@ const Home = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center"
               >
-                <Link
-  to="https://client.anvenssa.com/account/login/?next=/"
-  className="btn-primary text-lg px-8 py-3 flex items-center space-x-2 group"
->
-  <span>See a Demo</span>
-  <span className="transition-all duration-300">
-    <span className="block group-hover:hidden">{'>'}</span>
-    <span className="hidden group-hover:block">{'->'}</span>
-  </span>
-</Link>
+                <a
+                  href="https://client.anvenssa.com/account/login/?next=/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary text-lg px-8 py-3 flex items-center space-x-2 group"
+                >
+                  <span>See a Demo</span>
+                  <span className="transition-all duration-300">
+                    <span className="block group-hover:hidden">{'>'}</span>
+                    <span className="hidden group-hover:block">{'->'}</span>
+                  </span>
+                </a>
 
                 {/* <Link
                   to="/blog"
@@ -917,18 +920,9 @@ const Home = () => {
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
                   Conversational Intelligence
                 </h2>
-                <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                Conversational intelligence bridges human and AI communication, enabling smart, context-aware interactions for deeper connection and seamless collaboration.                </p>
-                <Link
-                  to="/conversational-intelligence"
-                  className="inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-full font-semibold hover:from-purple-600 hover:to-pink-700 transition-all duration-200 group shadow-lg"
-                >
-                  <span>Learn More</span>
-                  <span className="ml-2">
-                    <span className="block group-hover:hidden">{'>'}</span>
-                    <span className="hidden group-hover:block">{'->'}</span>
-                  </span>
-                </Link>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                Conversational intelligence bridges human and AI communication, enabling smart, context-aware interactions for deeper connection and seamless collaboration.
+                </p>
               </motion.div>
             </div>
 
@@ -2297,13 +2291,13 @@ const Home = () => {
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Agentflow supports businesses across the AI ecosystem - from usage-based billing for AI assistants to premium subscriptions for infrastructure providers.
               </p>
-              <a href="#" className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center group">
+              {/* <a href="#" className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center group">
                 Learn more 
                 <span className="ml-1">
                   <span className="block group-hover:hidden">{'>'}</span>
                   <span className="hidden group-hover:block">{'->'}</span>
                 </span>
-              </a>
+              </a> */}
               
               {/* Company Logos */}
               <div className="flex items-center space-x-6 mt-8 pt-6 border-t border-gray-100">
@@ -2326,13 +2320,6 @@ const Home = () => {
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Quickly launch and grow recurring revenue with a unified platform for payments, subscriptions, invoicing, tax, accounting, and more.
               </p>
-              <a href="#" className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center group">
-                Learn more 
-                <span className="ml-1">
-                  <span className="block group-hover:hidden">{'>'}</span>
-                  <span className="hidden group-hover:block">{'->'}</span>
-                </span>
-              </a>
               
               {/* Company Logos */}
               <div className="flex items-center space-x-6 mt-8 pt-6 border-t border-gray-100">
@@ -2355,13 +2342,6 @@ const Home = () => {
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Get everything you need to connect buyers and sellers, manage multiple providers, handle payouts, all in one place.
               </p>
-              <a href="#" className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center group">
-                Learn more 
-                <span className="ml-1">
-                  <span className="block group-hover:hidden">{'>'}</span>
-                  <span className="hidden group-hover:block">{'->'}</span>
-                </span>
-              </a>
               
               {/* Company Logos */}
               <div className="flex items-center space-x-6 mt-8 pt-6 border-t border-gray-100">
@@ -2401,13 +2381,18 @@ const Home = () => {
               </p>
               
               {/* Call-to-Action Button */}
-              <button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 inline-flex items-center space-x-2 mb-8 group">
+              <a
+                href="https://client.anvenssa.com/account/login/?next=/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 inline-flex items-center space-x-2 mb-8 group"
+              >
                 <span>Explore Agentflow for enterprises</span>
                 <span>
                   <span className="block group-hover:hidden">{'>'}</span>
                   <span className="hidden group-hover:block">{'->'}</span>
                 </span>
-              </button>
+              </a>
               
               {/* Statistics Section */}
               <div className="grid grid-cols-2 gap-8 mb-8">
@@ -2528,16 +2513,6 @@ const Home = () => {
                 Create an account instantly to get started or contact us to design a custom package for your business.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <Link
-                  to="https://client.anvenssa.com/account/login/?next=/"
-                  className="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-200 group"
-                >
-                  Start now
-                  <span className="ml-2">
-                    <span className="block group-hover:hidden">{'>'}</span>
-                    <span className="hidden group-hover:block">{'->'}</span>
-                  </span>
-                </Link>
                 <Link
                   to="/contact"
                   className="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold transition-colors duration-200 group"
@@ -2808,7 +2783,7 @@ const Home = () => {
                   </p>
             <Link
               to="/contact"
-                    className="group inline-flex items-center bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    className="group inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
                     <span>Take a tour</span>
                     <span className="ml-3">
@@ -2848,7 +2823,7 @@ const Home = () => {
                   </p>
                   <Link
                     to="/contact"
-                    className="group inline-flex items-center text-white hover:text-primary-100 font-semibold text-lg transition-all duration-300"
+                    className="group inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
                     <span>Let's Talk</span>
                     <span className="ml-3">

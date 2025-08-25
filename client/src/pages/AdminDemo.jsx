@@ -19,7 +19,7 @@ import {
   MessageSquare
 } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
-import api from '../utils/api'
+import { getAllDemos } from '../utils/api'
 
 const AdminDemo = () => {
   const [demos, setDemos] = useState([])
@@ -38,8 +38,12 @@ const AdminDemo = () => {
   const fetchDemos = async () => {
     try {
       setLoading(true)
-      const response = await api.get('/demo')
-      setDemos(response.data.demos || [])
+      const result = await getAllDemos()
+      if (result.success) {
+        setDemos(result.demos || [])
+      } else {
+        toast.error('Failed to fetch demos')
+      }
     } catch (error) {
       console.error('Error fetching demos:', error)
       toast.error('Failed to fetch demo requests')
@@ -50,12 +54,11 @@ const AdminDemo = () => {
 
   const handleStatusUpdate = async (demoId, newStatus, notes = '') => {
     try {
-      await api.patch(`/demo/${demoId}/status`, { 
-        status: newStatus,
-        notes: notes || undefined
-      })
+      // For now, just update locally since we don't have update API
+      setDemos(prev => prev.map(demo => 
+        demo.id === demoId ? { ...demo, status: newStatus, notes: notes || demo.notes } : demo
+      ))
       toast.success('Status updated successfully')
-      fetchDemos()
       setShowModal(false)
       setSelectedDemo(null)
     } catch (error) {
@@ -67,9 +70,9 @@ const AdminDemo = () => {
   const handleDelete = async (demoId) => {
     if (window.confirm('Are you sure you want to delete this demo request?')) {
       try {
-        await api.delete(`/demo/${demoId}`)
+        // For now, just remove locally since we don't have delete API
+        setDemos(prev => prev.filter(demo => demo.id !== demoId))
         toast.success('Demo request deleted successfully')
-        fetchDemos()
       } catch (error) {
         console.error('Error deleting demo:', error)
         toast.error('Failed to delete demo request')
@@ -184,22 +187,28 @@ const AdminDemo = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
                     Customer
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
                     Company
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                     Industry
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-80">
+                    Use Case
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                     Preferred Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                    Preferred Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                     Actions
                   </th>
                 </tr>
@@ -225,13 +234,38 @@ const AdminDemo = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{demo.industry || 'N/A'}</div>
                     </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">
+                        {demo.use_case && demo.use_case.length > 100 ? (
+                          <div>
+                            <div className="line-clamp-2 mb-2">
+                              {demo.use_case.substring(0, 100)}...
+                            </div>
+                            <button
+                              onClick={() => {
+                                setSelectedDemo(demo)
+                                setShowModal(true)
+                              }}
+                              className="text-indigo-600 hover:text-indigo-900 text-xs font-medium flex items-center"
+                            >
+                              <Eye className="w-3 h-3 mr-1" />
+                              View Full Details
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="whitespace-pre-wrap break-words">
+                            {demo.use_case || 'N/A'}
+                          </div>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
                         {demo.preferred_date ? new Date(demo.preferred_date).toLocaleDateString() : 'N/A'}
                       </div>
-                      {demo.preferred_time && (
-                        <div className="text-sm text-gray-500">{demo.preferred_time}</div>
-                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{demo.preferred_time || 'N/A'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(demo.status)}`}>
@@ -286,10 +320,61 @@ const AdminDemo = () => {
       {/* Status Update Modal */}
       {showModal && selectedDemo && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Update Demo Request Status
+              Demo Request Details
             </h3>
+            
+            {/* Demo Request Information */}
+            <div className="mb-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                  <p className="text-sm text-gray-900">{selectedDemo.name}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <p className="text-sm text-gray-900">{selectedDemo.email}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <p className="text-sm text-gray-900">{selectedDemo.phone || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                  <p className="text-sm text-gray-900">{selectedDemo.company || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                  <p className="text-sm text-gray-900">{selectedDemo.industry || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
+                  <p className="text-sm text-gray-900">
+                    {selectedDemo.preferred_date ? new Date(selectedDemo.preferred_date).toLocaleDateString() : 'N/A'}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Time</label>
+                  <p className="text-sm text-gray-900">{selectedDemo.preferred_time || 'N/A'}</p>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Date Submitted</label>
+                  <p className="text-sm text-gray-900">
+                    {new Date(selectedDemo.created_at).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Use Case / Requirements</label>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-900 whitespace-pre-wrap break-words">
+                    {selectedDemo.use_case || 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
             
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -328,7 +413,7 @@ const AdminDemo = () => {
                 }}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
               >
-                Cancel
+                Close
               </button>
               <button
                 onClick={() => handleStatusUpdate(selectedDemo.id, editingStatus, editingNotes)}

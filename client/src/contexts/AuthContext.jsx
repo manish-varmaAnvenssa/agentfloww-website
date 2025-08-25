@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import api from '../utils/api'
+import { loginUser } from '../utils/api'
 
 const AuthContext = createContext()
 
@@ -24,11 +25,15 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = localStorage.getItem('token')
       if (token) {
-        const response = await api.get('/auth/me')
-        setUser(response.data.user)
+        // For now, we'll check if user data exists in localStorage
+        const userData = localStorage.getItem('user')
+        if (userData) {
+          setUser(JSON.parse(userData))
+        }
       }
     } catch (error) {
       localStorage.removeItem('token')
+      localStorage.removeItem('user')
     } finally {
       setLoading(false)
     }
@@ -36,17 +41,24 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await api.post('/auth/login', { email, password })
-      const { token, user } = response.data
+      const result = await loginUser({ email, password })
       
-      localStorage.setItem('token', token)
-      setUser(user)
-      
-      toast.success('Login successful!')
-      
-      return { success: true }
+      if (result.success) {
+        // Create a simple token (you can implement proper JWT later)
+        const token = btoa(`${email}:${Date.now()}`)
+        localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(result.user))
+        setUser(result.user)
+        
+        toast.success('Login successful!')
+        
+        return { success: true }
+      } else {
+        toast.error(result.error || 'Login failed')
+        return { success: false, error: result.error }
+      }
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed'
+      const message = 'Login failed. Please try again.'
       toast.error(message)
       return { success: false, error: message }
     }
@@ -54,6 +66,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
     setUser(null)
     toast.success('Logged out successfully')
     // Let the component handle navigation

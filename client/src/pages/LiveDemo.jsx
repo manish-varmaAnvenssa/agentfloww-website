@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast'
 import { ArrowLeft, Play, Users, Building, Mail, Send, CheckCircle } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
-import api from '../utils/api'
+import { submitDemo } from '../utils/api'
 
 const LiveDemo = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -22,17 +22,20 @@ const LiveDemo = () => {
     console.log('Form data being submitted:', data)
     setIsSubmitting(true)
     try {
-      console.log('Making API call to /demo...')
-      const response = await api.post('/demo', data)
-      console.log('API response:', response)
-      setIsSubmitted(true)
-      reset()
-      toast.success('Demo request submitted successfully! We\'ll get back to you soon.')
+      console.log('Submitting demo to database...')
+      const result = await submitDemo(data)
+      console.log('Database response:', result)
+      
+      if (result.success) {
+        setIsSubmitted(true)
+        reset()
+        toast.success('Demo request submitted successfully! We\'ll get back to you soon.')
+      } else {
+        toast.error(result.error || 'Failed to submit demo request')
+      }
     } catch (error) {
       console.error('Demo submission error:', error)
-      console.error('Error response:', error.response)
-      const message = error.response?.data?.message || 'Failed to submit demo request'
-      toast.error(message)
+      toast.error('Failed to submit demo request. Please try again.')
     } finally {
       setIsSubmitting(false)
     }

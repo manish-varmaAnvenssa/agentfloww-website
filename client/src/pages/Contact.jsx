@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast'
 import { Mail, Phone, MapPin, Send, CheckCircle, ArrowLeft, MessageCircle, Clock, Globe } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
-import api from '../utils/api'
+import { submitContact } from '../utils/api'
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -30,43 +30,29 @@ const Contact = () => {
         email: data.email,
         phone: data.phone,
         company: data.company,
+        subject: `Contact from ${data.firstName} ${data.lastName}`,
         message: data.message
       }
       
-      console.log('Sending form data to backend:', formData);
-      console.log('Making API call to /contact...');
+      console.log('Sending form data to database:', formData);
+      console.log('Submitting contact to database...');
       
-      const response = await api.post('/contact', formData)
-      console.log('API response:', response);
+      const result = await submitContact(formData)
+      console.log('Database response:', result);
       
-      setIsSubmitted(true)
-      reset()
-      toast.success('Message sent successfully! We\'ll get back to you soon.')
+      if (result.success) {
+        setIsSubmitted(true)
+        reset()
+        toast.success('Message sent successfully! We\'ll get back to you soon.')
+      } else {
+        toast.error(result.error || 'Failed to send message')
+      }
     } catch (error) {
       console.error('=== CONTACT FORM ERROR ===');
       console.error('Error object:', error);
-      console.error('Error response:', error.response);
       console.error('Error message:', error.message);
-      console.error('Error status:', error.response?.status);
-      console.error('Error data:', error.response?.data);
       
-      let message = 'Failed to send message';
-      
-      if (error.response?.status === 400) {
-        // Validation error
-        const validationErrors = error.response.data.errors;
-        if (validationErrors && validationErrors.length > 0) {
-          const firstError = validationErrors[0];
-          message = `${firstError.path}: ${firstError.msg}`;
-          console.log('Validation error details:', firstError);
-        } else {
-          message = error.response.data.message || 'Invalid form data';
-        }
-      } else if (error.response?.data?.message) {
-        message = error.response.data.message;
-      }
-      
-      toast.error(message)
+      toast.error('Failed to send message. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -100,7 +86,7 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'India Office',
-      address: '91Springboard Sky Loft, Creaticity Mall, Off, Airport Rd, opposite Golf Course, Shastrinagar, Yerawada, Pune, Maharashtra 411006',
+      address: 'Awfis Binarius, Deepak Nitrate Road, Shastrinagar, Yerawada, Pune, Maharashtra 411006',
       city: '',
       color: 'from-orange-500 to-red-500'
     },

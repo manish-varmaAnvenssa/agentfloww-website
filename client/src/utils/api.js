@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: window.location.origin,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -52,5 +52,76 @@ api.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+// Database Functions using PHP API
+export const loginUser = async (credentials) => {
+  try {
+    const response = await api.post('/api.php?action=login', credentials);
+    return response.data;
+  } catch (error) {
+    console.error('Login error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const submitDemo = async (demoData) => {
+  try {
+    const response = await api.post('/api.php?action=demo', demoData);
+    return response.data;
+  } catch (error) {
+    console.error('Demo submission error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const submitContact = async (contactData) => {
+  try {
+    const response = await api.post('/api.php?action=contact', contactData);
+    return response.data;
+  } catch (error) {
+    console.error('Contact submission error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getAllDemos = async () => {
+  try {
+    const response = await api.get('/api.php?action=demos');
+    return response.data;
+  } catch (error) {
+    console.error('Get demos error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getAllContacts = async () => {
+  try {
+    const response = await api.get('/api.php?action=contacts');
+    return response.data;
+  } catch (error) {
+    console.error('Get contacts error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const updateDemoStatus = async (demoId, status) => {
+  try {
+    const response = await api.post('/api.php?action=updateDemo', { demoId, status });
+    return response.data;
+  } catch (error) {
+    console.error('Update demo status error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const updateContactStatus = async (contactId, status) => {
+  try {
+    const response = await api.post('/api.php?action=updateContact', { contactId, status });
+    return response.data;
+  } catch (error) {
+    console.error('Update contact status error:', error);
+    return { success: false, error: error.message };
+  }
+};
 
 export default api 

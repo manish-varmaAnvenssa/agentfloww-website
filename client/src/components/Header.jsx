@@ -27,7 +27,8 @@ const Header = () => {
       href: '/compare',
       hasDropdown: false,
     },
-    { name: 'Pricing', href: '/pricing' },
+    { name: 'About Us', href: '/about' },
+    // { name: 'Pricing', href: '/pricing' },
     { name: 'Contact', href: '/contact' },
     { name: 'Live Demo', href: '/live-demo' },
   ]

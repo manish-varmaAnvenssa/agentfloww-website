@@ -4,7 +4,7 @@ import { ArrowLeft, CheckCircle, Star, Info, ArrowRight, Zap, Shield, Users, Bar
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 
-const AboutUs = () => {
+const Pricing = () => {
   const [openFaq, setOpenFaq] = useState(null)
 
   const toggleFaq = (index) => {
@@ -154,14 +154,20 @@ const AboutUs = () => {
               
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl">
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl"
+                >
                   Start Free Trial
                   <ArrowRight size={20} className="ml-2" />
-                </button>
-                <button className="inline-flex items-center bg-white hover:bg-gray-50 text-blue-600 font-bold py-4 px-8 rounded-2xl border-2 border-blue-600 transition-all duration-300 transform hover:scale-105 shadow-xl">
+                </Link>
+                <Link
+                  to="/live-demo"
+                  className="inline-flex items-center bg-white hover:bg-gray-50 text-blue-600 font-bold py-4 px-8 rounded-2xl border-2 border-blue-600 transition-all duration-300 transform hover:scale-105 shadow-xl"
+                >
                   Book Demo
                   <ArrowRight size={20} className="ml-2" />
-                </button>
+                </Link>
               </div>
             </motion.div>
 
@@ -184,13 +190,16 @@ const AboutUs = () => {
                     <div className="text-center mb-8">
                       <h3 className="text-2xl font-bold text-gray-900 mb-4">{plan.name}</h3>
                       <div className="text-4xl font-bold text-gray-900 mb-2">{plan.price}</div>
-                      <button className={`w-full py-3 px-6 rounded-2xl font-semibold transition-all duration-300 ${
-                        plan.name === "Basic" 
-                          ? "bg-gray-100 text-gray-700 hover:bg-gray-200" 
-                          : "bg-blue-600 text-white hover:bg-blue-700"
-                      }`}>
+                      <Link
+                        to="/live-demo"
+                        className={`w-full py-3 px-6 rounded-2xl font-semibold transition-all duration-300 inline-flex items-center justify-center ${
+                          plan.name === "Basic" 
+                            ? "bg-gray-100 text-gray-700 hover:bg-gray-200" 
+                            : "bg-blue-600 text-white hover:bg-blue-700"
+                        }`}
+                      >
                         {plan.buttonText}
-                      </button>
+                      </Link>
                     </div>
                     
                     <div className="flex-1 space-y-4">
@@ -225,10 +234,13 @@ const AboutUs = () => {
               <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/20">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">Enterprise plans</h3>
                 <p className="text-gray-600 mb-6">Need more resources? Don't worry, contact sales.</p>
-                <button className="inline-flex items-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl">
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl"
+                >
                   Contact Us
                   <ArrowRight size={20} className="ml-2" />
-                </button>
+                </Link>
             </div>
             </motion.div>
           </div>
@@ -331,14 +343,20 @@ const AboutUs = () => {
                 Start your free trial today and experience the power of AI-driven customer engagement.
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <button className="inline-flex items-center bg-white text-blue-600 font-bold py-5 px-10 rounded-2xl hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl">
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center bg-white text-blue-600 font-bold py-5 px-10 rounded-2xl hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl"
+                >
                   Start Free Trial
                   <ArrowRight size={20} className="ml-2" />
-                </button>
-                <button className="inline-flex items-center bg-transparent text-white font-bold py-5 px-10 rounded-2xl border-2 border-white hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105">
+                </Link>
+                <Link
+                  to="/live-demo"
+                  className="inline-flex items-center bg-transparent text-white font-bold py-5 px-10 rounded-2xl border-2 border-white hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105"
+                >
                   Book Demo
                   <ArrowRight size={20} className="ml-2" />
-                </button>
+                </Link>
               </div>
             </motion.div>
           </div>
@@ -348,4 +366,4 @@ const AboutUs = () => {
   )
 }
 
-export default AboutUs 
+export default Pricing

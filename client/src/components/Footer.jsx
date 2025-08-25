@@ -10,7 +10,8 @@ const Footer = () => {
   ]
 
   const company = [
-    { name: 'Pricing', href: '/pricing' },
+    { name: 'About Us', href: '/about' },
+    // { name: 'Pricing', href: '/pricing' },
     { name: 'Contact Us', href: '/contact' },
   ]
 
