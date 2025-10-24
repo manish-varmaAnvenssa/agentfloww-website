@@ -44,7 +44,7 @@ const AISalesAgent = () => {
     <div className="Compare Page">
       <Helmet>
         <title>Compare - Agentflow vs Others | Agentflow</title>
-        <meta name="description" content="Compare Agentflow with other AI solutions. See why Agentflow is the leading choice with GPT-powered chatbots, advanced analytics, and superior features." />
+        <meta name="description" content="Compare Agentflow with other AI solutions. See why Agentflow is the leading choice with OpenAI Powered chatbots, advanced analytics, and superior features." />
       </Helmet>
 
       {/* Hero Section */}
@@ -81,7 +81,7 @@ const AISalesAgent = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-lg md:text-xl text-gray-800 mb-6 md:mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0 drop-shadow-sm font-medium"
               >
-                See how Agentflow stands out from the competition with GPT-powered technology, advanced features, and superior performance. Make an informed decision for your business.
+                See how Agentflow stands out from the competition with OpenAI Powered technology, advanced features, and superior performance. Make an informed decision for your business.
               </motion.p>
 
               <motion.div
@@ -223,7 +223,7 @@ const AISalesAgent = () => {
                 </h2>
                 
                 <p className="text-xl text-gray-600 leading-relaxed max-w-xl">
-                  Confidently handle 90% of customer inquiries with the world's first GPT-powered bot for commerce. Grow your brand without adding to your support team.
+                  Confidently handle 90% of customer inquiries with the world's first OpenAI Powered bot for commerce. Grow your brand without adding to your support team.
                 </p>
               </div>
             </motion.div>
@@ -299,10 +299,10 @@ const AISalesAgent = () => {
 
             {/* Table Rows */}
             <div className="divide-y divide-gray-200">
-              {/* GPT-Powered Chatbot */}
+              {/* OpenAI Powered Chatbot */}
               <div className="grid grid-cols-3 hover:bg-gray-50 transition-colors duration-200">
                 <div className="p-4 md:p-6 flex items-center">
-                  <span className="text-sm md:text-lg font-semibold text-gray-900">GPT-Powered Chatbot</span>
+                  <span className="text-sm md:text-lg font-semibold text-gray-900">OpenAI Powered Chatbot</span>
                 </div>
                 <div className="p-4 md:p-6 flex items-center justify-center border-l border-r border-gray-200">
                   <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-500" />
@@ -384,12 +384,529 @@ const AISalesAgent = () => {
               </div>
             </div>
           </motion.div>
-
-
         </div>
       </section>
 
+      {/* See the Change Yourself Section */}
+      <section className="py-24 bg-white relative z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            {/* Left - Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="space-y-8"
+            >
+              {/* Header */}
+              <div className="space-y-6">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-2 rounded-full border border-blue-100"
+                >
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                      <span className="text-blue-700 font-semibold text-sm uppercase tracking-wide">
+                      Witness the Change for Yourself
+                    </span>
+                </motion.div>
+                
+                <motion.h2 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight"
+                >
+                  Cut Expenses and Raise Income
+                </motion.h2>
+                
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  viewport={{ once: true }}
+                  className="text-lg text-gray-600 leading-relaxed max-w-xl"
+                >
+                  Agentflow helps your business expand and save money in addition to making work easier. cash. Your team's workload is decreased and repetitive work is relieved when you use our AI agents to automate tasks.
+                </motion.p>
 
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                  viewport={{ once: true }}
+                  className="text-lg text-gray-600 leading-relaxed max-w-xl"
+                >
+                  This directly reduces your operating costs because you can manage more clients and tasks without hiring more employees. You'll also make more money by handling more interactions and providing better customer service.
+                </motion.p>
+
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  viewport={{ once: true }}
+                  className="text-lg text-gray-600 leading-relaxed max-w-xl font-semibold"
+                >
+                  Every year, we handle millions of interactions for aspirational companies of all sizes, assisting them in achieving tangible outcomes.
+                </motion.p>
+              </div>
+
+              {/* Animated Stats */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                viewport={{ once: true }}
+                className="grid grid-cols-2 gap-6"
+              >
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-gradient-to-br from-green-50 to-emerald-100 p-6 rounded-2xl border border-green-200 text-center"
+                >
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.8 }}
+                    viewport={{ once: true }}
+                    className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3"
+                  >
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-green-700 mb-2">Cost Reduction</h3>
+                  <p className="text-sm text-green-600">Lower operational costs through automation</p>
+                </motion.div>
+
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-gradient-to-br from-blue-50 to-cyan-100 p-6 rounded-2xl border border-blue-200 text-center"
+                >
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.9 }}
+                    viewport={{ once: true }}
+                    className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3"
+                  >
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                    </svg>
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-blue-700 mb-2">Revenue Growth</h3>
+                  <p className="text-sm text-blue-600">Handle more customers & interactions</p>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right - Animated GIF-like Elements */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              {/* Main Container */}
+              <div className="relative">
+                <div className="bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100 rounded-3xl p-8 shadow-2xl border border-gray-100">
+                  {/* Floating Elements */}
+                  <motion.div 
+                    animate={{ 
+                      y: [0, -20, 0],
+                      rotate: [0, 5, 0]
+                    }}
+                    transition={{ 
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute -top-4 -left-4 w-16 h-16 bg-green-400 rounded-full opacity-80"
+                  />
+                  
+                  <motion.div 
+                    animate={{ 
+                      y: [0, 15, 0],
+                      rotate: [0, -5, 0]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1
+                    }}
+                    className="absolute -top-8 -right-8 w-12 h-12 bg-blue-400 rounded-full opacity-80"
+                  />
+
+                  <motion.div 
+                    animate={{ 
+                      y: [0, -15, 0],
+                      x: [0, 10, 0]
+                    }}
+                    transition={{ 
+                      duration: 3.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 2
+                    }}
+                    className="absolute -bottom-6 -left-6 w-20 h-20 bg-purple-400 rounded-full opacity-80"
+                  />
+
+                  {/* Central Content */}
+                  <div className="relative z-10 text-center">
+                    <motion.div 
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 360]
+                      }}
+                      transition={{ 
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="w-24 h-24 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
+                    >
+                      <Users className="w-12 h-12 text-white" />
+                    </motion.div>
+                    
+                    <motion.h3 
+                      animate={{ 
+                        color: ["#1f2937", "#059669", "#1f2937"]
+                      }}
+                      transition={{ 
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="text-2xl font-bold mb-4"
+                    >
+                      AI-Powered Growth
+                    </motion.h3>
+                    
+                    <motion.div 
+                      animate={{ 
+                        opacity: [0.5, 1, 0.5]
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="space-y-2"
+                    >
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm text-gray-600">Automated Customer Service</span>
+                      </div>
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                        <span className="text-sm text-gray-600">24/7 Availability</span>
+                      </div>
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                        <span className="text-sm text-gray-600">Scalable Operations</span>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* How Agentflow Helps Businesses Section */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
+            >
+              How Agentflow Benefits Companies
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+            >
+              There are three primary ways that Agentflow benefits businesses
+            </motion.p>
+          </div>
+
+          <div className="space-y-24">
+            {/* Doing More, Faster - Left Aligned */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
+            >
+              {/* Left Content */}
+              <div className="flex-1 lg:order-1">
+                <div className="space-y-6">
+                  <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-3 rounded-full border border-blue-200">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-blue-700 font-semibold text-sm uppercase tracking-wide">
+                      Efficiency Boost
+                    </span>
+        </div>
+                  
+                  <h3 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+                    Achieving More, Quicker
+                  </h3>
+                  
+                  <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
+                    Customer service and other tasks can be handled by Agentflow's AI agents. data entry, questions, and other tasks. Employees can now concentrate on more significant and creative work as a result.
+                  </p>
+                  
+                  <div className="flex items-center space-x-4 pt-4">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm text-gray-500">Automated task handling</span>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm text-gray-500">Employee focus shift</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Visual */}
+              <div className="flex-1 lg:order-2 flex justify-center">
+                <div className="relative">
+                  <div className="w-64 h-64 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
+                    <motion.div 
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 5, 0, -5, 0]
+                      }}
+                      transition={{ 
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
+                    >
+                      <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Floating Elements */}
+                  <motion.div 
+                    animate={{ 
+                      y: [0, -20, 0],
+                      x: [0, 10, 0]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute -top-4 -right-4 w-12 h-12 bg-blue-400 rounded-full opacity-80"
+                  />
+                  <motion.div 
+                    animate={{ 
+                      y: [0, 15, 0],
+                      x: [0, -10, 0]
+                    }}
+                    transition={{ 
+                      duration: 3.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1
+                    }}
+                    className="absolute -bottom-4 -left-4 w-16 h-16 bg-indigo-400 rounded-full opacity-80"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Growing Without Limits - Right Aligned */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="flex flex-col lg:flex-row-reverse items-center gap-12 lg:gap-20"
+            >
+              {/* Right Content */}
+              <div className="flex-1">
+                <div className="space-y-6">
+                  <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-3 rounded-full border border-green-200">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-green-700 font-semibold text-sm uppercase tracking-wide">
+                      Scalable Growth
+                    </span>
+                  </div>
+                  
+                  <h3 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+                    Growing Without Limits
+                  </h3>
+                  
+                  <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
+                    Businesses can grow and take on more clients without having to hire a large workforce because the AI does a lot of the work. Every year, Agentflow handles millions of interactions, supporting the expansion of companies of all kinds.
+                  </p>
+                  
+                  <div className="flex items-center space-x-4 pt-4">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm text-gray-500">Customer expansion</span>
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm text-gray-500">Millions of interactions</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Left Visual */}
+              <div className="flex-1 flex justify-center">
+                <div className="relative">
+                  <div className="w-64 h-64 bg-gradient-to-br from-green-100 to-emerald-200 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
+                    <motion.div 
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, -5, 0, 5, 0]
+                      }}
+                      transition={{ 
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="w-32 h-32 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center"
+                    >
+                      <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                      </svg>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Floating Elements */}
+                  <motion.div 
+                    animate={{ 
+                      y: [0, -15, 0],
+                      x: [0, -15, 0]
+                    }}
+                    transition={{ 
+                      duration: 3.2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute -top-6 -left-6 w-14 h-14 bg-green-400 rounded-full opacity-80"
+                  />
+                  <motion.div 
+                    animate={{ 
+                      y: [0, 20, 0],
+                      x: [0, 15, 0]
+                    }}
+                    transition={{ 
+                      duration: 3.8,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1.5
+                    }}
+                    className="absolute -bottom-6 -right-6 w-12 h-12 bg-emerald-400 rounded-full opacity-80"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Making Customers Happy - Left Aligned */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
+            >
+              {/* Left Content */}
+              <div className="flex-1 lg:order-1">
+                <div className="space-y-6">
+                  <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-3 rounded-full border border-purple-200">
+                    <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
+                    <span className="text-purple-700 font-semibold text-sm uppercase tracking-wide">
+                      Customer Success
+                    </span>
+                  </div>
+                  
+                  <h3 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+                    Satisfied Customers
+                  </h3>
+                  
+                  <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
+                    The AI agents' ability to respond to consumers promptly and helpfully is essential to establishing enduring bonds with them and maintaining their satisfaction. Conversations feel more intelligent when the AI comprehends what the customer needs and responds with intelligent, context-aware responses.
+                  </p>
+                  
+                  <div className="flex items-center space-x-4 pt-4">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm text-gray-500">Quick responses</span>
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm text-gray-500">Smart conversations</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Visual */}
+              <div className="flex-1 lg:order-2 flex justify-center">
+                <div className="relative">
+                  <div className="w-64 h-64 bg-gradient-to-br from-purple-100 to-pink-200 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
+                    <motion.div 
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 10, 0, -10, 0]
+                      }}
+                      transition={{ 
+                        duration: 4.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center"
+                    >
+                      <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Floating Elements */}
+                  <motion.div 
+                    animate={{ 
+                      y: [0, -25, 0],
+                      rotate: [0, 180, 360]
+                    }}
+                    transition={{ 
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute -top-8 -right-8 w-16 h-16 bg-purple-400 rounded-full opacity-80"
+                  />
+                  <motion.div 
+                    animate={{ 
+                      y: [0, 18, 0],
+                      rotate: [0, -180, -360]
+                    }}
+                    transition={{ 
+                      duration: 4.2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 2
+                    }}
+                    className="absolute -bottom-8 -left-8 w-18 h-18 bg-pink-400 rounded-full opacity-80"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
       {/* Benefits Section */}
       <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-blue-50">
@@ -944,18 +1461,23 @@ const AISalesAgent = () => {
             {/* Badge */}
             <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 text-white px-6 py-3 rounded-full text-sm font-medium mb-8">
               <Zap className="w-4 h-4 mr-2 text-green-300" />
-              Ready to Choose the Best?
+              Ready to Choose Agentflow?
             </div>
             
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to Choose 
-              <span className="block" style={{ background: 'linear-gradient(to right, #86efac, #93c5fd, #c4b5fd)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Agentflow?
-              </span>
+              Ready to Get Started?
             </h2>
             
-            <p className="text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed">
-              After seeing the comparison, it's clear that Agentflow offers superior features and performance. Join thousands of businesses that have already chosen the better AI solution.
+            <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
+              You can unlock the potential of AI and start automating your business today. We have options for everyone, even if you don't have developers on staff.
+            </p>
+            
+            <p className="text-lg text-white/80 mb-8 max-w-3xl mx-auto leading-relaxed">
+              By integrating our secure LLMs, you can supercharge your customer service and see your business become more efficient. It's time to stop worrying about complex issues and start automating your workflows to accelerate time-to-value for your business.
+            </p>
+            
+            <p className="text-lg text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
+              Explore our AI-powered agents in the marketplace and discover how to optimize your business processes and enhance productivity seamlessly.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center">

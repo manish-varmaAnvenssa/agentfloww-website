@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agentflow Network Flow Animation</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .demo { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #333; 
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .svg-container {
+            border: 2px solid #eee;
+            border-radius: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            margin: 20px 0;
+        }
+        .description {
+            margin-top: 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo">
+        <h1>Agentflow Network Flow</h1>
+        <p class="subtitle">Watch the animated network connections and data flow</p>
+        
+        <div class="svg-container">
+            <svg viewBox="0 0 1268 357" fill="none" preserveAspectRatio="xMinYMin meet" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 400px;">
+                <g transform="translate(0,10)">
+                    <path id="line1" d="M2 1L320.87 3.15715C360.692 3.42657 398.207 21.491 422.73 52.2067L508 159" stroke="url(#paint0)" stroke-width="2"></path>
+                    <path id="line2" class="delay" d="M322 313C360.559 313 397.053 295.532 421.306 265.468L508 158" stroke="url(#paint1)" stroke-width="2"></path>
+                    <path id="line3" class="animate-reverse" d="M508.101 159L29 159.804" stroke="url(#paint0)" stroke-width="2"></path>
+                    <path id="line4" class="animate-reverse" d="M323.944 313.007L281.081 280.705C274.438 275.698 266.365 272.952 258.045 272.874L0.259766 270.418" stroke="url(#paint0)" stroke-width="2"></path>
+                    <path id="line5" class="animate-reverse" d="M325.431 313.157L283.086 345.36C276.42 350.432 268.295 353.214 259.918 353.294L4.66602 355.747" stroke="url(#paint0)" stroke-width="2"></path>
+                    
+                    <!-- Animated dots on line1 -->
+                    <circle r="3" fill="#804CFF">
+                        <animateMotion dur="3s" begin="0s" repeatCount="indefinite">
+                            <mpath xlink:href="#line1"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#F5F4FE">
+                        <animateMotion dur="3s" begin="1s" repeatCount="indefinite">
+                            <mpath xlink:href="#line1"></mpath>
+                        </animateMotion>
+                    </circle>
+                    
+                    <!-- Animated dots on line2 -->
+                    <circle r="3" fill="#7762FF">
+                        <animateMotion dur="2.5s" begin="0.5s" repeatCount="indefinite">
+                            <mpath xlink:href="#line2"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#804CFF">
+                        <animateMotion dur="2.5s" begin="1.5s" repeatCount="indefinite">
+                            <mpath xlink:href="#line2"></mpath>
+                        </animateMotion>
+                    </circle>
+                    
+                    <!-- Animated dots on line3 -->
+                    <circle r="3" fill="#804CFF">
+                        <animateMotion dur="2s" begin="0s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#line3"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#F5F4FE">
+                        <animateMotion dur="2s" begin="1s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#line3"></mpath>
+                        </animateMotion>
+                    </circle>
+                    
+                    <!-- Animated dots on line4 -->
+                    <circle r="3" fill="#804CFF">
+                        <animateMotion dur="2.8s" begin="0.3s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#line4"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#F5F4FE">
+                        <animateMotion dur="2.8s" begin="1.3s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#line4"></mpath>
+                        </animateMotion>
+                    </circle>
+                    
+                    <!-- Animated dots on line5 -->
+                    <circle r="3" fill="#804CFF">
+                        <animateMotion dur="3.2s" begin="0.7s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#line5"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#F5F4FE">
+                        <animateMotion dur="3.2s" begin="1.7s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#line5"></mpath>
+                        </animateMotion>
+                    </circle>
+                </g>
+                <g transform="translate(759,0)" class="delayed-fade">
+                    <path id="rline5" class="animate-reverse delay1" d="M163 169.247L-255 168" stroke="#804DFF" stroke-width="1.5" stroke-linecap="round"></path>
+                    <path id="rline1" class="animate-reverse delay2" d="M517.743 1.1748H278.782C250.153 1.1748 226.946 24.3697 226.946 52.982V130.693C226.946 152.152 209.54 169.548 188.069 169.548H171.738" stroke="url(#paint2)" stroke-width="2"></path>
+                    <path id="rline2" class="animate-reverse delay2" d="M517.743 85.3604H275.078C248.494 85.3604 226.946 106.898 226.946 133.467C226.946 153.394 210.784 169.547 190.845 169.547H171.738" stroke="url(#paint2)" stroke-width="2"></path>
+                    <path id="rline3" class="animate-reverse delay2" d="M517.743 337.144H278.782C250.153 337.144 226.946 313.95 226.946 285.337V207.626C226.946 186.167 209.54 168.771 188.069 168.771H171.738" stroke="url(#paint2)" stroke-width="2"></path>
+                    <path id="rline4" class="animate-reverse delay2" d="M517.743 252.528H274.832C248.385 252.528 226.946 231.1 226.946 204.667C226.946 184.843 210.867 168.772 191.032 168.772H171.738" stroke="url(#paint2)" stroke-width="2"></path>
+                    <path id="rline6" class="animate-reverse delay2" d="M510 170.247L165 169" stroke="url(#paint2)" stroke-width="2" stroke-linecap="round"></path>
+                    
+                    <!-- Animated dots on rline1 -->
+                    <circle r="3" fill="#804CFF">
+                        <animateMotion dur="2.5s" begin="0s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline1"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#FFFFFF">
+                        <animateMotion dur="2.5s" begin="1.2s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline1"></mpath>
+                        </animateMotion>
+                    </circle>
+                    
+                    <!-- Animated dots on rline2 -->
+                    <circle r="3" fill="#804CFF">
+                        <animateMotion dur="2.3s" begin="0.5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline2"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#FFFFFF">
+                        <animateMotion dur="2.3s" begin="1.7s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline2"></mpath>
+                        </animateMotion>
+                    </circle>
+                    
+                    <!-- Animated dots on rline3 -->
+                    <circle r="3" fill="#804CFF">
+                        <animateMotion dur="2.7s" begin="0.2s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline3"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#FFFFFF">
+                        <animateMotion dur="2.7s" begin="1.4s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline3"></mpath>
+                        </animateMotion>
+                    </circle>
+                    
+                    <!-- Animated dots on rline4 -->
+                    <circle r="3" fill="#804CFF">
+                        <animateMotion dur="2.4s" begin="0.8s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline4"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#FFFFFF">
+                        <animateMotion dur="2.4s" begin="1.6s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline4"></mpath>
+                        </animateMotion>
+                    </circle>
+                    
+                    <!-- Animated dots on rline5 -->
+                    <circle r="3" fill="#804DFF">
+                        <animateMotion dur="2.1s" begin="0.3s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline5"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#804CFF">
+                        <animateMotion dur="2.1s" begin="1.1s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline5"></mpath>
+                        </animateMotion>
+                    </circle>
+                    
+                    <!-- Animated dots on rline6 -->
+                    <circle r="3" fill="#804CFF">
+                        <animateMotion dur="2.6s" begin="0.6s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline6"></mpath>
+                        </animateMotion>
+                    </circle>
+                    <circle r="2" fill="#FFFFFF">
+                        <animateMotion dur="2.6s" begin="1.8s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1">
+                            <mpath xlink:href="#rline6"></mpath>
+                        </animateMotion>
+                    </circle>
+                </g>
+                <defs>
+                    <linearGradient id="paint0" x1="0" y1="0" x2="700" y2="0" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#F5F4FE"></stop>
+                        <stop offset="1" stop-color="#804CFF"></stop>
+                    </linearGradient>
+                    <linearGradient id="paint1" x1="0" y1="0" x2="700" y2="0" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#7762FF"></stop>
+                        <stop offset="1" stop-color="#804CFF"></stop>
+                    </linearGradient>
+                    <linearGradient id="paint2" x1="0" y1="0" x2="700" y2="0" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#804CFF"></stop>
+                        <stop offset="1" stop-color="#FFFFFF"></stop>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+        
+        <div class="description">
+            <p><strong>What you're seeing:</strong> Animated network connections with moving data points and flowing dots traveling along the paths.</p>
+            <p>This represents the dynamic data flow and network connectivity in modern AI systems.</p>
+        </div>
+    </div>
+</body>
+</html>
+

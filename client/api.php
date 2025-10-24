@@ -26,26 +26,51 @@ try {
             
             // Simple file-based authentication for now
             $users_file = 'users.json';
+            $users = [];
+            
             if (file_exists($users_file)) {
                 $users = json_decode(file_get_contents($users_file), true);
-            } else {
-                // Create default admin user
-                $users = [
-                    [
-                        'username' => 'admin',
-                        'email' => 'varmamanish341@gmail.com',
-                        'password' => 'admin123',
-                        'role' => 'admin',
-                        'created_at' => '2025-01-19 10:00:00'
-                    ]
-                ];
-                file_put_contents($users_file, json_encode($users));
             }
+            
+            // Always ensure both admin accounts exist
+            $required_admins = [
+                [
+                    'username' => 'admin',
+                    'email' => 'varmamanish341@gmail.com',
+                    'password' => 'admin123',
+                    'role' => 'admin',
+                    'created_at' => '2025-01-19 10:00:00'
+                ],
+                [
+                    'username' => 'sales_admin',
+                    'email' => 'sales@anvenssa.COM',
+                    'password' => 'A2mw0bdod#1',
+                    'role' => 'admin',
+                    'created_at' => '2025-01-19 10:00:00'
+                ]
+            ];
+            
+            // Check if required admin accounts exist, add them if they don't
+            foreach ($required_admins as $required_admin) {
+                $admin_exists = false;
+                foreach ($users as $user) {
+                    if (strtolower($user['email']) === strtolower($required_admin['email'])) {
+                        $admin_exists = true;
+                        break;
+                    }
+                }
+                if (!$admin_exists) {
+                    $users[] = $required_admin;
+                }
+            }
+            
+            // Save updated users list
+            file_put_contents($users_file, json_encode($users));
             
             // Check credentials
             $user_found = null;
             foreach ($users as $user) {
-                if ($user['email'] === $email && $user['password'] === $password_input) {
+                if (strtolower($user['email']) === strtolower($email) && $user['password'] === $password_input) {
                     $user_found = $user;
                     break;
                 }

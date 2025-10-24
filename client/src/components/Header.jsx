@@ -54,9 +54,9 @@ const Header = () => {
     return (
       <div className="flex items-center">
         <img 
-          src="/images/logo/Agentflow Logo.png" 
+          src="/images/logo/Agentflow svg.svg" 
           alt="Agentflow Logo" 
-          className="h-12 w-auto"
+          className="h-8 w-auto mt-1"
           onError={() => setImageError(true)}
         />
       </div>

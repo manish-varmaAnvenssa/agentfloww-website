@@ -1,5 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
-import { HashRouter } from 'react-router-dom'
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Layout from './components/Layout'
 import AdminLayout from './components/AdminLayout'
@@ -24,7 +23,7 @@ import { AuthProvider } from './contexts/AuthContext'
 function App() {
   
   return (
-    <HashRouter>
+    <BrowserRouter>
       <AuthProvider>
         <AnimatePresence mode="wait">
           <Routes>
@@ -35,7 +34,6 @@ function App() {
               <Route path="login" element={<Login />} />
               <Route path="compare" element={<Compare />} />
               <Route path="about" element={<About />} />
-              <Route path="pricing" element={<Pricing />} />
               <Route path="live-demo" element={<LiveDemo />} />
               <Route path="privacy-policy" element={<PrivacyPolicy />} />
               <Route path="refund-policy" element={<RefundPolicy />} />
@@ -59,7 +57,7 @@ function App() {
           </Routes>
         </AnimatePresence>
       </AuthProvider>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 

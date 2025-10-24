@@ -249,7 +249,7 @@ const AdminDemo = () => {
                               className="text-indigo-600 hover:text-indigo-900 text-xs font-medium flex items-center"
                             >
                               <Eye className="w-3 h-3 mr-1" />
-                              View Full Details
+                              View Full Message
                             </button>
                           </div>
                         ) : (

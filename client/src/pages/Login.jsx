@@ -6,6 +6,7 @@ import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { validateEmail } from '../utils/validation'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -78,10 +79,7 @@ const Login = () => {
                     id="email"
                     {...register('email', { 
                       required: 'Email is required',
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Invalid email address'
-                      }
+                      validate: validateEmail
                     })}
                     className={`input-field pl-10 ${errors.email ? 'border-error-500' : ''}`}
                     placeholder="Enter your email"

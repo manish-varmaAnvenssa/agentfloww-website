@@ -8,7 +8,27 @@ const router = express.Router();
 router.post('/', [
   body('name').trim().isLength({ min: 2, max: 100 }).withMessage('Name must be between 2 and 100 characters'),
   body('email').isEmail().normalizeEmail().withMessage('Please enter a valid email'),
-  body('phone').trim().isLength({ min: 1, max: 20 }).withMessage('Phone number is required and must be less than 20 characters'),
+  body('phone')
+    .trim()
+    .isLength({ min: 1, max: 20 })
+    .withMessage('Phone number is required and must be less than 20 characters')
+    .custom((value) => {
+      // Remove all non-digit characters except + at the start
+      const cleanNumber = value.replace(/[^\d+]/g, '');
+      if (cleanNumber.startsWith('+')) {
+        // International number: + followed by 7-15 digits
+        if (cleanNumber.length < 8 || cleanNumber.length > 16) {
+          throw new Error('International phone number must be 8-16 digits');
+        }
+      } else {
+        // Local number: 7-15 digits
+        if (cleanNumber.length < 7 || cleanNumber.length > 15) {
+          throw new Error('Phone number must be 7-15 digits');
+        }
+      }
+      return true;
+    })
+    .withMessage('Please enter a valid phone number'),
   body('company').trim().isLength({ min: 1, max: 100 }).withMessage('Company name is required and must be less than 100 characters'),
   body('message').trim().isLength({ min: 1, max: 1000 }).withMessage('Message cannot be empty and must be less than 1000 characters')
 ], async (req, res) => {

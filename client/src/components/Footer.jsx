@@ -16,11 +16,11 @@ const Footer = () => {
   ]
 
   const socialLinks = [
-    { name: 'Facebook', href: '#', icon: Facebook, bgColor: 'bg-blue-600' },
-    { name: 'LinkedIn', href: '#', icon: Linkedin, bgColor: 'bg-blue-600' },
-    { name: 'Instagram', href: '#', icon: Instagram, bgColor: 'bg-pink-500' },
+    { name: 'Facebook', href: 'https://www.facebook.com/agentflow15/', icon: Facebook, bgColor: 'bg-blue-600' },
+    { name: 'LinkedIn', href: 'https://www.linkedin.com/company/anvenssa-ai/posts/?feedView=all', icon: Linkedin, bgColor: 'bg-blue-600' },
+    { name: 'Instagram', href: 'https://www.instagram.com/agentflow_?igsh=bWczd2lvaTJkY3pv&utm_source=qr', icon: Instagram, bgColor: 'bg-pink-500' },
     { name: 'Twitter', href: '#', icon: Twitter, bgColor: 'bg-black' },
-    { name: 'YouTube', href: '#', icon: Youtube, bgColor: 'bg-red-600' },
+    { name: 'YouTube', href: 'https://www.youtube.com/@AnvenssaAI', icon: Youtube, bgColor: 'bg-red-600' },
   ]
 
   return (
@@ -34,9 +34,9 @@ const Footer = () => {
           <div className="sm:col-span-2 lg:col-span-2 text-center sm:text-left">
             <Link to="/" className="flex items-center justify-center sm:justify-start space-x-3 mb-4">
               <img 
-                src="/images/logo/Agentflow Logo.png" 
+                src="/images/logo/Agentflow svg.svg" 
                 alt="Agentflow Logo" 
-                className="h-10 md:h-12 w-auto"
+                className="h-8 md:h-10 w-auto"
               />
              
             </Link>

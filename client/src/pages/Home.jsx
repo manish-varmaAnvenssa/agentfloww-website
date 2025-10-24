@@ -2,11 +2,21 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CheckCircle, Zap, Shield, Users, BarChart3, Menu, X, ChevronDown, Calendar, Clock } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState(null)
+  const [currentAgent, setCurrentAgent] = useState(0)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const videoRef = useRef(null)
+  
+  const agents = [
+    "AI Agent for Sales",
+    "Voice calling agent", 
+    "CRM agent",
+    "Powering Business Efficiency"
+  ]
 
   // Prevent auto-scroll on home page load
   useEffect(() => {
@@ -34,6 +44,31 @@ const Home = () => {
       // Cleanup
     }
   }, [])
+
+  // Cycle through agents every 4 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentAgent((prev) => (prev + 1) % agents.length)
+    }, 4000)
+    
+    return () => clearInterval(interval)
+  }, [agents.length])
+
+  // Pause video on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isVideoPlaying && videoRef.current) {
+        videoRef.current.pause();
+        setIsVideoPlaying(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isVideoPlaying]);
 
   const features = [
     {
@@ -98,9 +133,9 @@ const Home = () => {
               {/* Logo */}
               <Link to="/" className="flex items-center space-x-2 mr-12">
                 <img 
-                  src="/images/logo/Agentflow Logo.png" 
+                  src="/images/logo/Agentflow svg.svg" 
                   alt="Agentflow Logo" 
-                  className="h-12 w-auto"
+                  className="h-8 w-auto mt-1"
                 />
               </Link>
 
@@ -252,7 +287,7 @@ const Home = () => {
   }}
 ></div>
 
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-20 pb-12 md:pb-16 relative z-10">
+        <div className="w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-20 pb-12 md:pb-16 relative z-10">
           <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-between gap-8 md:gap-12">
             {/* Left Side - Text Content */}
             <div className="w-full lg:flex-1 text-center lg:text-left">
@@ -302,117 +337,580 @@ const Home = () => {
               </motion.div>
             </div>
 
-            {/* Right Side - Business Automation Image */}
+            {/* Right Side - Desktop Screen */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-          className="w-full lg:flex-1 flex justify-center lg:justify-start relative"
->
-  {/* Background image in red marked area - Hidden on mobile */}
-  <div className="hidden lg:block absolute right-[-310px] top-[-50px] w-[750px] h-[580px] opacity-100 bg-white/50 backdrop-blur-sm rounded-lg">
-  <img 
-  src="/images/logo/Agentflow Logo.png" 
-  alt="Agentflow Logo" 
-  className="w-32 h-10 object-contain" 
-  style={{ marginTop: '10px', marginLeft: '30px' }} 
-/>
-    <img 
-      src="/images/Pictures/Agentflow screen.png" 
-      alt="Dashboard Background" 
-      className=" w-[500px] h-[500px] object-cover object-[32%] rounded-lg shadow-lg translate-x-20 translate-y-20"
-      style={{ transform: 'translateY(calc(5rem - 55px)) translateX(10rem)' }}
-     />
-  </div>
-  
-  <div className="relative w-50 md:w-70 h-[450px] md:h-[530px] bg-white rounded-[2rem] p-2 shadow-2xl border border-gray-200 mx-auto lg:mx-0">
-    {/* Phone frame */}
-    <div className="w-full h-full bg-white rounded-[1.5rem] overflow-hidden relative border border-gray-100">
-      {/* Screen content */}
-
-                  <div className="w-full h-full p-4">
-                    <img 
-                      src="/images/Pictures/Agentflow Login.png" 
-                      alt="Business Automation" 
-                      className="w-full h-full object-contain rounded-lg"
-                    />
+              className="w-full lg:flex-1 flex justify-center lg:justify-end relative"
+            >
+              {/* Desktop Screen Container */}
+              <div className="relative w-full max-w-7xl">
+                {/* Desktop Frame */}
+                <div className="relative bg-gray-100/50 backdrop-blur-sm rounded-t-3xl p-1 shadow-2xl border border-gray-200/30">
+                  {/* Desktop Screen */}
+                  <div className="bg-white rounded-2xl overflow-hidden shadow-inner">
+                    {/* Screen Header */}
+                    <div className="bg-gray-100 px-6 py-3 flex items-center justify-between border-b">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      </div>
+                      <div className="text-sm text-gray-600 font-medium">Agentflow Dashboard</div>
+                      <div className="w-6"></div>
+                    </div>
+                    
+                    {/* Video Content */}
+                    <div className="relative w-full" style={{ height: '457px' }}>
+                      <video
+                        src="/images/Pictures/final.mp4"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="auto"
+                        controls={false}
+                        className="absolute inset-0 w-full h-full"
+                        style={{ 
+                          objectFit: 'cover',
+                          width: '100%',
+                          height: '100%'
+                        }}
+                        onLoadedData={(e) => {
+                          e.target.play().catch(console.error);
+                        }}
+                        onEnded={(e) => {
+                          e.target.currentTime = 0;
+                          e.target.play().catch(console.error);
+                        }}
+                      />
+                      
+                      {/* Overlay Elements */}
+                      <div className="absolute top-[-11px] left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                          <span className="text-xs font-medium text-gray-700">Live Demo</span>
+                        </div>
+                      </div>
+                      
+                      <motion.div 
+                        className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg"
+                        key={Math.random()}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <div className="text-xs text-gray-600">
+                          <motion.div 
+                            className="font-medium"
+                            key={currentAgent}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            {agents[currentAgent]}
+                          </motion.div>
+                          <motion.div 
+                            className="text-green-600"
+                            animate={{ 
+                              opacity: [1, 0.5, 1],
+                              scale: [1, 1.1, 1]
+                            }}
+                            transition={{ 
+                              duration: 1,
+                              repeat: Infinity,
+                              ease: "easeInOut"
+                            }}
+                          >
+                            ● Active
+                          </motion.div>
+                        </div>
+                      </motion.div>
+                    </div>
                   </div>
                   
-                  {/* Home indicator */}
-                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gray-300 rounded-full"></div>
                 </div>
+                
+                {/* Floating Elements */}
+                <motion.div 
+                  className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-xl"
+                  animate={{ 
+                    y: [0, -10, 0],
+                    rotate: [0, 5, -5, 0]
+                  }}
+                  transition={{ 
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </motion.div>
+                
+                <motion.div 
+                  className="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center shadow-xl"
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                    rotate: [0, 360]
+                  }}
+                  transition={{ 
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </motion.div>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-white">
+      {/* GIF Section */}
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            {/* <div className="inline-block text-purple-600 font-semibold text-sm uppercase tracking-wide mb-4">
+              Network Flow Animation
+            </div> */}
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8" style={{ marginTop: '-10px' }}>
+            Agentflow in Action
+            </h2>
+            <div className="relative w-full max-w-4xl mx-auto">
+              {/* Abstract Background Elements */}
+              <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-400 rounded-full opacity-40 blur-3xl z-0"></div>
+              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-pink-400 rounded-full opacity-50 z-0"></div>
+              <div className="absolute top-1/2 -right-24 w-48 h-48 bg-purple-300 rounded-full opacity-30 blur-2xl z-0"></div>
+              
+              {/* Video Container with Overlay */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl group z-10">
+                {/* Semi-transparent Purple Overlay with Blur - Only show when video is not playing */}
+                {!isVideoPlaying && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600/50 via-purple-500/40 to-indigo-600/30 z-10 backdrop-blur-sm transition-opacity duration-500"></div>
+                )}
+                
+                {/* Play Button - Only show when video is not playing */}
+                {!isVideoPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center z-20">
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.3 }}
+                      className="cursor-pointer"
+                      onClick={() => {
+                        if (videoRef.current) {
+                          videoRef.current.play();
+                          setIsVideoPlaying(true);
+                        }
+                      }}
+                    >
+                      <div className="relative">
+                        {/* Outer Glow Ring */}
+                        <motion.div
+                          animate={{ 
+                            scale: [1, 1.2, 1],
+                            opacity: [0.5, 0.8, 0.5]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                          className="absolute inset-0 bg-white rounded-full blur-xl opacity-60"
+                          style={{ width: '100px', height: '100px', left: '-10px', top: '-10px' }}
+                        />
+                        
+                        {/* Play Button Circle */}
+                        <div className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl">
+                          {/* Play Icon */}
+                          <svg 
+                            className="w-8 h-8 text-purple-600 ml-1" 
+                            fill="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        </div>
+                        
+                        {/* Pulse Ring */}
+                        <motion.div
+                          animate={{ 
+                            scale: [1, 1.4, 1],
+                            opacity: [0.8, 0, 0.8]
+                          }}
+                          transition={{ 
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: "easeOut"
+                          }}
+                          className="absolute inset-0 border-4 border-white rounded-full"
+                          style={{ width: '80px', height: '80px' }}
+                        />
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+                
+                {/* Video Element */}
+                <video
+                  ref={videoRef}
+                  src="/images/Pictures/Revolutionize Your Business with AgentFlow (1).mp4"
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  controls={false}
+                  className={`w-full h-auto transition-all duration-500 ${!isVideoPlaying ? 'blur-md' : 'blur-0'}`}
+                  style={{ 
+                    objectFit: 'cover',
+                    minHeight: '400px'
+                  }}
+                  onEnded={(e) => {
+                    e.target.currentTime = 0;
+                    e.target.play().catch(console.error);
+                  }}
+                />
+                
+                {/* Decorative Corner Elements */}
+                <div className="absolute top-4 left-4 w-6 h-6 bg-cyan-400 rounded-full opacity-70 z-10"></div>
+                <div className="absolute bottom-4 right-4 w-5 h-5 bg-indigo-400 rounded-full opacity-70 z-10"></div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+
+      {/* What is Agentflow Section */}
+      <section className="py-16 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-32 -right-32 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left - Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
+              className="space-y-6"
             >
-              Everything you need to succeed
-            </motion.h2>
-          </div>
+              {/* Header */}
+              <div className="space-y-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 px-3 py-1.5 rounded-full border border-blue-100"
+                >
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                  <span className="text-blue-700 font-semibold text-xs uppercase tracking-wide">
+                    What is Agentflow?
+                  </span>
+                </motion.div>
+                
+                <motion.h2 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight"
+                >
+                  Smart Virtual Assistant for Your Business
+                </motion.h2>
+                
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  viewport={{ once: true }}
+                  className="text-lg text-gray-600 leading-relaxed"
+                >
+                  Agentflow is a tool that helps businesses complete tasks more quickly and effectively by utilizing AI agents and workflows. Imagine it as an intelligent virtual assistant that can manage many of the routine, daily labor for a business.
+                </motion.p>
 
-          {/* Logo Carousel */}
-          <div className="overflow-hidden">
-            {/* First Row - 9 logos */}
-            <div className="flex animate-scroll-left mb-8">
-              <div className="flex space-x-16 min-w-max">
-                {[17, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                  <div key={num} className="flex-shrink-0">
-                    <img 
-                      src={`/images/logo/${num}.png`} 
-                      alt={`Logo ${num}`}
-                      className="h-16 w-auto object-contain transition-all duration-300"
-                    />
-                  </div>
-                ))}
-                {/* Duplicate for seamless loop */}
-                {[17, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                  <div key={`duplicate-${num}`} className="flex-shrink-0">
-                    <img 
-                      src={`/images/logo/${num}.png`} 
-                      alt={`Logo ${num}`}
-                      className="h-16 w-auto object-contain transition-all duration-300"
-                    />
-                  </div>
-                ))}
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                  viewport={{ once: true }}
+                  className="text-lg text-gray-600 leading-relaxed font-semibold"
+                >
+                  We want AI automation to be as easy as transferring data between locations.
+                </motion.p>
               </div>
-            </div>
 
-            {/* Second Row - 8 logos */}
-            <div className="flex animate-scroll-right">
-              <div className="flex space-x-16 min-w-max">
-                {[10, 11, 12, 13, 14, 15, 16, 17].map((num) => (
-                  <div key={num} className="flex-shrink-0">
-                    <img 
-                      src={`/images/logo/${num}.png`} 
-                      alt={`Logo ${num}`}
-                      className="h-16 w-auto object-contain transition-all duration-300"
-                    />
+              {/* Key Benefits */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                viewport={{ once: true }}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+              >
+                <motion.div 
+                  whileHover={{ scale: 1.02 }}
+                  className="flex flex-col items-center text-center p-3 bg-white/60 backdrop-blur-sm rounded-lg border border-white/40 shadow-sm"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0 mb-2">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
                   </div>
-                ))}
-                {/* Duplicate for seamless loop */}
-                {[10, 11, 12, 13, 14, 15, 16, 17].map((num) => (
-                  <div key={`duplicate-${num}`} className="flex-shrink-0">
-                    <img 
-                      src={`/images/logo/${num}.png`} 
-                      alt={`Logo ${num}`}
-                      className="h-16 w-auto object-contain transition-all duration-300"
-                    />
+                  <h3 className="font-semibold text-gray-900 text-sm">Faster Execution</h3>
+                  <p className="text-xs text-gray-600">Get things done in minutes, not hours</p>
+                </motion.div>
+
+                <motion.div 
+                  whileHover={{ scale: 1.02 }}
+                  className="flex flex-col items-center text-center p-3 bg-white/60 backdrop-blur-sm rounded-lg border border-white/40 shadow-sm"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0 mb-2">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
                   </div>
-                ))}
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-sm">Efficient Workflows</h3>
+                    <p className="text-xs text-gray-600">Automate repetitive tasks seamlessly</p>
+                  </div>
+                </motion.div>
+
+                <motion.div 
+                  whileHover={{ scale: 1.02 }}
+                  className="flex flex-col items-center text-center p-3 bg-white/60 backdrop-blur-sm rounded-lg border border-white/40 shadow-sm"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0 mb-2">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-sm">Smart Automation</h3>
+                    <p className="text-xs text-gray-600">AI agents that learn and adapt</p>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right - Animated Visual */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              {/* Main Container */}
+              <div className="relative">
+                <div className="bg-gradient-to-br from-white/90 to-blue-50/90 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/60 relative overflow-hidden">
+                  {/* Animated Background Pattern */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 left-0 w-full h-full">
+                      <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <defs>
+                          <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+                          </pattern>
+                        </defs>
+                        <rect width="100" height="100" fill="url(#grid)" className="text-blue-300"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Floating Elements */}
+                  <motion.div 
+                    animate={{ 
+                      y: [0, -20, 0],
+                      rotate: [0, 6, 0],
+                      scale: [1, 1.05, 1]
+                    }}
+                    transition={{ 
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full opacity-90 shadow-lg"
+                  />
+                  
+                  <motion.div 
+                    animate={{ 
+                      y: [0, 15, 0],
+                      rotate: [0, -6, 0],
+                      scale: [1, 0.95, 1]
+                    }}
+                    transition={{ 
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1
+                    }}
+                    className="absolute -top-8 -right-8 w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full opacity-90 shadow-lg"
+                  />
+
+                  <motion.div 
+                    animate={{ 
+                      y: [0, -15, 0],
+                      x: [0, 10, 0],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{ 
+                      duration: 4.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 2
+                    }}
+                    className="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full opacity-90 shadow-lg"
+                  />
+
+                  {/* Central Content */}
+                  <div className="relative z-10 text-center">
+                    {/* Main Icon Container */}
+                    <motion.div 
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 360],
+                        boxShadow: [
+                          "0 15px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -5px rgba(0, 0, 0, 0.04)",
+                          "0 20px 40px -12px rgba(59, 130, 246, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.05)",
+                          "0 15px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -5px rgba(0, 0, 0, 0.04)"
+                        ]
+                      }}
+                      transition={{ 
+                        duration: 10,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="w-24 h-24 bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl border-4 border-white/20"
+                    >
+                      <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </motion.div>
+                    
+                    {/* Main Heading */}
+                    <motion.h3 
+                      animate={{ 
+                        color: ["#1f2937", "#3b82f6", "#7c3aed", "#1f2937"]
+                      }}
+                      transition={{ 
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="text-2xl font-bold mb-4 bg-gradient-to-r from-gray-900 via-blue-600 to-purple-600 bg-clip-text text-transparent"
+                    >
+                      AI-Powered Workflows
+                    </motion.h3>
+                    
+                    {/* Workflow Steps */}
+                    <div className="space-y-3">
+                      {/* Data Processing */}
+                      <motion.div 
+                        animate={{ 
+                          x: [0, 3, 0],
+                          opacity: [0.7, 1, 0.7]
+                        }}
+                        transition={{ 
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="flex items-center justify-center space-x-2 p-2 bg-gradient-to-r from-emerald-50 to-green-50 rounded-lg border border-emerald-200/50"
+                      >
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                        <span className="text-xs font-medium text-emerald-700">Data Processing</span>
+                        <motion.div
+                          animate={{ rotate: [0, 360] }}
+                          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                          className="w-3 h-3 text-emerald-500"
+                        >
+                          <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                        </motion.div>
+                      </motion.div>
+
+                      {/* Task Automation */}
+                      <motion.div 
+                        animate={{ 
+                          x: [0, -3, 0],
+                          opacity: [0.7, 1, 0.7]
+                        }}
+                        transition={{ 
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: 1
+                        }}
+                        className="flex items-center justify-center space-x-2 p-2 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200/50"
+                      >
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                        <span className="text-xs font-medium text-blue-700">Task Automation</span>
+                        <motion.div
+                          animate={{ rotate: [0, -360] }}
+                          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                          className="w-3 h-3 text-blue-500"
+                        >
+                          <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm13.5 9.5a3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812 3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812 3.066 3.066 0 00.723 1.745 3.066 3.066 0 010 3.976z" clipRule="evenodd" />
+                          </svg>
+                        </motion.div>
+                      </motion.div>
+
+                      {/* Smart Routing */}
+                      <motion.div 
+                        animate={{ 
+                          x: [0, 3, 0],
+                          opacity: [0.7, 1, 0.7]
+                        }}
+                        transition={{ 
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: 2
+                        }}
+                        className="flex items-center justify-center space-x-2 p-2 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200/50"
+                      >
+                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                        <span className="text-xs font-medium text-purple-700">Smart Routing</span>
+                        <motion.div
+                          animate={{ rotate: [0, 360] }}
+                          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                          className="w-3 h-3 text-purple-500"
+                        >
+                          <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </motion.div>
+                      </motion.div>
+                    </div>
+
+                    {/* Connection Lines */}
+                    <div className="absolute left-1/2 top-24 transform -translate-x-1/2 w-0.5 h-12 bg-gradient-to-b from-blue-400 to-purple-400 opacity-60"></div>
+                    <div className="absolute left-1/2 top-36 transform -translate-x-1/2 w-0.5 h-12 bg-gradient-to-b from-purple-400 to-pink-400 opacity-60"></div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -430,14 +928,14 @@ const Home = () => {
                 viewport={{ once: true, amount: 0.3 }}
               >
                 <div className="inline-block text-[#6633FF] font-bold font size 14px  text-lg mb-8 -mt-2">
-                  Modular solutions
+                💡Modular solutions
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
                   AI Agent<br />
                    for Sales
                 </h2>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                  Discover how AI agents can <br />revolutionize your sales strategy by <br />enhancing productivity, automating tasks, and <br />increasing revenue.
+                  Automates lead generation, manages the pipeline and does outreach cutting costs by upto 70% and reduces manual effort
                 </p>
               </motion.div>
             </div>
@@ -476,7 +974,7 @@ const Home = () => {
                         </svg>
                   </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Lead Generation</h3>
+                        <h3 className="font-semibold text-gray-900">Automated Lead Generation</h3>
                         <p className="text-sm text-gray-600">AI-powered prospecting</p>
                   </div>
                       <motion.div 
@@ -502,8 +1000,8 @@ const Home = () => {
                         </svg>
                   </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Qualification</h3>
-                        <p className="text-sm text-gray-600">Smart lead scoring</p>
+                        <h3 className="font-semibold text-gray-900">Personalized Outreach</h3>
+                        <p className="text-sm text-gray-600">Custom communication</p>
                   </div>
                       <motion.div 
                         className="flex-1 h-0.5 bg-gradient-to-r from-green-500 to-teal-600"
@@ -528,8 +1026,8 @@ const Home = () => {
                         </svg>
                   </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Engagement</h3>
-                        <p className="text-sm text-gray-600">24/7 conversation</p>
+                        <h3 className="font-semibold text-gray-900">24/7 conversation </h3>
+                        <p className="text-sm text-gray-600">Engagement</p>
                   </div>
                       <motion.div 
                         className="flex-1 h-0.5 bg-gradient-to-r from-purple-500 to-pink-600"
@@ -554,8 +1052,8 @@ const Home = () => {
                         </svg>
                   </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Conversion</h3>
-                        <p className="text-sm text-gray-600">Revenue optimization</p>
+                        <h3 className="font-semibold text-gray-900">Seamless Integration</h3>
+                        <p className="text-sm text-gray-600">Easy setup & deployment</p>
                   </div>
                     </motion.div>
 
@@ -644,10 +1142,10 @@ const Home = () => {
                   🏆 Customer Excellence
                   </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                  Improving Customer Service
+                  Voice calling <br /> agent
                 </h2>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                This is key to building long-term relationships, delighting customers, and staying ahead of the competition. 
+                Our voice calling agent gets integrated with your CRM and engages with your leads leading to faster responses and higher conversions
                 </p>
               </motion.div>
                 </div>
@@ -677,7 +1175,7 @@ const Home = () => {
                       }}
                     >
                       <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                     </motion.div>
                     
@@ -765,10 +1263,12 @@ const Home = () => {
                       viewport={{ once: true }}
                     >
                       <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+                        <svg className="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
                         <span className="text-xs text-gray-500">Customer</span>
                 </div>
-                      <p className="text-sm text-gray-700">Need help with my order</p>
+                      <p className="text-sm text-gray-700">Interested in your product</p>
                     </motion.div>
 
                     <motion.div 
@@ -779,10 +1279,12 @@ const Home = () => {
                       viewport={{ once: true }}
                     >
                       <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                        <span className="text-xs text-white/80">AI Assistant</span>
+                        <svg className="w-4 h-4 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                        <span className="text-xs text-white/80">Voice Agent</span>
                   </div>
-                      <p className="text-sm text-white">I'll help you right away!</p>
+                      <p className="text-sm text-white">Let me call you back!</p>
                     </motion.div>
 
                     <motion.div 
@@ -793,10 +1295,12 @@ const Home = () => {
                       viewport={{ once: true }}
                     >
                       <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                        <span className="text-xs text-white/80">AI Assistant</span>
+                        <svg className="w-4 h-4 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-xs text-white/80">Voice Agent</span>
                 </div>
-                      <p className="text-sm text-white">Issue resolved in 2 minutes</p>
+                      <p className="text-sm text-white">Call completed successfully</p>
                     </motion.div>
 
                     <motion.div 
@@ -807,10 +1311,12 @@ const Home = () => {
                       viewport={{ once: true }}
                     >
                       <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                        <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
                         <span className="text-xs text-gray-500">Customer</span>
                       </div>
-                      <p className="text-sm text-gray-700">Thank you! ⭐⭐⭐⭐⭐</p>
+                      <p className="text-sm text-gray-700">Great call! ⭐⭐⭐⭐⭐</p>
                     </motion.div>
                   </div>
 
@@ -832,7 +1338,7 @@ const Home = () => {
                       >
                         24/7
                       </motion.div>
-                      <div className="text-xs text-gray-600">Availability</div>
+                      <div className="text-xs text-gray-600">Call Success</div>
                     </div>
                     <div className="text-center bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-3 border border-indigo-200">
                       <motion.div 
@@ -844,7 +1350,7 @@ const Home = () => {
                       >
                                                  &lt;2min
                       </motion.div>
-                      <div className="text-xs text-gray-600">Response Time</div>
+                      <div className="text-xs text-gray-600">Call Duration</div>
                     </div>
                     <div className="text-center bg-gradient-to-br from-emerald-50 to-green-50 rounded-lg p-3 border border-emerald-200">
                       <motion.div 
@@ -854,9 +1360,9 @@ const Home = () => {
                         transition={{ duration: 0.5, delay: 1.6 }}
                         viewport={{ once: true }}
                       >
-                        98%
+                        95%
                       </motion.div>
-                      <div className="text-xs text-gray-600">Satisfaction</div>
+                      <div className="text-xs text-gray-600">Conversion</div>
                     </div>
                   </motion.div>
 
@@ -915,13 +1421,13 @@ const Home = () => {
                 viewport={{ once: true, amount: 0.3 }}
               >
                 <div className="inline-block text-[#6633FF] font-bold font size 14px  text-lg mb-8 -mt-2">
-                  🤖 AI Communication
+                  📊 CRM agent
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                  Conversational Intelligence
+                  CRM agent
                 </h2>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                Conversational intelligence bridges human and AI communication, enabling smart, context-aware interactions for deeper connection and seamless collaboration.
+                Our AI CRM Agent automates data entry, lead management, and follow-ups—streamlining workflows, providing smart insights, and helping your team build stronger customer relationships with ease.
                 </p>
               </motion.div>
             </div>
@@ -1034,8 +1540,8 @@ const Home = () => {
                         </svg>
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Human Input</h3>
-                        <p className="text-sm text-gray-600">Natural language processing</p>
+                        <h3 className="font-semibold text-gray-900">Data Entry</h3>
+                        <p className="text-sm text-gray-600">Automated data capture</p>
                       </div>
                       <motion.div 
                         className="flex-1 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600"
@@ -1047,7 +1553,7 @@ const Home = () => {
                     </motion.div>
 
                     {/* Sentiment Analysis */}
-                    <motion.div 
+                    {/* <motion.div 
                       className="flex items-center space-x-4 mb-6"
                       initial={{ x: -50, opacity: 0 }}
                       whileInView={{ x: 0, opacity: 1 }}
@@ -1070,9 +1576,9 @@ const Home = () => {
                         transition={{ duration: 0.8, delay: 0.5 }}
                         viewport={{ once: true }}
                       />
-                    </motion.div>
+                    </motion.div> */}
 
-                    {/* Machine Learning */}
+                    {/* Artificial Intelligence */}
                     <motion.div 
                       className="flex items-center space-x-4 mb-6"
                       initial={{ x: -50, opacity: 0 }}
@@ -1086,8 +1592,8 @@ const Home = () => {
                         </svg>
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">Machine Learning</h3>
-                        <p className="text-sm text-gray-600">Pattern recognition</p>
+                        <h3 className="font-semibold text-gray-900">Lead Management</h3>
+                        <p className="text-sm text-gray-600">Smart lead tracking</p>
                       </div>
                       <motion.div 
                         className="flex-1 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-600"
@@ -1112,8 +1618,8 @@ const Home = () => {
                         </svg>
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">AI Response</h3>
-                        <p className="text-sm text-gray-600">Context-aware reply</p>
+                        <h3 className="font-semibold text-gray-900">Follow-ups</h3>
+                        <p className="text-sm text-gray-600">Automated outreach</p>
                       </div>
                     </motion.div>
 
@@ -1127,7 +1633,7 @@ const Home = () => {
                         viewport={{ once: true }}
                       >
                         <div className="bg-gray-100 rounded-2xl rounded-bl-md p-3 max-w-xs">
-                          <p className="text-sm text-gray-700">How can I help you today?</p>
+                          <p className="text-sm text-gray-700">New lead captured automatically</p>
                         </div>
                       </motion.div>
                       
@@ -1139,7 +1645,7 @@ const Home = () => {
                         viewport={{ once: true }}
                       >
                         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl rounded-br-md p-3 max-w-xs">
-                          <p className="text-sm text-white">I'm feeling frustrated with my order</p>
+                          <p className="text-sm text-white">Lead assigned to sales team</p>
                         </div>
                       </motion.div>
                       
@@ -1151,7 +1657,7 @@ const Home = () => {
                         viewport={{ once: true }}
                       >
                         <div className="bg-gray-100 rounded-2xl rounded-bl-md p-3 max-w-xs">
-                          <p className="text-sm text-gray-700">I understand your frustration. Let me help resolve this quickly.</p>
+                          <p className="text-sm text-gray-700">Follow-up scheduled for tomorrow</p>
                         </div>
                       </motion.div>
                     </div>
@@ -1165,16 +1671,16 @@ const Home = () => {
                       viewport={{ once: true }}
                     >
                       <div className="text-center bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-200">
-                        <div className="text-xl font-bold text-blue-600 mb-1">99%</div>
-                        <div className="text-xs text-gray-600">Accuracy</div>
+                        <div className="text-xl font-bold text-blue-600 mb-1">95%</div>
+                        <div className="text-xs text-gray-600">Data Accuracy</div>
                       </div>
                       <div className="text-center bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-3 border border-purple-200">
-                        <div className="text-xl font-bold text-purple-600 mb-1">Real-time</div>
-                        <div className="text-xs text-gray-600">Processing</div>
+                        <div className="text-xl font-bold text-purple-600 mb-1">24/7</div>
+                        <div className="text-xs text-gray-600">Monitoring</div>
                       </div>
                       <div className="text-center bg-gradient-to-br from-cyan-50 to-blue-50 rounded-lg p-3 border border-cyan-200">
-                        <div className="text-xl font-bold text-cyan-600 mb-1">Multi-lang</div>
-                        <div className="text-xs text-gray-600">Support</div>
+                        <div className="text-xl font-bold text-cyan-600 mb-1">Auto</div>
+                        <div className="text-xs text-gray-600">Follow-ups</div>
                       </div>
                     </motion.div>
                   </div>
@@ -1399,7 +1905,7 @@ const Home = () => {
                     >
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                       <div className="flex-1 h-1 bg-gradient-to-r from-blue-500 to-transparent rounded"></div>
-                      <span className="text-xs text-gray-600">Before AI</span>
+                      <span className="text-xs text-gray-600"></span>
                     </motion.div>
                     
                     <motion.div 
@@ -1411,7 +1917,7 @@ const Home = () => {
                     >
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                       <div className="flex-1 h-1 bg-gradient-to-r from-green-500 to-transparent rounded"></div>
-                      <span className="text-xs text-gray-600">After AI</span>
+                      <span className="text-xs text-gray-600"></span>
                     </motion.div>
                   </div>
 
@@ -2437,9 +2943,9 @@ const Home = () => {
                 {/* Logo */}
                 <div className="flex items-center justify-between mb-6 relative z-10">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 flex items-center justify-center">
+                    <div className="w-6 h-6 flex items-center justify-center">
                       <img 
-                        src="/images/logo/Agentflow Logo.png" 
+                        src="/images/logo/Agentflow svg.svg" 
                         alt="Agentflow Logo" 
                         className="w-full h-full object-contain"
                       />
@@ -2724,155 +3230,381 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Creative CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/3 rounded-full blur-3xl animate-pulse delay-500"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Section Header */}
+      {/* The Agentflow AI Marketplace Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - Content */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center bg-white/10 backdrop-blur-sm rounded-full px-6 py-2 mb-6 border border-white/20">
-              <div className="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></div>
-              <span className="text-white/90 text-sm font-medium">Ready to Transform Your Business?</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 bg-gradient-to-r from-white to-primary-100 bg-clip-text text-transparent">
-              Elevate Your Support Experience
-            </h2>
-            <p className="text-xl text-primary-100 max-w-4xl mx-auto leading-relaxed">
-              Explore a diverse range of AI-powered agents tailored for various workflows in our comprehensive Agents Marketplace. Discover innovative solutions designed to optimize your business processes and enhance productivity seamlessly.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column: Enhanced Main Content */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="relative"
+            transition={{ duration: 0.8 }}
+              viewport={{ once: true, amount: 0.3 }}
             >
-              <div className="bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/30 hover:border-white/40 transition-all duration-500 hover:transform hover:scale-105 shadow-xl h-full flex flex-col">
-                <div className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div className="text-center flex-1 flex flex-col">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              {/* Header/Category */}
+              <div className="inline-block text-blue-600 font-semibold text-sm uppercase tracking-wide mb-4">
+                AI Marketplace
+            </div>
+              
+              {/* Main Title */}
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                The Agentflow AI Marketplace
+            </h2>
+              
+              {/* Description */}
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                You can think of our marketplace like an app store for AI agents. It has a huge variety of pre-built AI agents, each designed for a specific task or workflow. Businesses can simply choose the agents they need to improve their processes and increase productivity.
+              </p>
+              
+              
+              
+              {/* Key Benefits */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">
-                    AI-Powered Solutions
-                  </h3>
-                  <p className="text-primary-100 mb-8 leading-relaxed flex-1">
-                    Unlock the full potential of AI with our comprehensive suite of intelligent agents. From customer support to process automation, we've got you covered.
-                  </p>
-            <Link
-              to="/contact"
-                    className="group inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-                    <span>Take a tour</span>
-                    <span className="ml-3">
-                      <span className="block group-hover:hidden">{'>'}</span>
-                      <span className="hidden group-hover:block">{'->'}</span>
-                    </span>
-            </Link>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Pre-built Solutions</h4>
+                    <p className="text-sm text-gray-600">Ready-to-use AI agents for immediate deployment</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Task-Specific Design</h4>
+                    <p className="text-sm text-gray-600">Each agent optimized for specific workflows</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Easy Selection</h4>
+                    <p className="text-sm text-gray-600">Simple process to choose and deploy agents</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Productivity Boost</h4>
+                    <p className="text-sm text-gray-600">Immediate improvement in business processes</p>
+                  </div>
                 </div>
               </div>
           </motion.div>
 
-            {/* Middle Column: Enhanced Experience Card */}
+            {/* Right Side - Visual Representation */}
             <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true, amount: 0.3 }}
               className="relative"
             >
-              <div className="bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/30 hover:border-white/40 transition-all duration-500 hover:transform hover:scale-105 shadow-xl h-full flex flex-col">
-                <div className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8 relative overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-0 left-0 w-full h-full">
+                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id="marketplace-grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#marketplace-grid)" className="text-blue-300"/>
                   </svg>
                 </div>
-                <div className="text-center flex-1 flex flex-col">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                </div>
+
+                {/* Marketplace Icons Grid */}
+                <div className="relative z-10">
+                  <div className="text-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">
-                    Experience Agentflow at your own pace
-                  </h3>
-                  <p className="text-primary-100 mb-8 text-lg flex-1">
-                    Contact Us
-                  </p>
-                  <Link
-                    to="/contact"
-                    className="group inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                  >
-                    <span>Let's Talk</span>
-                    <span className="ml-3">
-                      <span className="block group-hover:hidden">{'>'}</span>
-                      <span className="hidden group-hover:block">{'->'}</span>
-                    </span>
-                  </Link>
+                    <h3 className="text-xl font-bold text-gray-900">AI Agent Store</h3>
+                  </div>
+                  
+                  {/* Agent Categories Grid */}
+                  <div className="grid grid-cols-3 gap-4">
+                    {/* Customer Service Agent */}
+                    <motion.div 
+                      className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-200"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                </div>
+                      <span className="text-xs font-medium text-gray-700">Support</span>
+                    </motion.div>
+                    
+                    {/* Sales Agent */}
+                    <motion.div 
+                      className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-200"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+              </div>
+                      <span className="text-xs font-medium text-gray-700">Sales</span>
+          </motion.div>
+
+                    {/* Marketing Agent */}
+            <motion.div
+                      className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-200"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </div>
+                      <span className="text-xs font-medium text-gray-700">Marketing</span>
+                    </motion.div>
+                    
+                    {/* Data Analysis Agent */}
+                    <motion.div 
+                      className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-200"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                      <span className="text-xs font-medium text-gray-700">Analytics</span>
+                    </motion.div>
+                    
+                    {/* Automation Agent */}
+                    <motion.div 
+                      className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-200"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                </div>
+                      <span className="text-xs font-medium text-gray-700">Automation</span>
+                    </motion.div>
+                    
+                    {/* Integration Agent */}
+                    <motion.div 
+                      className="bg-white rounded-lg p-4 text-center shadow-sm border border-blue-200"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4h8m-8-4h8" />
+                        </svg>
+              </div>
+                      <span className="text-xs font-medium text-gray-700">Integration</span>
+            </motion.div>
+                  </div>
+                  
+                  
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Easy to Get Started Section */}
+      <section className="py-20 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - Visual Representation */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true, amount: 0.3 }}
+              className="relative order-2 lg:order-1"
+            >
+              <div className="bg-gradient-to-br from-white/80 to-green-50/80 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/60 relative overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-0 left-0 w-full h-full">
+                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                      <defs>
+                        <pattern id="easy-start-grid" width="8" height="8" patternUnits="userSpaceOnUse">
+                          <path d="M 8 0 L 0 0 0 8" fill="none" stroke="currentColor" strokeWidth="0.3"/>
+                        </pattern>
+                      </defs>
+                      <rect width="100" height="100" fill="url(#easy-start-grid)" className="text-green-300"/>
+                  </svg>
+                </div>
+                </div>
+
+                {/* Step-by-Step Process */}
+                <div className="relative z-10">
+                  <div className="text-center mb-8">
+                    <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                    <h3 className="text-2xl font-bold text-gray-900">Simple Setup Process</h3>
+                  </div>
+                  
+                  {/* Steps */}
+                  <div className="space-y-6">
+                    {/* Step 1 */}
+                    <motion.div 
+                      className="flex items-center space-x-4"
+                      initial={{ x: -30, opacity: 0 }}
+                      whileInView={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.6, delay: 0.2 }}
+                      viewport={{ once: true }}
+                    >
+                      <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">1</div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900">Choose Your Agent</h4>
+                        <p className="text-sm text-gray-600">Browse and select from our marketplace</p>
+                </div>
+                    </motion.div>
+                    
+                    {/* Step 2 */}
+                    <motion.div 
+                      className="flex items-center space-x-4"
+                      initial={{ x: -30, opacity: 0 }}
+                      whileInView={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.6, delay: 0.4 }}
+                      viewport={{ once: true }}
+                    >
+                      <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">2</div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900">Configure Settings</h4>
+                        <p className="text-sm text-gray-600">Customize to your business needs</p>
+              </div>
+            </motion.div>
+                    
+                    {/* Step 3 */}
+                    <motion.div 
+                      className="flex items-center space-x-4"
+                      initial={{ x: -30, opacity: 0 }}
+                      whileInView={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.6, delay: 0.6 }}
+                      viewport={{ once: true }}
+                    >
+                      <div className="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">3</div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900">Start Using</h4>
+                        <p className="text-sm text-gray-600">Your AI agent is ready to work</p>
+                      </div>
+                    </motion.div>
+                  </div>
+                  
+                  
                 </div>
               </div>
             </motion.div>
 
-            {/* Right Column: Enhanced Demo Card */}
+            {/* Right Side - Content */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              viewport={{ once: true }}
-              className="relative"
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true, amount: 0.3 }}
+              className="order-1 lg:order-2"
             >
-              <div className="bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/30 hover:border-white/40 transition-all duration-500 hover:transform hover:scale-105 shadow-xl h-full flex flex-col">
-                <div className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-pink-400 to-red-500 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div className="text-center flex-1 flex flex-col">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              {/* Header/Category */}
+              <div className="inline-block text-green-600 font-semibold text-sm uppercase tracking-wide mb-4">
+                Simple & Accessible
+              </div>
+              
+              {/* Main Title */}
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                Easy to Get Started
+              </h2>
+              
+              {/* Description */}
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                You don't have to be a computer programmer to use Agentflow. We have simple, no-code options that let anyone start using our AI agents right away.
+              </p>
+              
+              {/* Key Benefits */}
+              <div className="space-y-6 mb-8">
+                <div className="flex items-start space-x-4">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">
-                    Give a live demo from a Agentflow expert
-                  </h3>
-                  <p className="text-primary-100 mb-8 text-lg flex-1">
-                    Get a personalized demonstration of our AI-powered solutions tailored to your business needs.
-                  </p>
-                  <Link
-                    to="/live-demo"
-                    className="group inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                  >
-                    <span>Book a demo</span>
-                    <span className="ml-3">
-                      <span className="block group-hover:hidden">{'>'}</span>
-                      <span className="hidden group-hover:block">{'->'}</span>
-                    </span>
-                  </Link>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">No Programming Skills Required</h4>
+                    <p className="text-gray-600">Our intuitive interface makes AI accessible to everyone</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Drag & Drop Interface</h4>
+                    <p className="text-gray-600">Visual tools for easy configuration and setup</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Instant Deployment</h4>
+                    <p className="text-gray-600">Get your AI agents working in minutes, not days</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">24/7 Support</h4>
+                    <p className="text-gray-600">Help available whenever you need assistance</p>
+                  </div>
                 </div>
               </div>
+              
+              
             </motion.div>
           </div>
         </div>

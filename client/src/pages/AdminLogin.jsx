@@ -6,6 +6,7 @@ import { Eye, EyeOff, Lock, Mail, Shield } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../contexts/AuthContext'
 import { useLocation, Navigate, useNavigate } from 'react-router-dom'
+import { validateEmail } from '../utils/validation'
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -85,10 +86,7 @@ const AdminLogin = () => {
                     id="email"
                     {...register('email', { 
                       required: 'Email is required',
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Invalid email address'
-                      }
+                      validate: validateEmail
                     })}
                     className={`w-full px-12 py-3 border border-gray-300 rounded-lg text-base transition-all duration-300 bg-white ${errors.email ? 'border-red-500' : 'focus:border-blue-500 focus:ring-2 focus:ring-blue-200'}`}
                     placeholder="Enter your email"

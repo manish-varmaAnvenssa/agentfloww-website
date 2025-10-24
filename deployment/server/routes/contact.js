@@ -10,6 +10,29 @@ const router = express.Router();
 router.post('/', [
   body('name').notEmpty().withMessage('Name is required'),
   body('email').isEmail().withMessage('Please enter a valid email'),
+  body('phone')
+    .optional()
+    .trim()
+    .isLength({ min: 1, max: 20 })
+    .withMessage('Phone number must be less than 20 characters')
+    .custom((value) => {
+      if (!value) return true; // Optional field
+      // Remove all non-digit characters except + at the start
+      const cleanNumber = value.replace(/[^\d+]/g, '');
+      if (cleanNumber.startsWith('+')) {
+        // International number: + followed by 7-15 digits
+        if (cleanNumber.length < 8 || cleanNumber.length > 16) {
+          throw new Error('International phone number must be 8-16 digits');
+        }
+      } else {
+        // Local number: 7-15 digits
+        if (cleanNumber.length < 7 || cleanNumber.length > 15) {
+          throw new Error('Phone number must be 7-15 digits');
+        }
+      }
+      return true;
+    })
+    .withMessage('Please enter a valid phone number'),
   body('message').notEmpty().withMessage('Message is required')
 ], async (req, res) => {
   try {

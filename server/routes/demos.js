@@ -9,7 +9,27 @@ router.post('/', [
   body('name').trim().isLength({ min: 2, max: 100 }).withMessage('Name must be between 2 and 100 characters'),
   body('email').isEmail().normalizeEmail().withMessage('Please enter a valid email'),
   body('company').optional().trim().isLength({ max: 100 }).withMessage('Company name too long'),
-  body('phone').trim().isLength({ min: 1, max: 20 }).withMessage('Phone number is required and must be less than 20 characters'),
+  body('phone')
+    .trim()
+    .isLength({ min: 1, max: 20 })
+    .withMessage('Phone number is required and must be less than 20 characters')
+    .custom((value) => {
+      // Remove all non-digit characters except + at the start
+      const cleanNumber = value.replace(/[^\d+]/g, '');
+      if (cleanNumber.startsWith('+')) {
+        // International number: + followed by 7-15 digits
+        if (cleanNumber.length < 8 || cleanNumber.length > 16) {
+          throw new Error('International phone number must be 8-16 digits');
+        }
+      } else {
+        // Local number: 7-15 digits
+        if (cleanNumber.length < 7 || cleanNumber.length > 15) {
+          throw new Error('Phone number must be 8-15 digits');
+        }
+      }
+      return true;
+    })
+    .withMessage('Please enter a valid phone number'),
   body('industry').trim().isLength({ min: 1, max: 100 }).withMessage('Industry is required and must be less than 100 characters'),
   body('use_case').optional().trim().isLength({ max: 500 }).withMessage('Use case description too long'),
   body('preferred_date').optional().isISO8601().withMessage('Please enter a valid date'),

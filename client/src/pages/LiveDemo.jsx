@@ -6,6 +6,7 @@ import { ArrowLeft, Play, Users, Building, Mail, Send, CheckCircle } from 'lucid
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { submitDemo } from '../utils/api'
+import { validatePhoneNumber, validateEmail, preventNonPhoneChars } from '../utils/validation'
 
 const LiveDemo = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -232,10 +233,7 @@ const LiveDemo = () => {
                       placeholder="your@company.com"
                       {...register('email', { 
                         required: 'Work email is required',
-                        pattern: {
-                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                          message: 'Invalid email address'
-                        }
+                        validate: validateEmail
                       })}
                       className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                         errors.email ? 'border-red-500 ring-red-200' : ''
@@ -271,8 +269,12 @@ const LiveDemo = () => {
                     </label>
                     <input
                       type="tel"
-                      placeholder="Your phone number"
-                      {...register('phone', { required: 'Phone number is required' })}
+                      placeholder="Enter Your Phone Number"
+                      {...register('phone', { 
+                        required: 'Phone number is required',
+                        validate: validatePhoneNumber
+                      })}
+                      onKeyPress={preventNonPhoneChars}
                       className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                         errors.phone ? 'border-red-500 ring-red-200' : ''
                       }`}
@@ -280,6 +282,7 @@ const LiveDemo = () => {
                     {errors.phone && (
                       <p className="mt-2 text-sm text-red-600">{errors.phone.message}</p>
                     )}
+                   
                   </div>
 
                   {/* Industry Field */}

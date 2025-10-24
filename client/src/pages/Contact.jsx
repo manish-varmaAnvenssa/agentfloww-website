@@ -6,6 +6,7 @@ import { Mail, Phone, MapPin, Send, CheckCircle, ArrowLeft, MessageCircle, Clock
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { submitContact } from '../utils/api'
+import { validatePhoneNumber, validateEmail, preventNonPhoneChars } from '../utils/validation'
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -85,6 +86,13 @@ const Contact = () => {
   const officeLocations = [
     {
       icon: MapPin,
+      title: 'UK Office',
+      address: '53 Kenilworth Road, Ashford',
+      city: 'TW15 3EN, United Kingdom',
+      color: 'from-yellow-500 to-orange-500'
+    },
+    {
+      icon: MapPin,
       title: 'India Office',
       address: 'Awfis Binarius, Deepak Nitrate Road, Shastrinagar, Yerawada, Pune, Maharashtra 411006',
       city: '',
@@ -96,13 +104,6 @@ const Contact = () => {
       address: '2805-36, Level 28 Marina Plaza, Dubai Marina',
       city: 'Dubai U.A.E.',
       color: 'from-indigo-500 to-purple-500'
-    },
-    {
-      icon: MapPin,
-      title: 'UK Office',
-      address: '53 Kenilworth Road, Ashford',
-      city: 'TW15 3EN, United Kingdom',
-      color: 'from-yellow-500 to-orange-500'
     }
   ]
 
@@ -244,10 +245,7 @@ const Contact = () => {
                       placeholder="your@email.com"
                       {...register('email', { 
                         required: 'Email is required',
-                        pattern: {
-                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                          message: 'Invalid email address'
-                        }
+                        validate: validateEmail
                       })}
                       className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                         errors.email ? 'border-red-500 ring-red-200' : ''
@@ -265,8 +263,12 @@ const Contact = () => {
                     </label>
                     <input
                       type="tel"
-                      placeholder="+91 1234567890"
-                      {...register('phone', { required: 'Phone number is required' })}
+                      placeholder="Enter Your Phone Number"
+                      {...register('phone', { 
+                        required: 'Phone number is required',
+                        validate: validatePhoneNumber
+                      })}
+                      onKeyPress={preventNonPhoneChars}
                       className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
                         errors.phone ? 'border-red-500 ring-red-200' : ''
                       }`}
@@ -274,6 +276,7 @@ const Contact = () => {
                     {errors.phone && (
                       <p className="mt-2 text-sm text-red-600">{errors.phone.message}</p>
                     )}
+                   
                   </div>
 
                   {/* Company Field */}
