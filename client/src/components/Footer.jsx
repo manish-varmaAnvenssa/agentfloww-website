@@ -18,8 +18,8 @@ const Footer = () => {
   const socialLinks = [
     { name: 'Facebook', href: 'https://www.facebook.com/agentflow15/', icon: Facebook, bgColor: 'bg-blue-600' },
     { name: 'LinkedIn', href: 'https://www.linkedin.com/company/anvenssa-ai/posts/?feedView=all', icon: Linkedin, bgColor: 'bg-blue-600' },
-    { name: 'Instagram', href: 'https://www.instagram.com/agentflow_?igsh=bWczd2lvaTJkY3pv&utm_source=qr', icon: Instagram, bgColor: 'bg-pink-500' },
-    { name: 'Twitter', href: '#', icon: Twitter, bgColor: 'bg-black' },
+    { name: 'Instagram', href: 'https://www.instagram.com/agentfloww_?igsh=MWM1Y3hqbDV0ZXh2bQ==', icon: Instagram, bgColor: 'bg-pink-500' },
+    // { name: 'Twitter', href: '#', icon: Twitter, bgColor: 'bg-black' },
     { name: 'YouTube', href: 'https://www.youtube.com/@AnvenssaAI', icon: Youtube, bgColor: 'bg-red-600' },
   ]
 

@@ -86,9 +86,9 @@ const Contact = () => {
   const officeLocations = [
     {
       icon: MapPin,
-      title: 'UK Office',
-      address: '53 Kenilworth Road, Ashford',
-      city: 'TW15 3EN, United Kingdom',
+      title: 'US Office',
+      address: '3722 Valley Vista Fork,',
+      city: 'Bonita, CA 91902, USA',
       color: 'from-yellow-500 to-orange-500'
     },
     {

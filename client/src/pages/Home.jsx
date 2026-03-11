@@ -112,8 +112,8 @@ const Home = () => {
   return (
     <div className="home-page">
       <Helmet>
-        <title>Agentflow</title>
-        <meta name="description" content="" />
+        <title>Agentfloww</title>
+        <meta name="description" content="Enterprise AI Browser for Business" />
       </Helmet>
 
       {/* Vertical Dotted Lines */}
@@ -297,8 +297,7 @@ const Home = () => {
                 transition={{ duration: 0.6 }}
                 className="text-4xl md:text-6xl font-bold text-white mb-6"
               >
-                AI Agents Framework for Business Automation
-              </motion.h1>
+Enterprise AI Agent              </motion.h1>
               
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -490,26 +489,38 @@ const Home = () => {
             </h2>
             <div className="relative w-full max-w-4xl mx-auto">
               {/* Abstract Background Elements */}
-              <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-400 rounded-full opacity-40 blur-3xl z-0"></div>
+              <div className="absolute -top-40 -right-40 w-[450px] h-[450px] z-0 opacity-70">
+                <svg viewBox="0 0 300 300" className="w-full h-full filter drop-shadow-lg">
+                  <defs>
+                    <linearGradient id="gradient-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{ stopColor: '#f0f9ff', stopOpacity: 1 }} />
+                      <stop offset="50%" style={{ stopColor: '#e0f2fe', stopOpacity: 1 }} />
+                      <stop offset="100%" style={{ stopColor: '#d0ebff', stopOpacity: 1 }} />
+                    </linearGradient>
+                  </defs>
+                  <path fill="url(#gradient-blue)" d="M300,196.58v-71.16c0-31.57-16.84-60.75-44.19-76.53l-61.63-35.58c-27.34-15.79-61.03-15.79-88.37,0 L44.19,48.89C16.84,64.67,0,93.85,0,125.42v71.16c0,31.57,16.84,60.75,44.19,76.53l61.63,35.58c27.34,15.79,61.03,15.79,88.37,0 l61.63-35.58C283.16,257.33,300,228.15,300,196.58z"></path>
+                </svg>
+              </div>
               <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-pink-400 rounded-full opacity-50 z-0"></div>
               <div className="absolute top-1/2 -right-24 w-48 h-48 bg-purple-300 rounded-full opacity-30 blur-2xl z-0"></div>
               
               {/* Video Container with Overlay */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl group z-10">
-                {/* Semi-transparent Purple Overlay with Blur - Only show when video is not playing */}
+                {/* Light purple gradient overlay - Only show when video is not playing */}
                 {!isVideoPlaying && (
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600/50 via-purple-500/40 to-indigo-600/30 z-10 backdrop-blur-sm transition-opacity duration-500"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-100/15 via-indigo-50/10 to-transparent z-10 transition-opacity duration-500"></div>
                 )}
                 
                 {/* Play Button - Only show when video is not playing */}
                 {!isVideoPlaying && (
                   <div className="absolute inset-0 flex items-center justify-center z-20">
                     <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
+                      initial={{ scale: 0.9, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
                       transition={{ duration: 0.3 }}
-                      className="cursor-pointer"
+                      className="cursor-pointer group"
                       onClick={() => {
                         if (videoRef.current) {
                           videoRef.current.play();
@@ -518,47 +529,31 @@ const Home = () => {
                       }}
                     >
                       <div className="relative">
-                        {/* Outer Glow Ring */}
-                        <motion.div
-                          animate={{ 
-                            scale: [1, 1.2, 1],
-                            opacity: [0.5, 0.8, 0.5]
-                          }}
-                          transition={{ 
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                          }}
-                          className="absolute inset-0 bg-white rounded-full blur-xl opacity-60"
-                          style={{ width: '100px', height: '100px', left: '-10px', top: '-10px' }}
+                        {/* Outer Circle Ring */}
+                        <div
+                          className="absolute inset-0 bg-white/30 rounded-full"
+                          style={{ width: '160px', height: '160px', left: '-16px', top: '-16px' }}
                         />
                         
-                        {/* Play Button Circle */}
-                        <div className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl">
-                          {/* Play Icon */}
+                        {/* White Circle Background */}
+                        <div className="relative w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.12)] group-hover:shadow-[0_8px_40px_rgba(0,0,0,0.2)] transition-all duration-300">
+                          {/* Equilateral Triangle with Rounded Corners */}
                           <svg 
-                            className="w-8 h-8 text-purple-600 ml-1" 
-                            fill="currentColor" 
-                            viewBox="0 0 24 24"
+                            width="54" 
+                            height="54" 
+                            viewBox="0 0 40 40" 
+                            className="ml-1 group-hover:scale-110 transition-transform duration-300"
                           >
-                            <path d="M8 5v14l11-7z"/>
+                            <path 
+                              d="M12 10 L12 30 L28 20 Z" 
+                              fill="#000000"
+                              stroke="#000000"
+                              strokeWidth="0.5"
+                              strokeLinejoin="round"
+                              strokeLinecap="round"
+                            />
                           </svg>
                         </div>
-                        
-                        {/* Pulse Ring */}
-                        <motion.div
-                          animate={{ 
-                            scale: [1, 1.4, 1],
-                            opacity: [0.8, 0, 0.8]
-                          }}
-                          transition={{ 
-                            duration: 1.5,
-                            repeat: Infinity,
-                            ease: "easeOut"
-                          }}
-                          className="absolute inset-0 border-4 border-white rounded-full"
-                          style={{ width: '80px', height: '80px' }}
-                        />
                       </div>
                     </motion.div>
                   </div>
@@ -567,13 +562,13 @@ const Home = () => {
                 {/* Video Element */}
                 <video
                   ref={videoRef}
-                  src="/images/Pictures/Revolutionize Your Business with AgentFlow (1).mp4"
+                  src="/images/Pictures/Agentflow f7 (2).mp4"
+                  // poster="/images/Pictures/2nd video - frame .jpg"
                   loop
-                  muted
                   playsInline
                   preload="auto"
                   controls={false}
-                  className={`w-full h-auto transition-all duration-500 ${!isVideoPlaying ? 'blur-md' : 'blur-0'}`}
+                  className="w-full h-auto transition-all duration-500"
                   style={{ 
                     objectFit: 'cover',
                     minHeight: '400px'
@@ -583,6 +578,11 @@ const Home = () => {
                     e.target.play().catch(console.error);
                   }}
                 />
+                
+                {/* Thumbnail Gradient Overlay - only visible when video hasn't started */}
+                {!isVideoPlaying && (
+                  <div className="absolute inset-0 bg-gradient-to-tl from-purple-600/40 via-purple-500/20 to-transparent pointer-events-none" />
+                )}
                 
                 {/* Decorative Corner Elements */}
                 <div className="absolute top-4 left-4 w-6 h-6 bg-cyan-400 rounded-full opacity-70 z-10"></div>
@@ -634,7 +634,7 @@ const Home = () => {
                   viewport={{ once: true }}
                   className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight"
                 >
-                  Smart Virtual Assistant for Your Business
+Enterprise AI Browser
                 </motion.h2>
                 
                 <motion.p 
@@ -644,8 +644,7 @@ const Home = () => {
                   viewport={{ once: true }}
                   className="text-lg text-gray-600 leading-relaxed"
                 >
-                  Agentflow is a tool that helps businesses complete tasks more quickly and effectively by utilizing AI agents and workflows. Imagine it as an intelligent virtual assistant that can manage many of the routine, daily labor for a business.
-                </motion.p>
+The most powerful multithreaded browser AI that integrates everything. A group of 71 agents connect with everything including an LLM of your choice to give true enterprise Ai experience to your employees.                </motion.p>
 
                 <motion.p 
                   initial={{ opacity: 0, y: 20 }}
@@ -912,6 +911,67 @@ const Home = () => {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Trusted by our Customers Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Trusted by our Customers
+            </h2>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center"
+          >
+            {/* Client Logo 1 */}
+            <motion.div>
+              <img
+                src="/images/logo/client1.jpg"
+                alt="Client 1"
+                className="h-45 w-auto object-contain"
+              />
+            </motion.div>
+
+            {/* Client Logo 2 */}
+            <motion.div>
+              <img
+                src="/images/logo/client-2.jpg"
+                alt="Client 2"
+                className="h-45 w-auto object-contain"
+              />
+            </motion.div>
+
+            {/* Client Logo 3 */}
+            <motion.div>
+              <img
+                src="/images/logo/client-3.jpg"
+                alt="Client 3"
+                className="h-[200px] w-auto object-contain"
+              />
+            </motion.div>
+
+            {/* Client Logo 4 */}
+            <motion.div>
+              <img
+                src="/images/logo/client-4.jpeg"
+                alt="Client 4"
+                className="h-40 w-auto object-contain"
+              />
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
@@ -1421,14 +1481,13 @@ const Home = () => {
                 viewport={{ once: true, amount: 0.3 }}
               >
                 <div className="inline-block text-[#6633FF] font-bold font size 14px  text-lg mb-8 -mt-2">
-                  📊 CRM agent
+                  📊 Agentfloww
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                  CRM agent
+                 AI Driven Customer Experience Solutions
                 </h2>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                Our AI CRM Agent automates data entry, lead management, and follow-ups—streamlining workflows, providing smart insights, and helping your team build stronger customer relationships with ease.
-                </p>
+               AI driven customer experience and operational efficiency solutions                </p>
               </motion.div>
             </div>
 

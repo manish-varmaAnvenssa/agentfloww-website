@@ -703,4 +703,19 @@ header:not(.admin-header) {
 .border-aurora {
   border: 2px solid transparent;
   background: linear-gradient(white, white) padding-box, linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe) border-box;
-} 
+}
+
+/* Conference Popup Animation */
+@keyframes animate-gradient-xy {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-xy {
+  background-size: 400% 400%;
+  animation: animate-gradient-xy 6s ease infinite;
+}

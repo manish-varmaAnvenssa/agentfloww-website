@@ -171,12 +171,12 @@ const About = () => {
         </section>
 
         {/* Author Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-white relative overflow-hidden">
+        {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-indigo-600/20 to-blue-600/20"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center"> */}
               {/* Left Side - Content */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
@@ -186,9 +186,9 @@ const About = () => {
                 <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium border border-white/20">
                   <BookOpen size={14} className="mr-2" />
                   Sattology Creator
-                </div>
+                </div> */}
                 
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+                {/* <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
                   Indian American Author with an independent centrist, and Vedic viewpoint
                 </h2>
                 
@@ -196,10 +196,10 @@ const About = () => {
                   <p>Widely acclaimed author of 15 books on Sattology. An Avid Golfer! Creator of the word 'Sattology' as a true antonym of Mythology.</p>
                   <p>Training and mentoring executives and teams in Strategic Mindset, Customer Acquisition Strategies, Customer Management Strategies and Teamwork.</p>
                 </div>
-              </motion.div>
+              </motion.div> */}
 
               {/* Right Side - Visual Elements */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -231,7 +231,7 @@ const About = () => {
               </motion.div>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* CTA Section */}
         <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-r from-blue-50 to-indigo-50">
