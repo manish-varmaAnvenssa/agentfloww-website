@@ -104,7 +104,7 @@ const Home = () => {
       hasDropdown: false,
     },
     { name: 'About Us', href: '/about' },
-    // { name: 'Pricing', href: '/pricing' },
+    { name: 'Pricing', href: '/pricing' },
     { name: 'Contact', href: '/contact' },
     { name: 'Live Demo', href: '/live-demo' },
   ]

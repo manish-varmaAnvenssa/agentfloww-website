@@ -34,6 +34,7 @@ function App() {
               <Route path="login" element={<Login />} />
               <Route path="compare" element={<Compare />} />
               <Route path="about" element={<About />} />
+              <Route path="pricing" element={<Pricing />} />
               <Route path="live-demo" element={<LiveDemo />} />
               <Route path="privacy-policy" element={<PrivacyPolicy />} />
               <Route path="refund-policy" element={<RefundPolicy />} />
