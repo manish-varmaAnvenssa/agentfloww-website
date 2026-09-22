@@ -1,12 +1,45 @@
+Options -MultiViews
 RewriteEngine On
 RewriteBase /
 
-# Handle static files (CSS, JS, images, etc.)
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule ^.*$ - [L]
+# ----------------------------------------------------------------------
+# Security Headers
+# ----------------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
 
-# Handle all other routes - redirect to index.html
-RewriteRule ^.*$ /index.html [L]
+# ----------------------------------------------------------------------
+# Block Direct Access to Sensitive Files & Extensions
+# ----------------------------------------------------------------------
+<FilesMatch "(^#.*#|\.(bak|conf|dist|fla|in[ci]|log|psd|sh|sql|sw[op]|env|json|lock|md|zip|tar|gz|git.*)|~)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Forward Authorization Header to PHP in CGI/FastCGI environments (fixes Token missing errors)
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# 1. If the requested file or directory exists on disk, serve it directly and stop
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 2. Route all API requests (which do not exist on disk) to api.php
+RewriteRule ^/?api/(.*)$ /api.php?route=$1 [QSA,L]
+
+# 3. Fallback all other client-side routing to index.html (SPA routing)
+RewriteRule ^(.*)$ index.html [L]
 
 # Enable compression
 <IfModule mod_deflate.c>

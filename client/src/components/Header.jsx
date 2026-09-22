@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ChevronDown } from 'lucide-react'
+import { List, X, ChevronDown } from './Icons'
 import { useAuth } from '../contexts/AuthContext'
 
 const Header = () => {
@@ -28,6 +28,8 @@ const Header = () => {
       hasDropdown: false,
     },
     { name: 'About Us', href: '/about' },
+    { name: 'Measurable ROI', href: '/measurable-roi' },
+    { name: 'Blogs', href: '/blogs' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'Contact', href: '/contact' },
     { name: 'Live Demo', href: '/live-demo' },
@@ -56,7 +58,7 @@ const Header = () => {
         <img 
           src="/images/logo/Agentflow svg.svg" 
           alt="Agentflow Logo" 
-          className="h-8 w-auto mt-1"
+          className="h-12 md:h-14 w-auto mt-1"
           onError={() => setImageError(true)}
         />
       </div>
@@ -252,7 +254,7 @@ const Header = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-2 rounded-md transition-colors duration-200 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMenuOpen ? <X size={24} /> : <List size={24} />}
           </button>
         </div>
       </div>

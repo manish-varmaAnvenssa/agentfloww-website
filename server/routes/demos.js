@@ -14,15 +14,12 @@ router.post('/', [
     .isLength({ min: 1, max: 20 })
     .withMessage('Phone number is required and must be less than 20 characters')
     .custom((value) => {
-      // Remove all non-digit characters except + at the start
       const cleanNumber = value.replace(/[^\d+]/g, '');
       if (cleanNumber.startsWith('+')) {
-        // International number: + followed by 7-15 digits
         if (cleanNumber.length < 8 || cleanNumber.length > 16) {
           throw new Error('International phone number must be 8-16 digits');
         }
       } else {
-        // Local number: 7-15 digits
         if (cleanNumber.length < 7 || cleanNumber.length > 15) {
           throw new Error('Phone number must be 8-15 digits');
         }
@@ -66,7 +63,7 @@ router.post('/', [
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     
-    const result = insertDemo.run(
+    const result = await insertDemo.run(
       name, 
       email, 
       company || null, 
@@ -81,7 +78,7 @@ router.post('/', [
     console.log('Demo inserted with ID:', result.lastInsertRowid);
 
     // Get the created demo request
-    const newDemo = db.prepare('SELECT * FROM demos WHERE id = ?').get(result.lastInsertRowid);
+    const newDemo = await db.prepare('SELECT * FROM demos WHERE id = ?').get(result.lastInsertRowid);
 
     res.status(201).json({ 
       message: 'Demo request submitted successfully',
@@ -99,7 +96,7 @@ router.get('/', async (req, res) => {
   try {
     const db = getDatabase();
     
-    const demos = db.prepare(`
+    const demos = await db.prepare(`
       SELECT * FROM demos 
       ORDER BY created_at DESC
     `).all();
@@ -118,7 +115,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const db = getDatabase();
     
-    const demo = db.prepare('SELECT * FROM demos WHERE id = ?').get(id);
+    const demo = await db.prepare('SELECT * FROM demos WHERE id = ?').get(id);
     
     if (!demo) {
       return res.status(404).json({ message: 'Demo request not found' });
@@ -154,14 +151,14 @@ router.patch('/:id/status', [
       WHERE id = ?
     `);
     
-    const result = updateDemo.run(status, notes || null, id);
+    const result = await updateDemo.run(status, notes || null, id);
 
     if (result.changes === 0) {
       return res.status(404).json({ message: 'Demo request not found' });
     }
 
     // Get updated demo
-    const updatedDemo = db.prepare('SELECT * FROM demos WHERE id = ?').get(id);
+    const updatedDemo = await db.prepare('SELECT * FROM demos WHERE id = ?').get(id);
 
     res.json({ 
       message: 'Demo request updated successfully',
@@ -181,7 +178,7 @@ router.delete('/:id', async (req, res) => {
     const db = getDatabase();
 
     const deleteDemo = db.prepare('DELETE FROM demos WHERE id = ?');
-    const result = deleteDemo.run(id);
+    const result = await deleteDemo.run(id);
 
     if (result.changes === 0) {
       return res.status(404).json({ message: 'Demo request not found' });
@@ -195,4 +192,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

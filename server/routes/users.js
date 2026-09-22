@@ -9,7 +9,7 @@ router.get('/profile/:id', async (req, res) => {
     const { id } = req.params;
     const db = getDatabase();
     
-    const user = db.prepare(`
+    const user = await db.prepare(`
       SELECT id, username, email, role, avatar, is_active, created_at, updated_at 
       FROM users 
       WHERE id = ? AND is_active = 1
@@ -35,7 +35,7 @@ router.put('/profile/:id', async (req, res) => {
     const db = getDatabase();
 
     // Check if user exists
-    const existingUser = db.prepare('SELECT id FROM users WHERE id = ? AND is_active = 1').get(id);
+    const existingUser = await db.prepare('SELECT id FROM users WHERE id = ? AND is_active = 1').get(id);
     if (!existingUser) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -63,14 +63,14 @@ router.put('/profile/:id', async (req, res) => {
     const updateQuery = `UPDATE users SET ${updateFields.join(', ')} WHERE id = ?`;
     const updateUser = db.prepare(updateQuery);
     
-    const result = updateUser.run(...updateValues);
+    const result = await updateUser.run(...updateValues);
 
     if (result.changes === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     // Get updated user
-    const updatedUser = db.prepare(`
+    const updatedUser = await db.prepare(`
       SELECT id, username, email, role, avatar, is_active, created_at, updated_at 
       FROM users 
       WHERE id = ?
@@ -103,7 +103,7 @@ router.put('/profile/:id/password', async (req, res) => {
     }
 
     // Get user with password
-    const user = db.prepare('SELECT * FROM users WHERE id = ? AND is_active = 1').get(id);
+    const user = await db.prepare('SELECT * FROM users WHERE id = ? AND is_active = 1').get(id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -125,7 +125,7 @@ router.put('/profile/:id/password', async (req, res) => {
       WHERE id = ?
     `);
     
-    const result = updatePassword.run(hashedPassword, id);
+    const result = await updatePassword.run(hashedPassword, id);
 
     if (result.changes === 0) {
       return res.status(404).json({ message: 'User not found' });

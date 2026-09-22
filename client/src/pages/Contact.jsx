@@ -1,17 +1,84 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { Mail, Phone, MapPin, Send, CheckCircle, ArrowLeft, MessageCircle, Clock, Globe } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
-import { submitContact } from '../utils/api'
-import { validatePhoneNumber, validateEmail, preventNonPhoneChars } from '../utils/validation'
+import { submitContact, sendOtp, verifyOtp } from '../utils/api'
+import { validatePhoneNumber, validateEmail, preventNonPhoneChars, validatePhoneDigits, countryCodes } from '../utils/validation'
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   
+  // OTP States
+  const [isOtpSent, setIsOtpSent] = useState(false)
+  const [isOtpSending, setIsOtpSending] = useState(false)
+  const [isEmailVerified, setIsEmailVerified] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
+  const [verifiedEmail, setVerifiedEmail] = useState('')
+
+  useEffect(() => {
+    let timer;
+    if (cooldown > 0) {
+      timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [cooldown]);
+
+  const handleSendOtp = async (email) => {
+    const isEmailValid = validateEmail(email);
+    if (isEmailValid !== true) {
+      toast.error(isEmailValid || 'Please enter a valid email address');
+      return;
+    }
+
+    setIsOtpSending(true);
+    try {
+      const result = await sendOtp(email);
+      if (result.success) {
+        setIsOtpSent(true);
+        setCooldown(60);
+        toast.success('Verification code sent to your email!');
+        if (result.mockOtp) {
+          console.log(`[Local Dev] Verification Code: ${result.mockOtp}`);
+          toast(`[Local Dev] Code is: ${result.mockOtp}`, { icon: '🔑', duration: 8000 });
+        }
+      } else {
+        toast.error(result.error || 'Failed to send verification code');
+      }
+    } catch (error) {
+      toast.error('Failed to send verification code. Please try again.');
+    } finally {
+      setIsOtpSending(false);
+    }
+  }
+
+  const handleVerifyOtp = async (email, otpCode) => {
+    if (!otpCode || otpCode.length < 6) {
+      toast.error('Please enter a 6-digit verification code');
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    try {
+      const result = await verifyOtp(email, otpCode);
+      if (result.success) {
+        setIsEmailVerified(true);
+        setVerifiedEmail(email);
+        toast.success('Email verified successfully!');
+      } else {
+        toast.error(result.error || 'Invalid or expired verification code');
+      }
+    } catch (error) {
+      toast.error('Failed to verify verification code. Please try again.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  }
+
   const {
     register,
     handleSubmit,
@@ -20,6 +87,11 @@ const Contact = () => {
   } = useForm()
 
   const onSubmit = async (data) => {
+    if (!isEmailVerified || data.email !== verifiedEmail) {
+      toast.error('Please verify your email address first.');
+      return;
+    }
+    
     console.log('=== CONTACT FORM SUBMISSION ===');
     console.log('Form data:', data);
     
@@ -29,7 +101,7 @@ const Contact = () => {
       const formData = {
         name: `${data.firstName} ${data.lastName}`,
         email: data.email,
-        phone: data.phone,
+        phone: `${data.countryCode} ${data.phoneDigits}`,
         company: data.company,
         subject: `Contact from ${data.firstName} ${data.lastName}`,
         message: data.message
@@ -44,6 +116,9 @@ const Contact = () => {
       if (result.success) {
         setIsSubmitted(true)
         reset()
+        setIsEmailVerified(false)
+        setIsOtpSent(false)
+        setVerifiedEmail('')
         toast.success('Message sent successfully! We\'ll get back to you soon.')
       } else {
         toast.error(result.error || 'Failed to send message')
@@ -63,14 +138,14 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email Us',
-      content: 'sales@anvenssa.com',
-      href: 'mailto:sales@anvenssa.com',
+      content: 'aditya@agentfloww.com',
+      href: 'mailto:aditya@agentfloww.com',
       color: 'from-blue-500 to-cyan-500'
     },
     {
       icon: Phone,
       title: 'Call Us',
-      content: '+91 8956512955',
+      content: 'India: +91 8956512955 | UAE: +971 58 525 4420',
       href: 'tel:+918956512955',
       color: 'from-green-500 to-emerald-500'
     },
@@ -144,8 +219,8 @@ const Contact = () => {
   return (
     <>
       <Helmet>
-        <title>Contact Us - Anvenssa.AI</title>
-        <meta name="description" content="Get in touch with the Anvenssa.AI team. We're here to help you build amazing AI-powered digital experiences." />
+        <title>Contact Us - Agentfloww</title>
+        <meta name="description" content="Get in touch with the Agentfloww team. We're here to help you build amazing AI-powered digital experiences." />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 relative overflow-hidden">
@@ -154,19 +229,6 @@ const Contact = () => {
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-400/10 to-blue-400/10 rounded-full blur-3xl"></div>
-        </div>
-
-        {/* Header */}
-        <div className="relative z-10 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <Link
-              to="/"
-              className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 group"
-            >
-              <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
-              Back to Home
-            </Link>
-          </div>
         </div>
 
         {/* Main Content Section */}
@@ -181,7 +243,7 @@ const Contact = () => {
             >
               <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full border border-blue-200/50 mb-6">
                 <MessageCircle size={16} className="text-blue-600 mr-2" />
-                <span className="text-blue-600 font-medium text-sm">Contact Anvenssa.AI</span>
+                <span className="text-blue-600 font-medium text-sm">Contact Agentfloww</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 Get in Touch
@@ -235,24 +297,87 @@ const Contact = () => {
                     )}
                   </div>
 
-                  {/* Email Field */}
+                  {/* Email Field with OTP */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-3">
                       Email <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="email"
-                      placeholder="your@email.com"
-                      {...register('email', { 
-                        required: 'Email is required',
-                        validate: validateEmail
-                      })}
-                      className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                        errors.email ? 'border-red-500 ring-red-200' : ''
-                      }`}
-                    />
-                    {errors.email && (
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <input
+                          id="email-input"
+                          type="email"
+                          placeholder="your@email.com"
+                          disabled={isEmailVerified}
+                          {...register('email', { 
+                            required: 'Email is required',
+                            validate: validateEmail
+                          })}
+                          className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                            isEmailVerified ? 'bg-gray-50 border-green-300 text-gray-500' : ''
+                          } ${errors.email ? 'border-red-500 ring-red-200' : ''}`}
+                        />
+                      </div>
+                      {!isEmailVerified && (
+                        <button
+                          type="button"
+                          disabled={isOtpSending || cooldown > 0}
+                          onClick={() => {
+                            const emailVal = document.getElementById('email-input')?.value;
+                            handleSendOtp(emailVal);
+                          }}
+                          className={`px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 whitespace-nowrap shadow ${
+                            cooldown > 0 
+                              ? 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
+                              : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          }`}
+                        >
+                          {isOtpSending ? 'Sending...' : cooldown > 0 ? `Resend (${cooldown}s)` : 'Send Code'}
+                        </button>
+                      )}
+                    </div>
+                    {isEmailVerified && (
+                      <p className="mt-2 text-sm text-green-600 flex items-center gap-1.5 font-semibold">
+                        <CheckCircle size={16} /> Email verified successfully
+                      </p>
+                    )}
+                    {errors.email && !isEmailVerified && (
                       <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
+                    )}
+
+                    {/* OTP Code Input */}
+                    {isOtpSent && !isEmailVerified && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl"
+                      >
+                        <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
+                          Enter 6-Digit Code
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            id="otp-input"
+                            type="text"
+                            maxLength={6}
+                            placeholder="123456"
+                            {...register('otp_code')}
+                            className="w-1/3 px-4 py-2.5 border border-gray-300 rounded-xl text-center font-mono text-lg tracking-widest focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                          />
+                          <button
+                            type="button"
+                            disabled={isVerifyingOtp}
+                            onClick={() => {
+                              const emailVal = document.getElementById('email-input')?.value;
+                              const codeVal = document.getElementById('otp-input')?.value;
+                              handleVerifyOtp(emailVal, codeVal);
+                            }}
+                            className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold text-sm transition-all shadow"
+                          >
+                            {isVerifyingOtp ? 'Verifying...' : 'Verify Code'}
+                          </button>
+                        </div>
+                      </motion.div>
                     )}
                   </div>
 
@@ -261,22 +386,33 @@ const Contact = () => {
                     <label className="block text-sm font-semibold text-gray-700 mb-3">
                       Phone <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="tel"
-                      placeholder="Enter Your Phone Number"
-                      {...register('phone', { 
-                        required: 'Phone number is required',
-                        validate: validatePhoneNumber
-                      })}
-                      onKeyPress={preventNonPhoneChars}
-                      className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                        errors.phone ? 'border-red-500 ring-red-200' : ''
-                      }`}
-                    />
-                    {errors.phone && (
-                      <p className="mt-2 text-sm text-red-600">{errors.phone.message}</p>
+                    <div className="flex gap-2">
+                      <select
+                        {...register('countryCode')}
+                        className="w-1/3 px-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                      >
+                        {countryCodes.map(c => (
+                          <option key={c.code} value={c.code}>
+                            {c.flag} {c.code} ({c.name})
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="tel"
+                        placeholder="Phone Number (e.g. 9876543210)"
+                        {...register('phoneDigits', { 
+                          required: 'Phone number digits are required',
+                          validate: (val, formValues) => validatePhoneDigits(val, formValues.countryCode)
+                        })}
+                        onKeyPress={preventNonPhoneChars}
+                        className={`flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                          errors.phoneDigits ? 'border-red-500 ring-red-200' : ''
+                        }`}
+                      />
+                    </div>
+                    {errors.phoneDigits && (
+                      <p className="mt-2 text-sm text-red-600">{errors.phoneDigits.message}</p>
                     )}
-                   
                   </div>
 
                   {/* Company Field */}
@@ -318,8 +454,8 @@ const Contact = () => {
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                    disabled={isSubmitting || !isEmailVerified}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     {isSubmitting ? (
                       <span className="flex items-center justify-center">
@@ -333,6 +469,11 @@ const Contact = () => {
                       </span>
                     )}
                   </button>
+                  {!isEmailVerified && (
+                    <p className="text-center text-xs text-slate-500 mt-3 font-semibold">
+                      Please verify your email address to enable form submission.
+                    </p>
+                  )}
                 </form>
               </motion.div>
 
@@ -389,7 +530,22 @@ const Contact = () => {
                         </div>
                         <div className="flex-1">
                           <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
-                          <p className="text-gray-600">{item.content}</p>
+                          {item.title === 'Call Us' ? (
+                            <div className="flex flex-col space-y-1 text-gray-600 text-sm sm:text-base">
+                              <a href="tel:+918956512955" className="hover:text-blue-600 transition-colors font-medium">
+                                India: +91 8956512955
+                              </a>
+                              <a href="tel:+971585254420" className="hover:text-blue-600 transition-colors font-medium">
+                                UAE: +971 58 525 4420
+                              </a>
+                            </div>
+                          ) : item.href && item.href !== '#' ? (
+                            <a href={item.href} className="text-gray-600 hover:text-blue-600 transition-colors text-sm sm:text-base font-medium">
+                              {item.content}
+                            </a>
+                          ) : (
+                            <p className="text-gray-600 text-sm sm:text-base">{item.content}</p>
+                          )}
                         </div>
                       </motion.div>
                       {/* Add divider after each item except the last one */}

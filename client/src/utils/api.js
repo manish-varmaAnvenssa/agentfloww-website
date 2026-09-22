@@ -45,83 +45,107 @@ api.interceptors.response.use(
     console.error('Message:', error.message);
     
     if (error.response?.status === 401) {
-      console.log('Unauthorized - redirecting to login');
-      localStorage.removeItem('token')
-      window.location.href = '/login'
+      const isLoginRequest = error.config?.url?.includes('/auth/login');
+      if (!isLoginRequest) {
+        console.log('Unauthorized - redirecting to login');
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(error)
   }
 )
 
-// Database Functions using PHP API
+// Database Functions with Express Node Server
 export const loginUser = async (credentials) => {
   try {
-    const response = await api.post('/api.php?action=login', credentials);
-    return response.data;
+    const response = await api.post('/api/auth/login', credentials);
+    return { success: true, user: response.data.user, token: response.data.token };
   } catch (error) {
     console.error('Login error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.message || error.message };
   }
 };
 
 export const submitDemo = async (demoData) => {
   try {
-    const response = await api.post('/api.php?action=demo', demoData);
-    return response.data;
+    const response = await api.post('/api/demo', demoData);
+    return { success: true, demo: response.data.demo };
   } catch (error) {
     console.error('Demo submission error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.message || error.message };
   }
 };
 
 export const submitContact = async (contactData) => {
   try {
-    const response = await api.post('/api.php?action=contact', contactData);
-    return response.data;
+    const response = await api.post('/api/contact', contactData);
+    return { success: true, contact: response.data.contact };
   } catch (error) {
     console.error('Contact submission error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.message || error.message };
   }
 };
 
 export const getAllDemos = async () => {
   try {
-    const response = await api.get('/api.php?action=demos');
-    return response.data;
+    const response = await api.get('/api/demo');
+    return { success: true, demos: response.data.demos };
   } catch (error) {
     console.error('Get demos error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.message || error.message };
   }
 };
 
 export const getAllContacts = async () => {
   try {
-    const response = await api.get('/api.php?action=contacts');
-    return response.data;
+    const response = await api.get('/api/contact');
+    return { success: true, contacts: response.data.contacts };
   } catch (error) {
     console.error('Get contacts error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.message || error.message };
   }
 };
 
 export const updateDemoStatus = async (demoId, status) => {
   try {
-    const response = await api.post('/api.php?action=updateDemo', { demoId, status });
-    return response.data;
+    const response = await api.patch(`/api/demo/${demoId}/status`, { status });
+    return { success: true, demo: response.data.demo };
   } catch (error) {
     console.error('Update demo status error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.message || error.message };
   }
 };
 
 export const updateContactStatus = async (contactId, status) => {
   try {
-    const response = await api.post('/api.php?action=updateContact', { contactId, status });
-    return response.data;
+    const response = await api.patch(`/api/contact/${contactId}/status`, { status });
+    return { success: true, contact: response.data.contact };
   } catch (error) {
     console.error('Update contact status error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.message || error.message };
   }
 };
 
-export default api 
+export const sendOtp = async (email) => {
+  try {
+    const response = await api.post('/api/otp/send', { email });
+    return { success: true, message: response.data.message, mockOtp: response.data.mockOtp };
+  } catch (error) {
+    console.error('Send OTP error:', error);
+    return { success: false, error: error.response?.data?.message || error.message };
+  }
+};
+
+export const verifyOtp = async (email, otp) => {
+  try {
+    const response = await api.post('/api/otp/verify', { email, otp });
+    return { success: true, message: response.data.message };
+  } catch (error) {
+    console.error('Verify OTP error:', error);
+    return { success: false, error: error.response?.data?.message || error.message };
+  }
+};
+
+export default api

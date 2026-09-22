@@ -27,19 +27,19 @@ async function testConnection() {
     console.log('Database:', dbConfig.database);
     
     const connection = await pool.getConnection();
-    console.log('✅ Database connected successfully!');
+    console.log('Database connected successfully!');
     console.log('Connected to:', connection.config.host);
     console.log('Server version:', connection.serverVersion);
     connection.release();
     return true;
   } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
+    console.error('Database connection failed:', error.message);
     console.error('Error code:', error.code);
     console.error('Error number:', error.errno);
     
     // Additional debugging info
     if (error.code === 'ER_ACCESS_DENIED_ERROR') {
-      console.error('🔒 Access denied - This usually means:');
+      console.error('Access denied - This usually means:');
       console.error('   - IP address not whitelisted in Remote MySQL');
       console.error('   - Wrong username/password');
       console.error('   - User permissions insufficient');

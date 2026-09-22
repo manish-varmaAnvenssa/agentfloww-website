@@ -1,20 +1,40 @@
 # Dependencies
 node_modules/
+client/node_modules/
+server/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Production builds
+# Production builds & Archives
 client/dist/
 client/build/
 deployment/public/
+*.zip
+*.tar.gz
+*.rar
+*.7z
 
 # Environment variables
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
+
+# Documents & Raw extraction text dumps
+*.docx
+*.doc
+*_extracted.txt
+*_extracted_raw.txt
+
+# Server uploads & runtime temporary data
+server/public/uploads/*
+!server/public/uploads/.gitkeep
+server/query
+server/queryex
+
+# Unnecessary root assets & unformatted asset folders
+/SAP.png
+client/logo asset/
 
 # Database files
 server/data/*.db
@@ -35,17 +55,11 @@ pids
 
 # Coverage directory used by tools like istanbul
 coverage/
-
-# nyc test coverage
 .nyc_output
 
 # Dependency directories
 jspm_packages/
-
-# Optional npm cache directory
 .npm
-
-# Optional REPL history
 .node_repl_history
 
 # Output of 'npm pack'
@@ -54,32 +68,17 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
-
-# parcel-bundler cache (https://parceljs.org/)
+# Cache directories
 .cache
 .parcel-cache
 
-# next.js build output
+# Framework build output
 .next
-
-# nuxt.js build output
 .nuxt
-
-# vuepress build output
 .vuepress/dist
-
-# Serverless directories
 .serverless
-
-# FuseBox cache
 .fusebox/
-
-# DynamoDB Local files
 .dynamodb/
-
-# TernJS port file
 .tern-port
 
 # IDE files

@@ -5,13 +5,13 @@ import { toast } from 'react-hot-toast'
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { validateEmail } from '../utils/validation'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { login } = useAuth()
+  const { login, user } = useAuth()
   const navigate = useNavigate()
 
   const {
@@ -19,6 +19,11 @@ const Login = () => {
     handleSubmit,
     formState: { errors }
   } = useForm()
+
+  // If user is already logged in, redirect to admin dashboard or index
+  if (user) {
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/'} replace />
+  }
 
   const onSubmit = async (data) => {
     setIsSubmitting(true)

@@ -14,9 +14,14 @@ import About from './pages/About'
 import Pricing from './pages/Pricing'
 import LiveDemo from './pages/LiveDemo'
 import AdminDemo from './pages/AdminDemo'
+import MeasurableROI from './pages/MeasurableROI'
+import BuiltERPNative from './pages/BuiltERPNative'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import RefundPolicy from './pages/RefundPolicy'
 import TermsOfService from './pages/TermsOfService'
+import BlogListing from './pages/BlogListing'
+import BlogDetail from './pages/BlogDetail'
+import AdminBlog from './pages/AdminBlog'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './contexts/AuthContext'
 
@@ -35,7 +40,11 @@ function App() {
               <Route path="compare" element={<Compare />} />
               <Route path="about" element={<About />} />
               <Route path="pricing" element={<Pricing />} />
+              <Route path="blogs" element={<BlogListing />} />
+              <Route path="blogs/:slug" element={<BlogDetail />} />
               <Route path="live-demo" element={<LiveDemo />} />
+              <Route path="measurable-roi" element={<MeasurableROI />} />
+              <Route path="built-erp-native" element={<BuiltERPNative />} />
               <Route path="privacy-policy" element={<PrivacyPolicy />} />
               <Route path="refund-policy" element={<RefundPolicy />} />
               <Route path="terms-of-service" element={<TermsOfService />} />
@@ -51,6 +60,7 @@ function App() {
               </ProtectedRoute>
             }>
               <Route index element={<Admin />} />
+              <Route path="blogs" element={<AdminBlog />} />
               <Route path="contact" element={<AdminContact />} />
               <Route path="demo" element={<AdminDemo />} />
               <Route path="users" element={<AdminUsers />} />

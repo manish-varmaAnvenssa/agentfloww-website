@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Header from './Header'
 import Footer from './Footer'
+import Breadcrumbs from './Breadcrumbs'
 
 const Layout = () => {
   const location = useLocation()
@@ -17,6 +18,7 @@ const Layout = () => {
         transition={{ duration: 0.3 }}
         className={isHomePage ? '' : 'pt-16'}
       >
+        {!isHomePage && <Breadcrumbs />}
         <Outlet />
       </motion.main>
       <Footer />

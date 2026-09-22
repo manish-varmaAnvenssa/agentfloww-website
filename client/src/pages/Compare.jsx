@@ -1,191 +1,381 @@
-import { motion } from 'framer-motion'
+import React, { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowRight, CheckCircle, Zap, Shield, Users, BarChart3, Star, TrendingUp, Target, MessageCircle, Clock, Globe, Play, ArrowUpRight } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
-import { useState, useEffect } from 'react'
+import { 
+  CheckCircle, 
+  Warning, 
+  X, 
+  ArrowRight, 
+  ShieldCheck, 
+  Clock, 
+  Coins, 
+  Factory, 
+  Broadcast, 
+  Gear, 
+  Database, 
+  Terminal,
+  ChartBar, 
+  Calculator, 
+  Robot, 
+  PlugsConnected, 
+  Pulse as Activity, 
+  Calendar, 
+  MagnifyingGlass, 
+  CaretDown, 
+  CaretRight,
+  UserCheck,
+  TrendUp,
+  FileText,
+  Cloud
+} from '@phosphor-icons/react'
 
-const AISalesAgent = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [openDropdown, setOpenDropdown] = useState(null)
-  const [openFAQ, setOpenFAQ] = useState(null)
+// --- Dynamic Odometer / Counter Component ---
+const AnimatedCounter = ({ target, suffix = "", duration = 2000 }) => {
+  const [count, setCount] = useState(0)
+  const elementRef = useRef(null)
 
-  // Prevent auto-scroll on page load
   useEffect(() => {
-    // Prevent scroll restoration
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        let startTime = null
+        const targetVal = parseFloat(target)
+        if (isNaN(targetVal)) {
+          setCount(target)
+          return
+        }
+
+        const animate = (timestamp) => {
+          if (!startTime) startTime = timestamp
+          const progress = Math.min((timestamp - startTime) / duration, 1)
+          const current = progress * targetVal
+          
+          if (target.toString().includes('.')) {
+            setCount(current.toFixed(1))
+          } else {
+            setCount(Math.floor(current))
+          }
+
+          if (progress < 1) {
+            window.requestAnimationFrame(animate)
+          } else {
+            setCount(target)
+          }
+        }
+        window.requestAnimationFrame(animate)
+        observer.disconnect()
+      }
+    }, { threshold: 0.1 })
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current)
+    }
+    return () => observer.disconnect()
+  }, [target, duration])
+
+  return <span ref={elementRef}>{count}{suffix}</span>
+}
+
+// --- Comparison Data ---
+const comparisonFeatures = [
+  {
+    id: "integration",
+    title: "ERP Integration Architecture",
+    icon: PlugsConnected,
+    desc: "How the automation system connects to your enterprise database (SAP, Oracle, Dynamics, etc.).",
+    agentfloww: {
+      text: "API-Native (REST/OData & Service Layer API)",
+      rating: "check",
+      detail: "Direct secure writebacks and transactional commits to ERP database without middleware. Reads and logs data instantly with 0ms sync delay."
+    },
+    rpa: {
+      text: "UI Screen Scraping",
+      rating: "warning",
+      detail: "Simulates manual clicks on desktop windows. Fails whenever any input field shifts slightly or browser updates UI."
+    },
+    manual: {
+      text: "No Integration",
+      rating: "cross",
+      detail: "Requires human operators to download attachment emails, open SAP screens, and manually copy-paste values cell-by-cell."
+    }
+  },
+  {
+    id: "engine",
+    title: "Process Execution Logic",
+    icon: Robot,
+    desc: "The reasoning engine behind extracting fields and resolving operational deviations.",
+    agentfloww: {
+      text: "Autonomous Agentic AI",
+      rating: "check",
+      detail: "Understands intent via natural language. Parses unformatted documents dynamically and adapts to invoice formatting layout changes."
+    },
+    rpa: {
+      text: "Hardcoded Static Rules",
+      rating: "warning",
+      detail: "Relies on rigid templates. If a vendor adds a new column or moves the invoice total cell, the RPA script halts with an exception."
+    },
+    manual: {
+      text: "Human Work",
+      rating: "cross",
+      detail: "FTEs reading sheets and keying in data. Plagued by fatigue, distractions, and typing errors."
+    }
+  },
+  {
+    id: "resilience",
+    title: "System Resilience & Alerting",
+    icon: Activity,
+    desc: "How failures, anomalies, or document mismatch exceptions are managed.",
+    agentfloww: {
+      text: "24/7 RPA Log Intelligence & Auto-Retry",
+      rating: "check",
+      detail: "Automatically scans logs, discovers mismatch root causes, auto-heals layout changes, and drafts alerts only on critical errors."
+    },
+    rpa: {
+      text: "Silent Failures & Halting",
+      rating: "warning",
+      detail: "Halts the queue entirely when validation fails. Requires specialized RPA developers to fix code before operations resume."
+    },
+    manual: {
+      text: "Delayed Auditing",
+      rating: "cross",
+      detail: "Errors are usually found days later during manual financial closing reconciliations, costing time and supplier goodwill."
+    }
+  },
+  {
+    id: "interface",
+    title: "Operational Interface",
+    icon: Terminal,
+    desc: "The user experience for checking values, retrieving reports, or triggering processes.",
+    agentfloww: {
+      text: "Conversational NLP (Type or Talk)",
+      rating: "check",
+      detail: "Get real-time inventory updates, PO drafts, or PDF spend reports via simple chat commands. Built-in SQL auto-generator."
+    },
+    rpa: {
+      text: "CLI / System Console Only",
+      rating: "warning",
+      detail: "Requires logging into complex orchestrator panels. No natural language control for non-technical operations staff."
+    },
+    manual: {
+      text: "Complex ERP WebGUI / Excel sheets",
+      rating: "cross",
+      detail: "Operators must navigate nested menus, multiple filters, and heavy spreadsheets to assemble a single report."
+    }
+  },
+  {
+    id: "time-to-value",
+    title: "Deployment & Setup Sprints",
+    icon: Calendar,
+    desc: "Onboarding speed and custom development cycles before first business value.",
+    agentfloww: {
+      text: "16-Week Agile Accelerators",
+      rating: "check",
+      detail: "Built using preconfigured modules (Gate Entry, Job Work, Quality Control) that map immediately to standard SAP schemas."
+    },
+    rpa: {
+      text: "Multi-Month Custom Dev Cycles",
+      rating: "warning",
+      detail: "Requires massive process mapping workshops, layout recorders, and bespoke scripting from scratch."
+    },
+    manual: {
+      text: "Immediate / Weeks of Training",
+      rating: "cross",
+      detail: "No software setup, but high onboarding friction. Days spent training operators on company guidelines and rules."
+    }
+  },
+  {
+    id: "analytics",
+    title: "Cognitive Decision Capabilities",
+    icon: ChartBar,
+    desc: "How the system performs forecasting and analytics.",
+    agentfloww: {
+      text: "Predictive Analytics & Forecasters",
+      rating: "check",
+      detail: "Performs demand inventory forecasting, detects micro production losses, and audits spend compliance automatically."
+    },
+    rpa: {
+      text: "Zero Intelligence (Calculators Only)",
+      rating: "warning",
+      detail: "Limited to moving data. Cannot predict stock shortages, analyze spend trends, or discover inefficiencies."
+    },
+    manual: {
+      text: "Manual Report Analysis",
+      rating: "cross",
+      detail: "Ops managers review historical reports in retrospect, making reactive rather than proactive decisions."
+    }
+  }
+]
+
+// --- FAQ Data ---
+const faqQuestions = [
+  {
+    category: "general",
+    q: "How does Agentfloww differ from traditional RPA platforms?",
+    a: "Traditional RPA uses static screen recording scripts to replicate human clicks. If a button moves 5 pixels, RPA breaks. Agentfloww is API-native and cognitive; it integrates directly with the ERP Service Layer and uses AI agents that parse document intent, adapting dynamically to document layout changes without breaking."
+  },
+  {
+    category: "general",
+    q: "Is 80%+ automation realistic in manufacturing ERPs?",
+    a: "Yes. By combining API writebacks with LLM document parsers, Agentfloww processes straight-through transactions automatically. Most manufacturing clients reach an 85% to 92% straight-through processing rate within the first 30 days of deployment."
+  },
+  {
+    category: "technical",
+    q: "What ERP systems and databases are supported?",
+    a: "We offer native accelerators for SAP Business One (REST Service Layer), SAP S/4HANA, Oracle NetSuite, Microsoft Dynamics 365, Odoo Enterprise, and Epicor. Databases supported include SAP HANA, MS SQL Server, PostgreSQL, and Oracle DB."
+  },
+  {
+    category: "technical",
+    q: "How do AI agents handle data verification and compliance?",
+    a: "Agentfloww acts as a secure co-pilot inside your ERP workflow. AI agents parse transaction parameters (e.g. quantity, rate) and cross-verify them against Purchase Orders (POs) and Goods Receipts (GRNs). Any variance triggers role-based approvals and audit logs, securing transaction compliance."
+  },
+  {
+    category: "performance",
+    q: "What typical cost savings and productivity gains do clients experience?",
+    a: "AI ERP engagements deliver a 20-30% increase in productivity for our manufacturing clients. By reducing PO cycle times from 45 minutes to under 5 minutes and eliminating invoice entry errors, operational costs are slashed by up to 75%."
+  },
+  {
+    category: "performance",
+    q: "What is the typical timeline to launch an Agentfloww module?",
+    a: "A typical deployment takes 16 weeks. This includes system mapping, configuring pre-built Service Layer accelerators, validating schemas, custom AI training, user acceptance testing (UAT), and a 30-day hypercare support window."
+  }
+]
+
+// --- Enterprise AI Intelligence Mesh Modules ---
+const meshModules = [
+  { id: "erp", title: "ERP Databases", icon: Database, desc: "Direct Service Layer transactions & writebacks for SAP, Oracle, and Dynamics.", angle: -90, status: "Connected" },
+  { id: "crm", title: "CRM Pipelines", icon: UserCheck, desc: "Synchronize pipeline leads, customer accounts, and billing files.", angle: -50, status: "Connected" },
+  { id: "email", title: "Email Queues", icon: Broadcast, desc: "Monitor supplier inboxes for incoming request attachments.", angle: -10, status: "Active" },
+  { id: "docs", title: "Document OCR", icon: FileText, desc: "Cognitive parsing of PDFs, spreadsheets, and layout structures.", angle: 30, status: "Connected" },
+  { id: "apis", title: "APIs & Webhooks", icon: PlugsConnected, desc: "Trigger external systems and verify dynamic vendor parameters.", angle: 70, status: "Active" },
+  { id: "db", title: "Local DBs", icon: Database, desc: "Secure direct queries, logging histories, and data ledger transactions.", angle: 110, status: "Connected" },
+  { id: "cloud", title: "Cloud Store", icon: Cloud, desc: "Automatic S3/Azure file archives of audited transaction records.", angle: 150, status: "Active" },
+  { id: "human", title: "Human Review", icon: UserCheck, desc: "Escalation queues for verification of unmatched anomalies.", angle: 190, status: "Standby" },
+  { id: "analytics", title: "KPI Analytics", icon: ChartBar, desc: "Real-time cost anomaly reporting and spend scorecard calculations.", angle: 230, status: "Connected" }
+]
+
+// --- Isometric Enterprise Integration Stack Layers ---
+const stackLayers = [
+  { 
+    id: 3, 
+    title: "Transactional ERP Commit", 
+    role: "Database Writebacks & Commit Logs", 
+    desc: "Automates direct transactional ledger updates with zero human data-entry latency. Commits verified line items natively into core ERP registers.", 
+    status: "Active", 
+    metric: "0.8s sync writeback latency", 
+    connected: ["SAP S/4HANA & B1", "Oracle NetSuite", "Dynamics 365", "MS SQL Tables"],
+    color: "#22c55e",
+    glowColor: "rgba(34, 197, 94, 0.15)",
+    cardOffset: -120
+  },
+  { 
+    id: 2, 
+    title: "Cognitive AI Processing & RAG", 
+    role: "Validation, Extraction, and Matching Engine", 
+    desc: "Performs three-way match reconciliations of invoice data against Purchase Orders (POs) and Goods Receipts (GRNs). AI agents extract unformatted PDF invoice fields and dynamically resolve variances.", 
+    status: "Running", 
+    metric: "94.2% straight-through accuracy", 
+    connected: ["Agentfloww RAG Vector Registers", "Cognitive LLM Pipelines", "Auditing Guardrails"],
+    color: "#6366f1",
+    glowColor: "rgba(99, 102, 241, 0.15)",
+    cardOffset: 0
+  },
+  { 
+    id: 1, 
+    title: "Edge & Ingestion Capture", 
+    role: "Multi-channel Real-time Ingestion", 
+    desc: "Gathers raw data straight from the source. Monitors supplier email attachments, logs factory floor IoT sensors, and receives inbound webhooks.", 
+    status: "Connected", 
+    metric: "12+ channels active", 
+    connected: ["Gmail/Outlook API queues", "IoT REST sensor telemetry", "FTP secure uploads", "S3 buckets"],
+    color: "#06b6d4",
+    glowColor: "rgba(6, 182, 212, 0.15)",
+    cardOffset: 120
+  }
+]
+
+const Compare = () => {
+  const [expandedRow, setExpandedRow] = useState(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [faqCategory, setFaqCategory] = useState("all")
+  const [poVolume, setPoVolume] = useState(1500)
+  const [activeFaq, setActiveFaq] = useState(0)
+
+  // Odometer calculator state variables
+  const hoursSavedValue = Math.round(poVolume * (40 / 60)) // 40 mins saved per PO
+  const costSavingsValue = Math.round(poVolume * 15) // $15 average labor + error cost saved per PO
+  const stpValue = 94.2
+
+  // Prevent auto-scroll on mount
+  useEffect(() => {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual'
     }
-    
-    // Ensure page starts at top without any scroll animation
-    setTimeout(() => {
-      window.scrollTo(0, 0)
-    }, 0)
-    
-    // Additional fix for any remaining scroll issues
-    const preventScroll = () => {
-      if (window.scrollY > 0) {
-        window.scrollTo(0, 0)
-      }
-    }
-    
-    // Check for scroll issues after a short delay
-    setTimeout(preventScroll, 100)
-    
-    return () => {
-      // Cleanup
-    }
+    window.scrollTo(0, 0)
   }, [])
 
-  const toggleFAQ = (index) => {
-    setOpenFAQ(openFAQ === index ? null : index)
+  // Filter FAQ questions
+  const filteredFaqs = faqQuestions.filter(item => {
+    const matchesCategory = faqCategory === "all" || item.category === faqCategory
+    const matchesSearch = item.q.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          item.a.toLowerCase().includes(searchQuery.toLowerCase())
+    return matchesCategory && matchesSearch
+  })
+
+  // Connected architecture hovered node state
+  const [hoveredBenefit, setHoveredBenefit] = useState(null)
+  const benefitDetails = {
+    ERP: "Direct API writebacks for Purchase Requisitions, Sales Orders, and Goods Receipts (GRN) with 0% data lag.",
+    IoT: "Synchronize factory floor sensor logs with ERP inventory ledgers, enabling real-time stock checks.",
+    Manufacturing: "Auto-parse Bill of Materials (BOM) revisions and feed stock requirements straight to production schedules.",
+    AI: "Cognitive parsing of supplier emails and PDFs. Automatically matching rate variables with historical data.",
+    CRM: "Direct sync between sales team leads, pipeline accounts, and ERP invoice billing lines.",
+    Analytics: "Real-time cost anomaly alarms, demand forecasting charts, and vendor scorecard calculations."
   }
 
+  // Isometric Enterprise Integration Stack state
+  const [hoveredLayer, setHoveredLayer] = useState(2)
+
+  // Enterprise AI Intelligence Mesh state
+  const [hoveredModule, setHoveredModule] = useState(null)
+  const [isMobile, setIsMobile] = useState(false)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const containerRef = useRef(null)
+
+  const handleMouseMove = (e) => {
+    if (!containerRef.current) return
+    const rect = containerRef.current.getBoundingClientRect()
+    const x = (e.clientX - rect.left - rect.width / 2) * 0.05
+    const y = (e.clientY - rect.top - rect.height / 2) * 0.05
+    setMousePos({ x, y })
+  }
+
+  const handleMouseLeave = () => {
+    setMousePos({ x: 0, y: 0 })
+  }
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024) // Match responsive breakpoints
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const size = isMobile ? 380 : 600
+  const radius = isMobile ? 115 : 210
+
   return (
-    <div className="Compare Page">
+    <div className="Compare-Page bg-slate-50 text-slate-900 overflow-x-hidden pt-16">
       <Helmet>
-        <title>Compare - Agentflow vs Others | Agentflow</title>
-        <meta name="description" content="Compare Agentflow with other AI solutions. See why Agentflow is the leading choice with OpenAI Powered chatbots, advanced analytics, and superior features." />
+        <title>Agentfloww vs Traditional ERP Automation | Agentfloww</title>
+        <meta name="description" content="See why Agentfloww's API-native cognitive AI operating system outperforms manual processes, screen scraping, and traditional RPA. Explore interactive matrices, calculators, and network architecture." />
       </Helmet>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-          <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-16">
-            {/* Left Side - Content */}
-            <div className="flex-1 text-center lg:text-left">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="flex items-center justify-center lg:justify-start space-x-2 mb-4 md:mb-6"
-              >
-                <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">VS</span>
-                </div>
-                <span className="text-green-600 font-semibold text-sm">Comparison</span>
-                <span className="text-gray-400 text-xs">• See the difference</span>
-              </motion.div>
+      {/* ================= HERO SECTION ================= */}
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden py-16 md:py-24 border-b border-slate-100 bg-white">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[100px] pointer-events-none animate-pulse-slow" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '2s' }} />
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 leading-tight drop-shadow-sm"
-              >
-                Compare Agentflow vs Other AI Solutions
-              </motion.h1>
-              
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-lg md:text-xl text-gray-800 mb-6 md:mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0 drop-shadow-sm font-medium"
-              >
-                See how Agentflow stands out from the competition with OpenAI Powered technology, advanced features, and superior performance. Make an informed decision for your business.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-              >
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center bg-green-500 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold hover:bg-green-600 transition-colors duration-200 group shadow-lg text-base md:text-lg"
-                >
-                  <span>Get Started</span>
-                  <span className="ml-2">
-                    <span className="block group-hover:hidden">{'>'}</span>
-                    <span className="hidden group-hover:block">{'->'}</span>
-                  </span>
-                </Link>
-              </motion.div>
-            </div>
-
-            {/* Right Side - AI Sales Interface Demo */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="flex-1 flex justify-center lg:justify-end mb-8 lg:mb-0"
-            >
-              <div className="relative">
-                {/* Main AI Sales Interface */}
-                <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 md:p-6 w-80 md:max-w-md">
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
-                        <span className="text-white text-sm font-bold">AI</span>
-                      </div>
-                      <span className="font-semibold text-gray-900">Agent</span>
-                    </div>
-                    <div className="text-xs text-gray-500">Live Demo</div>
-                  </div>
-
-                  {/* AI Chat Interface */}
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-xs">AI</span>
-                      </div>
-                      <div className="bg-gray-100 rounded-2xl rounded-bl-md p-3 max-w-xs">
-                        <p className="text-sm text-gray-700">Hi! I'm your AI assistant. How can I help you today?</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3 justify-end">
-                      <div className="bg-green-500 text-white rounded-2xl rounded-br-md p-3 max-w-xs">
-                        <p className="text-sm">I need help with customer support</p>
-                      </div>
-                      <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-gray-600 text-xs">U</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-xs">AI</span>
-                      </div>
-                      <div className="bg-gray-100 rounded-2xl rounded-bl-md p-3 max-w-xs">
-                        <p className="text-sm text-gray-700">I can help you with customer inquiries, order tracking, and general support. What specific issue can I assist with?</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Quick Actions */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <button className="group bg-green-500 text-white text-sm font-medium py-2 px-4 rounded-full hover:bg-green-600 transition-colors duration-200 inline-flex items-center justify-center">
-                      <span>Support</span>
-                      <span className="ml-1">
-                        <span className="block group-hover:hidden">{'>'}</span>
-                        <span className="hidden group-hover:block">{'->'}</span>
-                      </span>
-                    </button>
-                    <button className="group bg-gray-100 text-gray-700 text-sm font-medium py-2 px-4 rounded-full hover:bg-gray-200 transition-colors duration-200 inline-flex items-center justify-center">
-                      <span>Chat</span>
-                      <span className="ml-1">
-                        <span className="block group-hover:hidden">{'>'}</span>
-                        <span className="hidden group-hover:block">{'->'}</span>
-                      </span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Floating Elements - Hidden on mobile for better layout */}
-                <div className="hidden md:block absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
-                  <TrendingUp className="w-8 h-8 text-white" />
-                </div>
-                <div className="hidden md:block absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
-                  <Target className="w-6 h-6 text-white" />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Inclined Background Gradient - Like Blog Page */}
+        {/* Skewed background visual gradient - like original design */}
         <div
           className="absolute bottom-6 left-0 w-full h-[250px] opacity-30 transform -skew-y-12 origin-top-left z-10"
           style={{ 
@@ -195,1322 +385,1027 @@ const AISalesAgent = () => {
             animation: 'gradientFlow 20s ease infinite' 
           }}
         ></div>
-      </section>
 
-      {/* Why Agentflow Section */}
-      <section className="py-24 bg-white relative z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            {/* Left - Content */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="space-y-8"
-            >
-              {/* Header */}
-              <div className="space-y-6">
-                <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-50 to-blue-50 px-4 py-2 rounded-full border border-green-100">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-green-700 font-semibold text-sm uppercase tracking-wide">
-                    Why Agentflow?
-                  </span>
-                </div>
-                
-                <h2 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-                  Chatbots better than your best agents.
-                </h2>
-                
-                <p className="text-xl text-gray-600 leading-relaxed max-w-xl">
-                  Confidently handle 90% of customer inquiries with the world's first OpenAI Powered bot for commerce. Grow your brand without adding to your support team.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Right - Image */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="relative"
-            >
-              <div className="relative">
-                <div className="bg-gradient-to-br from-green-100 via-blue-50 to-purple-100 rounded-3xl p-8 shadow-2xl border border-gray-100">
-                  <img 
-                    src="/images/Pictures/Compare 1.png" 
-                    alt="Agentflow Comparison" 
-                    className="w-full h-auto rounded-2xl shadow-lg"
-                  />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Comparison Section */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="inline-block text-green-600 font-semibold text-sm uppercase tracking-wide mb-4"
-            >
-              Comparison
-            </motion.div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-8"
-            >
-              Agentflow vs Others
-            </motion.h2>
-          </div>
-
-          {/* Comparison Table */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden"
-          >
-            {/* Table Header */}
-            <div className="grid grid-cols-3 bg-gradient-to-r from-green-50 to-blue-50 border-b border-gray-200">
-              <div className="p-4 md:p-6 text-center">
-                <h3 className="text-lg md:text-2xl font-bold text-gray-900">Features</h3>
-              </div>
-              <div className="p-4 md:p-6 text-center border-l border-r border-gray-200">
-                <h3 className="text-lg md:text-2xl font-bold text-green-600">Agentflow</h3>
-                <p className="text-xs md:text-sm text-gray-600 mt-1">Recommended</p>
-              </div>
-              <div className="p-4 md:p-6 text-center">
-                <h3 className="text-lg md:text-2xl font-bold text-gray-600">Others</h3>
-                <p className="text-xs md:text-sm text-gray-500 mt-1">Basic</p>
-              </div>
-            </div>
-
-            {/* Table Rows */}
-            <div className="divide-y divide-gray-200">
-              {/* OpenAI Powered Chatbot */}
-              <div className="grid grid-cols-3 hover:bg-gray-50 transition-colors duration-200">
-                <div className="p-4 md:p-6 flex items-center">
-                  <span className="text-sm md:text-lg font-semibold text-gray-900">OpenAI Powered Chatbot</span>
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center border-l border-r border-gray-200">
-                  <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-500" />
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center">
-                  <div className="w-6 h-6 md:w-8 md:h-8 border-2 border-gray-300 rounded-full"></div>
-                </div>
-              </div>
-
-              {/* AI CRM and Analytics */}
-              <div className="grid grid-cols-3 hover:bg-gray-50 transition-colors duration-200">
-                <div className="p-4 md:p-6 flex items-center">
-                  <span className="text-sm md:text-lg font-semibold text-gray-900">AI CRM and Analytics</span>
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center border-l border-r border-gray-200">
-                  <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-500" />
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center">
-                  <div className="w-6 h-6 md:w-8 md:h-8 border-2 border-gray-300 rounded-full"></div>
-                </div>
-              </div>
-
-              {/* Advanced Bot Flows */}
-              <div className="grid grid-cols-3 hover:bg-gray-50 transition-colors duration-200">
-                <div className="p-4 md:p-6 flex items-center">
-                  <span className="text-sm md:text-lg font-semibold text-gray-900">Advanced Bot Flows</span>
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center border-l border-r border-gray-200">
-                  <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-500" />
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center">
-                  <div className="w-6 h-6 md:w-8 md:h-8 border-2 border-gray-300 rounded-full"></div>
-                </div>
-              </div>
-
-              {/* iPhone Pop Ups */}
-              <div className="grid grid-cols-3 hover:bg-gray-50 transition-colors duration-200">
-                <div className="p-4 md:p-6 flex items-center">
-                  <span className="text-sm md:text-lg font-semibold text-gray-900">iPhone Pop Ups</span>
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center border-l border-r border-gray-200">
-                  <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-500" />
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center">
-                  <div className="w-6 h-6 md:w-8 md:h-8 border-2 border-gray-300 rounded-full"></div>
-                </div>
-              </div>
-
-              {/* Non-Spammy Campaigns */}
-              <div className="grid grid-cols-3 hover:bg-gray-50 transition-colors duration-200">
-                <div className="p-4 md:p-6 flex items-center">
-                  <span className="text-sm md:text-lg font-semibold text-gray-900">Non-Spammy Campaigns</span>
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center border-l border-r border-gray-200">
-                  <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-500" />
-                </div>
-                <div className="p-4 md:p-6 flex items-center justify-center">
-                  <div className="w-6 h-6 md:w-8 md:h-8 border-2 border-gray-300 rounded-full"></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Table Footer */}
-            <div className="grid grid-cols-3 bg-gradient-to-r from-green-50 to-blue-50 border-t border-gray-200">
-              <div className="p-4 md:p-6 text-center">
-                <span className="text-sm md:text-lg font-semibold text-gray-900">Verdict</span>
-              </div>
-              <div className="p-4 md:p-6 text-center border-l border-r border-gray-200">
-                <div className="inline-flex items-center bg-green-100 text-green-800 px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-semibold">
-                  <CheckCircle className="w-3 h-3 md:w-4 md:h-4 mr-2" />
-                  Winner
-                </div>
-              </div>
-              <div className="p-4 md:p-6 text-center">
-                <div className="inline-flex items-center bg-gray-100 text-gray-600 px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-semibold">
-                  <span className="w-3 h-3 md:w-4 md:h-4 mr-2">•</span>
-                  Basic
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* See the Change Yourself Section */}
-      <section className="py-24 bg-white relative z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            {/* Left - Content */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="space-y-8"
-            >
-              {/* Header */}
-              <div className="space-y-6">
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  viewport={{ once: true }}
-                  className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-2 rounded-full border border-blue-100"
-                >
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                                      <span className="text-blue-700 font-semibold text-sm uppercase tracking-wide">
-                      Witness the Change for Yourself
-                    </span>
-                </motion.div>
-                
-                <motion.h2 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  viewport={{ once: true }}
-                  className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight"
-                >
-                  Cut Expenses and Raise Income
-                </motion.h2>
-                
-                <motion.p 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  viewport={{ once: true }}
-                  className="text-lg text-gray-600 leading-relaxed max-w-xl"
-                >
-                  Agentflow helps your business expand and save money in addition to making work easier. cash. Your team's workload is decreased and repetitive work is relieved when you use our AI agents to automate tasks.
-                </motion.p>
-
-                <motion.p 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  viewport={{ once: true }}
-                  className="text-lg text-gray-600 leading-relaxed max-w-xl"
-                >
-                  This directly reduces your operating costs because you can manage more clients and tasks without hiring more employees. You'll also make more money by handling more interactions and providing better customer service.
-                </motion.p>
-
-                <motion.p 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  viewport={{ once: true }}
-                  className="text-lg text-gray-600 leading-relaxed max-w-xl font-semibold"
-                >
-                  Every year, we handle millions of interactions for aspirational companies of all sizes, assisting them in achieving tangible outcomes.
-                </motion.p>
-              </div>
-
-              {/* Animated Stats */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-                viewport={{ once: true }}
-                className="grid grid-cols-2 gap-6"
-              >
-                <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  className="bg-gradient-to-br from-green-50 to-emerald-100 p-6 rounded-2xl border border-green-200 text-center"
-                >
-                  <motion.div 
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.8 }}
-                    viewport={{ once: true }}
-                    className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3"
-                  >
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                    </svg>
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-green-700 mb-2">Cost Reduction</h3>
-                  <p className="text-sm text-green-600">Lower operational costs through automation</p>
-                </motion.div>
-
-                <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  className="bg-gradient-to-br from-blue-50 to-cyan-100 p-6 rounded-2xl border border-blue-200 text-center"
-                >
-                  <motion.div 
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.9 }}
-                    viewport={{ once: true }}
-                    className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3"
-                  >
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
-                    </svg>
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-blue-700 mb-2">Revenue Growth</h3>
-                  <p className="text-sm text-blue-600">Handle more customers & interactions</p>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-
-            {/* Right - Animated GIF-like Elements */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="relative"
-            >
-              {/* Main Container */}
-              <div className="relative">
-                <div className="bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100 rounded-3xl p-8 shadow-2xl border border-gray-100">
-                  {/* Floating Elements */}
-                  <motion.div 
-                    animate={{ 
-                      y: [0, -20, 0],
-                      rotate: [0, 5, 0]
-                    }}
-                    transition={{ 
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="absolute -top-4 -left-4 w-16 h-16 bg-green-400 rounded-full opacity-80"
-                  />
-                  
-                  <motion.div 
-                    animate={{ 
-                      y: [0, 15, 0],
-                      rotate: [0, -5, 0]
-                    }}
-                    transition={{ 
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1
-                    }}
-                    className="absolute -top-8 -right-8 w-12 h-12 bg-blue-400 rounded-full opacity-80"
-                  />
-
-                  <motion.div 
-                    animate={{ 
-                      y: [0, -15, 0],
-                      x: [0, 10, 0]
-                    }}
-                    transition={{ 
-                      duration: 3.5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 2
-                    }}
-                    className="absolute -bottom-6 -left-6 w-20 h-20 bg-purple-400 rounded-full opacity-80"
-                  />
-
-                  {/* Central Content */}
-                  <div className="relative z-10 text-center">
-                    <motion.div 
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        rotate: [0, 360]
-                      }}
-                      transition={{ 
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="w-24 h-24 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
-                    >
-                      <Users className="w-12 h-12 text-white" />
-                    </motion.div>
-                    
-                    <motion.h3 
-                      animate={{ 
-                        color: ["#1f2937", "#059669", "#1f2937"]
-                      }}
-                      transition={{ 
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="text-2xl font-bold mb-4"
-                    >
-                      AI-Powered Growth
-                    </motion.h3>
-                    
-                    <motion.div 
-                      animate={{ 
-                        opacity: [0.5, 1, 0.5]
-                      }}
-                      transition={{ 
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="space-y-2"
-                    >
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-sm text-gray-600">Automated Customer Service</span>
-                      </div>
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                        <span className="text-sm text-gray-600">24/7 Availability</span>
-                      </div>
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-                        <span className="text-sm text-gray-600">Scalable Operations</span>
-                      </div>
-                    </motion.div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* How Agentflow Helps Businesses Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
-            >
-              How Agentflow Benefits Companies
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
-            >
-              There are three primary ways that Agentflow benefits businesses
-            </motion.p>
-          </div>
-
-          <div className="space-y-24">
-            {/* Doing More, Faster - Left Aligned */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
-            >
-              {/* Left Content */}
-              <div className="flex-1 lg:order-1">
-                <div className="space-y-6">
-                  <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-3 rounded-full border border-blue-200">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span className="text-blue-700 font-semibold text-sm uppercase tracking-wide">
-                      Efficiency Boost
-                    </span>
-        </div>
-                  
-                  <h3 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-                    Achieving More, Quicker
-                  </h3>
-                  
-                  <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
-                    Customer service and other tasks can be handled by Agentflow's AI agents. data entry, questions, and other tasks. Employees can now concentrate on more significant and creative work as a result.
-                  </p>
-                  
-                  <div className="flex items-center space-x-4 pt-4">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-sm text-gray-500">Automated task handling</span>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-sm text-gray-500">Employee focus shift</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Visual */}
-              <div className="flex-1 lg:order-2 flex justify-center">
-                <div className="relative">
-                  <div className="w-64 h-64 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
-                    <motion.div 
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        rotate: [0, 5, 0, -5, 0]
-                      }}
-                      transition={{ 
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
-                    >
-                      <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                    </motion.div>
-                  </div>
-                  
-                  {/* Floating Elements */}
-                  <motion.div 
-                    animate={{ 
-                      y: [0, -20, 0],
-                      x: [0, 10, 0]
-                    }}
-                    transition={{ 
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="absolute -top-4 -right-4 w-12 h-12 bg-blue-400 rounded-full opacity-80"
-                  />
-                  <motion.div 
-                    animate={{ 
-                      y: [0, 15, 0],
-                      x: [0, -10, 0]
-                    }}
-                    transition={{ 
-                      duration: 3.5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1
-                    }}
-                    className="absolute -bottom-4 -left-4 w-16 h-16 bg-indigo-400 rounded-full opacity-80"
-                  />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Growing Without Limits - Right Aligned */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="flex flex-col lg:flex-row-reverse items-center gap-12 lg:gap-20"
-            >
-              {/* Right Content */}
-              <div className="flex-1">
-                <div className="space-y-6">
-                  <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-3 rounded-full border border-green-200">
-                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-green-700 font-semibold text-sm uppercase tracking-wide">
-                      Scalable Growth
-                    </span>
-                  </div>
-                  
-                  <h3 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-                    Growing Without Limits
-                  </h3>
-                  
-                  <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
-                    Businesses can grow and take on more clients without having to hire a large workforce because the AI does a lot of the work. Every year, Agentflow handles millions of interactions, supporting the expansion of companies of all kinds.
-                  </p>
-                  
-                  <div className="flex items-center space-x-4 pt-4">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm text-gray-500">Customer expansion</span>
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm text-gray-500">Millions of interactions</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Left Visual */}
-              <div className="flex-1 flex justify-center">
-                <div className="relative">
-                  <div className="w-64 h-64 bg-gradient-to-br from-green-100 to-emerald-200 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
-                    <motion.div 
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        rotate: [0, -5, 0, 5, 0]
-                      }}
-                      transition={{ 
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="w-32 h-32 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center"
-                    >
-                      <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
-                      </svg>
-                    </motion.div>
-                  </div>
-                  
-                  {/* Floating Elements */}
-                  <motion.div 
-                    animate={{ 
-                      y: [0, -15, 0],
-                      x: [0, -15, 0]
-                    }}
-                    transition={{ 
-                      duration: 3.2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="absolute -top-6 -left-6 w-14 h-14 bg-green-400 rounded-full opacity-80"
-                  />
-                  <motion.div 
-                    animate={{ 
-                      y: [0, 20, 0],
-                      x: [0, 15, 0]
-                    }}
-                    transition={{ 
-                      duration: 3.8,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1.5
-                    }}
-                    className="absolute -bottom-6 -right-6 w-12 h-12 bg-emerald-400 rounded-full opacity-80"
-                  />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Making Customers Happy - Left Aligned */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20"
-            >
-              {/* Left Content */}
-              <div className="flex-1 lg:order-1">
-                <div className="space-y-6">
-                  <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-3 rounded-full border border-purple-200">
-                    <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
-                    <span className="text-purple-700 font-semibold text-sm uppercase tracking-wide">
-                      Customer Success
-                    </span>
-                  </div>
-                  
-                  <h3 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-                    Satisfied Customers
-                  </h3>
-                  
-                  <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
-                    The AI agents' ability to respond to consumers promptly and helpfully is essential to establishing enduring bonds with them and maintaining their satisfaction. Conversations feel more intelligent when the AI comprehends what the customer needs and responds with intelligent, context-aware responses.
-                  </p>
-                  
-                  <div className="flex items-center space-x-4 pt-4">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-sm text-gray-500">Quick responses</span>
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-sm text-gray-500">Smart conversations</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Visual */}
-              <div className="flex-1 lg:order-2 flex justify-center">
-                <div className="relative">
-                  <div className="w-64 h-64 bg-gradient-to-br from-purple-100 to-pink-200 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
-                    <motion.div 
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        rotate: [0, 10, 0, -10, 0]
-                      }}
-                      transition={{ 
-                        duration: 4.5,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center"
-                    >
-                      <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </motion.div>
-                  </div>
-                  
-                  {/* Floating Elements */}
-                  <motion.div 
-                    animate={{ 
-                      y: [0, -25, 0],
-                      rotate: [0, 180, 360]
-                    }}
-                    transition={{ 
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="absolute -top-8 -right-8 w-16 h-16 bg-purple-400 rounded-full opacity-80"
-                  />
-                  <motion.div 
-                    animate={{ 
-                      y: [0, 18, 0],
-                      rotate: [0, -180, -360]
-                    }}
-                    transition={{ 
-                      duration: 4.2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 2
-                    }}
-                    className="absolute -bottom-8 -left-8 w-18 h-18 bg-pink-400 rounded-full opacity-80"
-                  />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 md:mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="inline-block text-green-600 font-semibold text-xs md:text-sm uppercase tracking-wide mb-3 md:mb-4"
-            >
-              Benefits
-            </motion.div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 md:mb-8"
-            >
-              Why Choose AI Agents?
-            </motion.h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="group h-full"
-            >
-              <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl transition-all duration-300 group-hover:shadow-2xl group-hover:scale-105 border border-gray-100 h-full flex flex-col">
-                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Zap className="w-6 h-6 md:w-8 md:h-8 text-white" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4 group-hover:text-green-600 transition-colors">
-                  Increased Efficiency
-                </h3>
-                <p className="text-sm md:text-base text-gray-600 leading-relaxed flex-1">
-                  AI agents handle high volumes of repetitive tasks like customer support, order processing, or data entry. This automation allows your human team to focus on more critical tasks, boosting overall productivity.
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="group h-full"
-            >
-              <div className="bg-white rounded-3xl p-8 shadow-xl transition-all duration-300 group-hover:shadow-2xl group-hover:scale-105 border border-gray-100 h-full flex flex-col">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
-                  Enhanced Engagement
-                </h3>
-                <p className="text-gray-600 leading-relaxed flex-1">
-                  With AI's ability to understand and process customer behavior, agents can deliver personalized customer interactions. Whether through chatbots or email, AI agents ensure that customers receive relevant information at the right time.
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="group h-full"
-            >
-              <div className="bg-white rounded-3xl p-8 shadow-xl transition-all duration-300 group-hover:shadow-2xl group-hover:scale-105 border border-gray-100 h-full flex flex-col">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <BarChart3 className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
-                  Data-Driven Insights
-                </h3>
-                <p className="text-gray-600 leading-relaxed flex-1">
-                  AI agents provide valuable analytics that offer insights into customer preferences, behaviors, and trends. This data-driven approach helps teams refine their strategies and make informed decisions.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="inline-block text-green-600 font-semibold text-sm uppercase tracking-wide mb-4"
-            >
-              How It Works
-            </motion.div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-8"
-            >
-              Simple 4-Step Integration Process
-            </motion.h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                number: '1',
-                title: 'Access Your Workflow',
-                description: 'Identify tasks that could benefit from AI assistance'
-              },
-              {
-                number: '2',
-                title: 'Choose Your Agent',
-                description: 'Select an AI solution that aligns with your goals'
-              },
-              {
-                number: '3',
-                title: 'Integrate Seamlessly',
-                description: 'Connect with your existing CRM and sales tools'
-              },
-              {
-                number: '4',
-                title: 'Monitor & Optimize',
-                description: 'Track performance and adjust for maximum impact'
-              }
-            ].map((step, index) => (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            
+            {/* Left side text */}
+            <div className="lg:col-span-7 text-center lg:text-left space-y-6">
               <motion.div
-                key={step.number}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="relative group"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-150 px-4 py-1.5 rounded-full text-indigo-650 font-mono text-xs uppercase tracking-wider"
               >
-                <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-3xl p-8 transition-all duration-300 group-hover:shadow-xl group-hover:scale-105 border border-green-200">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-white font-bold text-2xl">{step.number}</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-                
-                {/* Connection Line */}
-                {index < 3 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-1 bg-gradient-to-r from-green-500 to-blue-600 transform -translate-y-1/2"></div>
-                )}
+                <Activity className="w-4 h-4 animate-pulse" />
+                <span>Enterprise Protocol Redefined</span>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-        {/* Applications Section with Full-Size Image */}
-        <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
-              <motion.div
+              <motion.h1
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-50 to-blue-50 px-6 py-3 rounded-full border border-green-100 mb-8"
-              >
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-700 font-semibold text-sm uppercase tracking-wide">
-                  Applications
-                </span>
-              </motion.div>
-              
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                viewport={{ once: true }}
-                className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight"
+                className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight font-sans"
               >
-                Versatile AI Solutions for Every Industry
-              </motion.h2>
-              
+                Agentfloww <span className="text-indigo-655">vs</span> Traditional ERP Automation
+              </motion.h1>
+
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
+                className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
               >
-                AI sales agents are not limited to a single industry or type of business. Their adaptability makes them suitable for various applications across different sectors.
+                Purpose-built AI agents outperform manual processes, screen scraping, and traditional RPA. Compare how native API writebacks and cognitive intelligence resolve enterprise busywork.
               </motion.p>
-              
-              {/* Decorative Elements */}
+
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="flex justify-center space-x-4 mt-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
               >
-                <div className="w-3 h-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full animate-pulse"></div>
-                <div className="w-3 h-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                <div className="w-3 h-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                <div className="w-3 h-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }}></div>
+                <a
+                  href="#comparison"
+                  className="btn-primary text-lg px-8 py-3.5 flex items-center space-x-2 group shadow-lg cursor-pointer"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </a>
               </motion.div>
             </div>
 
-            <div className="grid grid-cols-1 gap-16">
-              {/* Full Size Image */}
+            {/* Right side split visualization */}
+            <div className="lg:col-span-5 relative">
               <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                viewport={{ once: true }}
-                className="relative group"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="bg-white/90 backdrop-blur-md rounded-3xl p-6 border border-slate-200/80 shadow-2xl relative overflow-hidden"
               >
-                <div className="relative">
-                  {/* Background Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-blue-400/20 to-purple-400/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                {/* Background grid */}
+                <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+
+                <div className="grid grid-cols-2 gap-4 relative z-10">
                   
-                  <div className="relative bg-gradient-to-br from-white via-green-50 to-blue-50 rounded-3xl p-8 shadow-2xl border border-gray-200 overflow-hidden group-hover:shadow-3xl transition-all duration-500">
-                    {/* Animated Background Pattern */}
-                    <div className="absolute inset-0 opacity-5">
-                      <div className="absolute top-4 left-4 w-20 h-20 bg-gradient-to-br from-green-400 to-blue-500 rounded-full animate-pulse"></div>
-                      <div className="absolute bottom-4 right-4 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full animate-bounce"></div>
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-pulse"></div>
-                    </div>
-                    
-                    <div className="flex justify-center items-center">
-                      <img 
-                        src="/images/Pictures/Ai sales 2.png" 
-                        alt="AI Sales Applications" 
-                        className="rounded-2xl shadow-lg object-cover group-hover:scale-105 transition-transform duration-500 relative z-10"
-                        style={{ 
-                          width: 'calc(100% - 120px)', 
-                          height: 'calc(100% - 120px)',
-                          maxWidth: 'calc(100% - 120px)',
-                          maxHeight: 'calc(100% - 120px)'
-                        }}
-                      />
-                    </div>
+                  {/* Glowing split divider */}
+                  <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-transparent via-indigo-500 to-transparent flex items-center justify-center">
+                    <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping filter drop-shadow(0 0 8px #6366f1)"></div>
                   </div>
 
-                  {/* Additional Floating Elements */}
-                  <div className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce hover:scale-110 transition-transform duration-300">
-                    <Zap className="w-8 h-8 text-white" />
+                  {/* LEFT: Manual processes */}
+                  <div className="pr-4 space-y-4 text-left">
+                    <div className="flex items-center space-x-2 border-b border-red-100/60 pb-2 mb-2">
+                      <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                      <span className="text-xs font-mono font-bold text-red-650 uppercase tracking-wide">Manual Process</span>
+                    </div>
+                    {[
+                      { title: "Excel Matching", desc: "Manual comparison of sheet rows." },
+                      { title: "Email Pipeline", desc: "PDFs stuck in attachments." },
+                      { title: "Approval Lag", desc: "PO pending manager reviews." },
+                      { title: "Errors & Typos", desc: "Data entered incorrectly." }
+                    ].map((item, i) => (
+                      <div key={i} className="bg-red-50 border border-red-200 rounded-xl p-3 space-y-1 relative hover:bg-red-100/50 transition-colors">
+                        <span className="text-xs font-bold text-red-800 font-sans block">{item.title}</span>
+                        <span className="text-[10px] text-slate-500 leading-tight block">{item.desc}</span>
+                        <X className="absolute top-3 right-3 text-red-500 w-3.5 h-3.5" />
+                      </div>
+                    ))}
                   </div>
-                  
-                  <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg animate-pulse hover:scale-110 transition-transform duration-300">
-                    <Star className="w-6 h-6 text-white" />
+
+                  {/* RIGHT: Agentfloww AI */}
+                  <div className="pl-4 space-y-4 text-left">
+                    <div className="flex items-center space-x-2 border-b border-green-100/60 pb-2 mb-2">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                      <span className="text-xs font-mono font-bold text-green-650 uppercase tracking-wide">Agentfloww AI</span>
+                    </div>
+                    {[
+                      { title: "Connected ERP", desc: "Service Layer transactional sync." },
+                      { title: "AI Automation", desc: "Autonomous matching workflows." },
+                      { title: "Live Dashboards", desc: "Telemetry monitoring active data." },
+                      { title: "AI Agents", desc: "Cognitive parsing & routing." }
+                    ].map((item, i) => (
+                      <div key={i} className="bg-green-50 border border-green-200 rounded-xl p-3 space-y-1 relative hover:bg-green-100/50 transition-colors">
+                        <span className="text-xs font-bold text-green-800 font-sans block">{item.title}</span>
+                        <span className="text-[10px] text-slate-655 leading-tight block">{item.desc}</span>
+                        <CheckCircle className="absolute top-3 right-3 text-green-500 w-3.5 h-3.5" />
+                      </div>
+                    ))}
                   </div>
+
                 </div>
-              </motion.div>
-
-              {/* Horizontal Applications Cards */}
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  viewport={{ once: true }}
-                  className="group"
-                >
-                  <div className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:scale-105 border border-gray-100 overflow-hidden relative h-full">
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative z-10 h-full flex flex-col">
-                      <div className="flex items-start space-x-6">
-                        <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                          <Target className="w-8 h-8 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors leading-tight">
-                            Customer Support
-                          </h3>
-                          <p className="text-gray-600 leading-relaxed text-lg">
-                            Automate the process of handling customer inquiries and providing instant responses with intelligent routing and prioritization.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  viewport={{ once: true }}
-                  className="group"
-                >
-                  <div className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:scale-105 border border-gray-100 overflow-hidden relative h-full">
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative z-10 h-full flex flex-col">
-                      <div className="flex items-start space-x-6">
-                        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                          <MessageCircle className="w-8 h-8 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors leading-tight">
-                            Order Processing
-                          </h3>
-                          <p className="text-gray-600 leading-relaxed text-lg">
-                            Handle order processing and tracking without human intervention, providing instant updates and solutions.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  viewport={{ once: true }}
-                  className="group"
-                >
-                  <div className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:scale-105 border border-gray-100 overflow-hidden relative h-full">
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative z-10 h-full flex flex-col">
-                      <div className="flex items-start space-x-6">
-                        <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                          <TrendingUp className="w-8 h-8 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-orange-600 transition-colors leading-tight">
-                            Data Processing
-                          </h3>
-                          <p className="text-gray-600 leading-relaxed text-lg">
-                            Process and analyze data efficiently using advanced AI algorithms and machine learning insights.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
               </motion.div>
             </div>
-          </div>
-        </section>
 
-      {/* Success Stories Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="inline-block text-green-600 font-semibold text-sm uppercase tracking-wide mb-4"
-            >
-              Success Stories
-            </motion.div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-5xl font-bold text-gray-900 mb-8"
-            >
-              Companies Thriving with AI Agents
-            </motion.h2>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="group h-full"
-            >
-              <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-3xl p-10 border border-green-200 transition-all duration-300 group-hover:shadow-2xl group-hover:scale-105 h-full flex flex-col">
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-3xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">
-                    Increased Sales by 30%
-                  </h3>
-                  <div className="text-right">
-                    <div className="text-4xl font-bold text-green-600">30%</div>
-                    <div className="text-sm text-gray-600">Efficiency Increase</div>
-                  </div>
-                </div>
-                <p className="text-gray-600 leading-relaxed text-lg flex-1">
-                  One of our clients saw a 30% increase in efficiency after implementing our AI agent. By automating customer support and data processing, their team was able to focus on high-value tasks, leading to improved productivity.
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="group h-full"
-            >
-              <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-3xl p-10 border border-green-200 transition-all duration-300 group-hover:shadow-2xl group-hover:scale-105 h-full flex flex-col">
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-3xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">
-                    Improved Customer Retention
-                  </h3>
-                  <div className="text-right">
-                    <div className="text-4xl font-bold text-green-600">85%</div>
-                    <div className="text-sm text-gray-600">Retention Rate</div>
-                  </div>
-                </div>
-                <p className="text-gray-600 leading-relaxed text-lg flex-1">
-                  Another client used our AI agent to improve customer support, leading to a significant boost in customer retention rates. The AI's ability to provide personalized support and solve common issues quickly resulted in happier customers.
-                </p>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section - Modern Accordion Design */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-2 rounded-full border border-purple-100 text-purple-700 text-sm font-medium mb-6">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              FAQ
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Everything you need to know about AI Sales Agents
-            </p>
-          </motion.div>
+      {/* ================= COMPARISON SECTION ================= */}
+      <section id="comparison" className="py-24 relative overflow-hidden bg-slate-50 border-b border-slate-200/60">
+        <div className="absolute inset-0 bg-dot-pattern opacity-25 pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-6"
-          >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+          
+          <div className="text-center mb-16 space-y-4">
+            <span className="text-indigo-650 font-mono text-xs uppercase tracking-wider font-semibold">Side-by-Side Analysis</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">Compare Architecture Models</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto text-base font-normal">
+              A breakdown of integration capabilities, failure recovery systems, and operational parameters. Click on any row to expand developer-level details.
+            </p>
+          </div>
+
+          {/* Sticky header container */}
+          <div className="bg-white border border-slate-200/80 shadow-xl rounded-3xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+
+            {/* Grid Header - Hidden on Mobile */}
+            <div className="hidden md:grid grid-cols-12 border-b border-slate-200 text-xs font-mono uppercase tracking-wider font-bold text-slate-700 py-0 px-0">
+              <div className="col-span-4 bg-emerald-50/20 px-6 py-5 border-r border-slate-200/80 text-left font-sans text-sm font-bold text-slate-800 flex items-center">
+                Enterprise Features
+              </div>
+              <div className="col-span-3 bg-emerald-50/30 px-6 py-4 border-r border-slate-200/80 text-center flex flex-col justify-center items-center">
+                <span className="text-sm font-extrabold text-green-650 tracking-tight block">Agentfloww AI</span>
+                <span className="text-[9px] text-slate-400 font-mono tracking-wide mt-0.5 font-bold uppercase">Recommended</span>
+              </div>
+              <div className="col-span-3 bg-blue-50/15 px-6 py-4 border-r border-slate-200/80 text-center flex flex-col justify-center items-center">
+                <span className="text-sm font-bold text-slate-700 tracking-tight block">Traditional RPA</span>
+                <span className="text-[9px] text-slate-400 font-mono tracking-wide mt-0.5 uppercase">Basic</span>
+              </div>
+              <div className="col-span-2 bg-blue-50/25 px-6 py-4 text-center flex flex-col justify-center items-center">
+                <span className="text-sm font-bold text-slate-750 tracking-tight block">Manual Process</span>
+                <span className="text-[9px] text-slate-400 font-mono tracking-wide mt-0.5 uppercase">Legacy</span>
+              </div>
+            </div>
+
+            {/* Expandable Rows */}
+            <div className="divide-y divide-slate-150">
+              {comparisonFeatures.map((row) => {
+                const Icon = row.icon
+                const isExpanded = expandedRow === row.id
+                return (
+                  <div key={row.id} className="relative transition-all duration-300">
+                    
+                    {/* Main row grid layout */}
+                    <div 
+                      onClick={() => setExpandedRow(isExpanded ? null : row.id)}
+                      className={`grid grid-cols-1 md:grid-cols-12 items-stretch cursor-pointer transition-all duration-300 py-0 px-0 gap-0 border-b border-slate-150 ${isExpanded ? 'bg-indigo-50/10' : ''}`}
+                    >
+                      {/* Column 1: Feature details */}
+                      <div className="col-span-1 md:col-span-4 bg-emerald-50/20 py-5 px-6 border-r border-slate-200/80 flex items-center space-x-3 text-left">
+                        <div className={`p-2.5 rounded-lg border transition-all ${isExpanded ? 'bg-indigo-50 border-indigo-200 text-indigo-650' : 'bg-white border-slate-200 text-slate-400'}`}>
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <span className="text-sm font-extrabold text-slate-800 block">{row.title}</span>
+                          <span className="text-[11px] text-slate-500 leading-normal block max-w-xs mt-0.5">{row.desc}</span>
+                        </div>
+                      </div>
+
+                      {/* Column 2: Agentfloww */}
+                      <div className="col-span-1 md:col-span-3 bg-emerald-50/30 py-5 px-6 border-r border-slate-200/80 flex items-center space-x-2.5 text-left md:justify-center">
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                          <span className="text-xs font-extrabold text-slate-800">{row.agentfloww.text}</span>
+                        </div>
+                      </div>
+
+                      {/* Column 3: Traditional RPA */}
+                      <div className="col-span-1 md:col-span-3 bg-blue-50/15 py-5 px-6 border-r border-slate-200/80 flex items-center space-x-2.5 text-left md:justify-center">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-5 h-5 rounded-full border-2 border-slate-300 flex-shrink-0"></div>
+                          <span className="text-xs font-semibold text-slate-500">{row.rpa.text}</span>
+                        </div>
+                      </div>
+
+                      {/* Column 4: Manual */}
+                      <div className="col-span-1 md:col-span-2 bg-blue-50/25 py-5 px-6 flex items-center space-x-2.5 text-left md:justify-center relative">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-5 h-5 rounded-full border-2 border-slate-300 flex-shrink-0"></div>
+                          <span className="text-xs font-semibold text-slate-500">{row.manual.text}</span>
+                        </div>
+
+                        {/* Expand Chevron */}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:block">
+                          {isExpanded ? (
+                            <CaretDown className="w-4 h-4 text-slate-400" />
+                          ) : (
+                            <CaretRight className="w-4 h-4 text-slate-400" />
+                          )}
+                        </div>
+                      </div>
+
+                    </div>
+
+                    {/* Detailed Expansion Content */}
+                    <AnimatePresence initial={false}>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden border-t border-slate-150 bg-slate-50/40"
+                        >
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 font-sans text-xs leading-relaxed">
+                            {/* Agentfloww card */}
+                            <div className="bg-indigo-50 border border-indigo-150 p-4 rounded-xl space-y-2 text-left">
+                              <span className="font-mono text-indigo-800 font-bold uppercase tracking-wide block">Agentfloww Advantage:</span>
+                              <p className="text-slate-700 font-normal">{row.agentfloww.detail}</p>
+                            </div>
+                            {/* RPA card */}
+                            <div className="bg-amber-50 border border-amber-150 p-4 rounded-xl space-y-2 text-left">
+                              <span className="font-mono text-amber-800 font-bold uppercase tracking-wide block">RPA Limitations:</span>
+                              <p className="text-slate-655 font-normal">{row.rpa.detail}</p>
+                            </div>
+                            {/* Manual card */}
+                            <div className="bg-red-50 border border-red-150 p-4 rounded-xl space-y-2 text-left">
+                              <span className="font-mono text-red-800 font-bold uppercase tracking-wide block">Manual Drawbacks:</span>
+                              <p className="text-slate-655 font-normal">{row.manual.detail}</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                  </div>
+                )
+              })}
+
+              {/* Verdict Row */}
+              <div className="grid grid-cols-1 md:grid-cols-12 items-stretch py-0 px-0 gap-0 border-t border-slate-150">
+                <div className="col-span-4 bg-emerald-50/20 py-6 px-6 border-r border-slate-200/80 text-left flex items-center justify-between">
+                  <span className="text-sm font-extrabold text-slate-800">Verdict</span>
+                </div>
+                <div className="col-span-3 bg-emerald-50/30 py-6 px-6 border-r border-slate-200/80 flex items-center justify-start md:justify-center">
+                  <span className="px-4 py-1.5 bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-full text-xs font-bold font-sans flex items-center space-x-1.5 shadow-sm">
+                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                    <span>Winner</span>
+                  </span>
+                </div>
+                <div className="col-span-3 bg-blue-50/15 py-6 px-6 border-r border-slate-200/80 flex items-center justify-start md:justify-center">
+                  <span className="px-4 py-1.5 bg-slate-105 border border-slate-200 text-slate-600 rounded-full text-xs font-semibold font-sans">
+                    Basic RPA
+                  </span>
+                </div>
+                <div className="col-span-2 bg-blue-50/25 py-6 px-6 flex items-center justify-start md:justify-center">
+                  <span className="px-4 py-1.5 bg-slate-105 border border-slate-200 text-slate-500 rounded-full text-xs font-semibold font-sans">
+                    Legacy Manual
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Swipe stack indicator for mobile responsiveness */}
+          <div className="md:hidden mt-6 text-center text-xs text-slate-500 font-mono">
+            <span>💡 Select any feature row to view technical differences.</span>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ================= ONE INTELLIGENCE LAYER STACK ================= */}
+      <section className="py-24 relative bg-white border-b border-slate-150">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+          
+          <div className="text-center mb-16 space-y-4">
+            <span className="text-green-650 font-mono text-xs uppercase tracking-wider font-semibold">AI Orchestration Layer</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-tight font-sans">
+              One Intelligence Layer. <span className="text-green-600">Every Enterprise System.</span>
+            </h2>
+            <p className="text-slate-600 max-w-2xl mx-auto text-base font-normal leading-relaxed">
+              How Agentfloww operates inside your technical stack, moving transactions from edge capture layers directly into audited ERP records.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left side: Interactive 3D Isometric Stack */}
+            <div className="lg:col-span-6 flex items-center justify-center relative min-h-[500px]">
+              
+              {/* Glowing aura behind stack */}
+              <div className="absolute w-[80%] h-[80%] bg-gradient-to-tr from-indigo-50/10 via-cyan-50/10 to-green-50/10 rounded-full blur-3xl -z-10 animate-pulse-slow"></div>
+
+              {/* Stack container */}
+              <div 
+                className="relative flex flex-col justify-center items-center w-full max-w-[400px] h-[480px] z-20"
+                style={{ 
+                  perspective: isMobile ? 'none' : '1000px',
+                  transformStyle: 'preserve-3d'
+                }}
+              >
+                {/* Vertical SVG connection line inside stack container (pixel-perfect alignment) */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible" viewBox="0 0 400 480">
+                  <defs>
+                    <linearGradient id="beam-grad" x1="0" y1="0" x2="0" y2="100%">
+                      <stop offset="0%" stopColor="#22c55e" />
+                      <stop offset="50%" stopColor="#6366f1" />
+                      <stop offset="100%" stopColor="#06b6d4" />
+                    </linearGradient>
+                  </defs>
+                  
+                  {/* Glowing vertical laser beam */}
+                  <line 
+                    x1="200" 
+                    y1="80" 
+                    x2="200" 
+                    y2="400" 
+                    stroke="url(#beam-grad)" 
+                    strokeWidth="3" 
+                    strokeLinecap="round"
+                    strokeOpacity="0.8"
+                  />
+                  <line 
+                    x1="200" 
+                    y1="80" 
+                    x2="200" 
+                    y2="400" 
+                    stroke="url(#beam-grad)" 
+                    strokeWidth="8" 
+                    strokeLinecap="round"
+                    strokeOpacity="0.2"
+                    className="blur-[2px]"
+                  />
+                  
+                  {/* Flowing animated light particles moving UP */}
+                  <circle r="4.5" fill="#22c55e" filter="drop-shadow(0 0 6px #22c55e)">
+                    <animate 
+                      attributeName="cy" 
+                      from="400" 
+                      to="80" 
+                      dur="2.5s" 
+                      repeatCount="indefinite" 
+                    />
+                  </circle>
+                  <circle r="4.5" fill="#6366f1" filter="drop-shadow(0 0 6px #6366f1)">
+                    <animate 
+                      attributeName="cy" 
+                      from="400" 
+                      to="80" 
+                      dur="2.5s" 
+                      begin="1.25s"
+                      repeatCount="indefinite" 
+                    />
+                  </circle>
+                </svg>
+
+                {stackLayers.map((layer) => {
+                  const isHovered = hoveredLayer === layer.id
+                  return (
+                    <motion.div
+                      key={layer.id}
+                      onMouseEnter={() => setHoveredLayer(layer.id)}
+                      onClick={() => setHoveredLayer(layer.id)}
+                      className="absolute cursor-pointer transition-all duration-300 w-[260px] h-[100px] md:w-[300px] md:h-[110px]"
+                      style={{
+                        top: `calc(50% + ${layer.cardOffset}px)`,
+                        left: '50%',
+                        transformStyle: 'preserve-3d',
+                      }}
+                      animate={{
+                        x: '-50%',
+                        y: isHovered ? '-60%' : '-50%',
+                        z: isHovered ? 40 : 0,
+                        rotateX: isMobile ? 0 : 60,
+                        rotateZ: isMobile ? 0 : -45,
+                      }}
+                      transition={{ 
+                        type: "spring", 
+                        stiffness: 180, 
+                        damping: 20 
+                      }}
+                    >
+                      {/* Tilted Glassmorphism Layer Card */}
+                      <div 
+                        className={`w-full h-full rounded-2xl p-4 flex flex-col justify-between backdrop-blur-md border transition-all duration-300 ${isHovered ? "bg-white/95 shadow-2xl text-slate-800" : "bg-white/70 shadow-lg border-slate-200/80"}`}
+                        style={{
+                          borderColor: isHovered ? layer.color : '',
+                          boxShadow: isHovered ? `0 20px 40px -10px ${layer.glowColor}` : ''
+                        }}
+                      >
+                        {/* Layer Title & Dot status */}
+                        <div className="flex justify-between items-start">
+                          <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-slate-500">
+                            Layer 0{layer.id}
+                          </span>
+                          <div className="flex items-center space-x-1">
+                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: layer.color }}></span>
+                            <span className="text-[8px] font-mono text-slate-450 uppercase">{layer.status}</span>
+                          </div>
+                        </div>
+
+                        {/* Layer details */}
+                        <div className="text-left space-y-1">
+                          <h4 className="text-xs md:text-sm font-extrabold text-slate-800 leading-tight">
+                            {layer.title}
+                          </h4>
+                          <span className="text-[9px] text-slate-450 block truncate font-medium uppercase tracking-wide">
+                            {layer.role}
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )
+                })}
+              </div>
+
+            </div>
+
+            {/* Right side: Detailed Description Board */}
+            <div className="lg:col-span-6 flex relative">
+              
+              {/* Glowing aura behind details card */}
+              <div className="absolute w-[95%] h-[95%] bg-gradient-to-tr from-purple-500/10 via-indigo-500/10 to-blue-500/10 rounded-[2.5rem] blur-3xl -z-10 animate-pulse-slow"></div>
+
+              {stackLayers.map((layer) => {
+                if (layer.id !== hoveredLayer) return null
+                return (
+                  <motion.div
+                    key={layer.id}
+                    initial={{ opacity: 0, x: 15 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-white border border-slate-200/80 shadow-2xl rounded-3xl p-6 md:p-8 flex flex-col justify-between w-full text-left min-h-[380px] relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+
+                    <div className="space-y-6 relative z-10">
+                      
+                      {/* Header Badge */}
+                      <div className="flex items-center space-x-3">
+                        <span className="w-2.5 h-2.5 rounded-full animate-ping" style={{ backgroundColor: layer.color }}></span>
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider" style={{ color: layer.color }}>
+                          {layer.title} Architecture
+                        </span>
+                      </div>
+
+                      {/* Role & Description */}
+                      <div className="space-y-2">
+                        <h3 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">
+                          {layer.role}
+                        </h3>
+                        <p className="text-slate-600 text-sm leading-relaxed font-normal">
+                          {layer.desc}
+                        </p>
+                      </div>
+
+                      {/* Status Metric tag */}
+                      <div className="inline-flex items-center bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl font-mono text-[10px] text-slate-655 font-bold uppercase">
+                        <Activity className="w-3.5 h-3.5 mr-1.5 animate-pulse text-indigo-600" />
+                        <span>Active Telemetry: {layer.metric}</span>
+                      </div>
+
+                      {/* Connected systems tag list */}
+                      <div className="space-y-2 pt-2">
+                        <span className="text-[10px] font-mono font-bold text-slate-450 uppercase tracking-widest block">Supported Connectors:</span>
+                        <div className="flex flex-wrap gap-2">
+                          {layer.connected.map((sys, sIdx) => (
+                            <span 
+                              key={sIdx} 
+                              className="px-2.5 py-1 bg-slate-50/80 border border-slate-150 rounded-lg text-[10px] text-slate-600 font-semibold"
+                            >
+                              {sys}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <div className="border-t border-slate-100 pt-4 mt-6 text-[10px] text-slate-400 font-mono flex justify-between items-center relative z-10">
+                      <span>SECURE TRANSACTION TUNNEL</span>
+                      <span>SYSTEM LOG ENCRYPTION: TLS 1.3</span>
+                    </div>
+
+                  </motion.div>
+                )
+              })}
+
+            </div>
+
+          </div>
+
+          {/* Bottom glass metrics panel */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mt-12 w-full max-w-7xl mx-auto z-20">
+            {[
+              { label: "Connected Systems", target: "12", suffix: "+" },
+              { label: "Active AI Agents", target: "8", suffix: "" },
+              { label: "Docs Processed Today", target: "14240", suffix: "" },
+              { label: "Automations Running", target: "99.8", suffix: "%" },
+              { label: "Avg Response Time", target: "1.2", suffix: "s" },
+              { label: "Success Rate", target: "94.2", suffix: "%" }
+            ].map((m, idx) => (
+              <div 
+                key={idx} 
+                className="text-center space-y-2 p-4 bg-white/90 border border-slate-200 shadow-lg rounded-2xl relative z-10 transition-all hover:shadow-xl hover:border-slate-300"
+              >
+                <div className="text-2xl md:text-3xl font-extrabold text-slate-800 font-sans tracking-tight leading-none">
+                  <AnimatedCounter target={m.target} suffix={m.suffix} />
+                </div>
+                <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wider font-semibold leading-tight">
+                  {m.label}
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ================= HOW AGENTFLOWW BENEFITS MANUFACTURERS ================= */}
+      <section className="py-24 relative overflow-hidden bg-slate-50 border-b border-slate-200/60">
+        <div className="absolute inset-0 bg-dot-pattern opacity-25 pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+          
+          <div className="text-center mb-16 space-y-4">
+            <span className="text-indigo-650 font-mono text-xs uppercase tracking-wider font-semibold font-bold">Business Outcomes</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-tight font-sans">
+              How Agentfloww Benefits Manufacturers
+            </h2>
+            <p className="text-slate-600 max-w-2xl mx-auto text-base font-normal leading-relaxed">
+              Three primary ways Agentfloww drives autonomous efficiency and transactional compliance on the factory floor.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
             {[
               {
-                question: 'How long does it take to set up?',
-                answer: 'Get up and running in no time! Most businesses are set up in just a few days, with full deployment wrapped up in a week. Fast, efficient, and hassle-free!'
+                title: "ERP-Native Expertise",
+                body: "Deep integration with SAP S/4HANA, SAP Build, and ERP/CRM — not bolt-on middleware.",
+                badge: "Native Integration",
+                icon: Database,
+                color: "from-blue-500 to-indigo-650",
+                glow: "rgba(99, 102, 241, 0.15)"
               },
               {
-                question: 'Is 80% automation realistic?',
-                answer: 'Most brands see 80% of their customer queries automated within the first month with Agentflow. Our top brands even hit over 90% automation!'
+                title: "60+ Projects Delivered",
+                body: "A proven track record across manufacturing, automotive, logistics, and government.",
+                badge: "Enterprise Scale",
+                icon: CheckCircle,
+                color: "from-purple-500 to-pink-600",
+                glow: "rgba(236, 72, 153, 0.15)"
               },
               {
-                question: 'Worried an AI agent will ruin your customer experience?',
-                answer: 'Agentflow\'s AI agents are called human-level for a reason. They often provide better experiences than human agents. The proof? Our AI agents\' average CSAT is 10% higher than that of our human team.'
-              },
-              {
-                question: 'What\'s Agentflow\'s USP?',
-                answer: 'Agentflow\'s secret sauce? It\'s the perfect blend of human-level AI and skilled agents to respond faster, manage all channels, and scale your customer service – at a reasonable pricing.'
-              },
-              {
-                question: 'How does Agentflow enhance customer experience?',
-                answer: 'Agentflow up customer experience with smart AI for fun, personalized interactions. It\'s like having a chatty friend who solves problems fast and makes customers feel special, boosting satisfaction and loyalty.'
+                title: "AI + IoT + ERP Together",
+                body: "AI agents, IoT sensors, and enterprise systems combined for end-to-end automation.",
+                badge: "Cognitive Mesh",
+                icon: PlugsConnected,
+                color: "from-green-500 to-cyan-600",
+                glow: "rgba(34, 197, 94, 0.15)"
               }
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="group bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300"
-              >
-                <button
-                  onClick={() => toggleFAQ(index)}
-                  className="w-full px-8 py-8 text-left flex items-center justify-between hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50 transition-all duration-300 group"
-                >
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300 leading-relaxed">
-                      {item.question}
-                    </h3>
-                  </div>
-                  <div className="ml-6 flex items-center justify-center">
-                    <div className="w-8 h-8 bg-gradient-to-br from-green-100 to-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      {openFAQ === index ? (
-                        <span className="text-green-600 text-lg font-bold">−</span>
-                      ) : (
-                        <span className="text-green-600 text-lg font-bold">+</span>
-                      )}
-                    </div>
-                  </div>
-                </button>
-                <motion.div
-                  initial={false}
-                  animate={{
-                    height: openFAQ === index ? 'auto' : 0,
-                    opacity: openFAQ === index ? 1 : 0
+            ].map((card, idx) => {
+              const CardIcon = card.icon
+              return (
+                <div 
+                  key={idx}
+                  className="bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-3xl p-8 md:p-10 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl flex flex-col justify-between items-start text-left min-h-[320px] relative overflow-hidden group"
+                  style={{
+                    boxShadow: `hover: 0 20px 40px -10px ${card.glow}`
                   }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="overflow-hidden"
                 >
-                  <div className="px-8 pb-8 border-t border-gray-100 pt-6">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-blue-400 rounded-full mt-3 flex-shrink-0"></div>
-                      <p className="text-gray-600 leading-relaxed text-lg">
-                        {item.answer}
+                  {/* Grid pattern background inside card */}
+                  <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+
+                  <div className="space-y-6 relative z-10 w-full">
+                    {/* Floating Glowing Badge & Icon Header */}
+                    <div className="flex justify-between items-center w-full">
+                      <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-slate-450 bg-slate-100 border border-slate-200/60 px-3 py-1 rounded-full">
+                        {card.badge}
+                      </span>
+                      
+                      {/* Floating glowing circle icon container */}
+                      <div className="relative flex items-center justify-center">
+                        <div className={`absolute inset-0 rounded-full blur-md opacity-45 bg-gradient-to-tr ${card.color} group-hover:scale-125 transition-transform duration-300`}></div>
+                        <div className={`w-12 h-12 rounded-full p-[1.5px] bg-gradient-to-tr ${card.color} relative z-10 shadow-lg`}>
+                          <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-slate-800 group-hover:bg-slate-50 transition-colors">
+                            <CardIcon size={20} className="group-hover:scale-110 transition-transform duration-300" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Title & Body */}
+                    <div className="space-y-3 pt-4">
+                      <h3 className="text-xl md:text-2xl font-extrabold text-slate-800 tracking-tight leading-tight group-hover:text-indigo-600 transition-colors font-sans">
+                        {card.title}
+                      </h3>
+                      <p className="text-slate-600 text-sm leading-relaxed font-normal">
+                        {card.body}
                       </p>
                     </div>
                   </div>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
+
+                  {/* Visual bottom indicator bar */}
+                  <div className={`w-full h-1 mt-8 rounded-full bg-gradient-to-r ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                </div>
+              )
+            })}
+          </div>
+
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-green-500 via-blue-500 to-purple-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 via-blue-500/20 to-purple-600/20"></div>
-        
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+      {/* ================= PROOF, NOT PROMISES SECTION ================= */}
+      <section className="py-24 relative overflow-hidden bg-white border-b border-slate-150">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+          
+          <div className="text-center mb-16 space-y-4">
+            <span className="text-indigo-650 font-mono text-xs uppercase tracking-wider font-semibold">Live Operational Proof</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">Proof, Not Promises</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto text-base font-normal">
+              Explore live metrics and simulate calculated savings based on your company's actual transaction volume.
+            </p>
+          </div>
+
+          {/* Interactive slider & live odometer dashboard */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-16">
+            
+            {/* Left Col: Interactive calculator controller */}
+            <div className="lg:col-span-5 flex">
+              <div className="bg-slate-50 border border-slate-200 shadow-2xl rounded-3xl p-6 md:p-8 flex flex-col justify-between w-full text-left">
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-2 border-b border-slate-200 pb-4">
+                    <Calculator className="w-5 h-5 text-indigo-500" />
+                    <span className="text-sm font-mono font-bold text-slate-800 uppercase tracking-wider">Savings Calculator</span>
+                  </div>
+
+                  <p className="text-slate-500 text-xs leading-relaxed">
+                    Adjust the slider to match your estimated monthly Purchase Order (PO) or invoice transaction volume. Watch calculated savings update in real time.
+                  </p>
+
+                  <div className="space-y-3 pt-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-slate-655 font-medium">Monthly Transactions:</span>
+                      <span className="font-mono font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded">{poVolume} POs</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="100" 
+                      max="10000" 
+                      step="100"
+                      value={poVolume} 
+                      onChange={(e) => setPoVolume(parseInt(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    />
+                    <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                      <span>100</span>
+                      <span>5,000</span>
+                      <span>10,000</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-200 pt-6 mt-8 space-y-3 text-xs leading-normal">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Average Manual Cycle:</span>
+                    <span className="text-red-500 font-bold">45 min / PO</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Agentfloww AI Cycle:</span>
+                    <span className="text-green-600 font-bold">&lt; 5 min / PO</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Col: Live dashboards */}
+            <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+              
+              {/* Card 1: Cycle Time Timeline */}
+              <div className="bg-slate-50 border border-slate-200 shadow-2xl rounded-3xl p-6 flex flex-col justify-between text-left">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+                    <span className="text-xs font-mono font-bold text-indigo-500 uppercase tracking-wide">Cycle Time Analysis</span>
+                    <Clock className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <h3 className="text-base font-bold text-slate-800">Timeline Shrinking Proof</h3>
+                  
+                  <div className="space-y-4 pt-2">
+                    {/* Before bar */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[10px] text-slate-500">
+                        <span>Manual Process Cycle:</span>
+                        <span>45 mins</span>
+                      </div>
+                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                        <div className="bg-red-400 h-full w-full rounded-full"></div>
+                      </div>
+                    </div>
+                    {/* After bar */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[10px] text-slate-500">
+                        <span>Agentfloww AI Cycle:</span>
+                        <span>&lt; 5 mins</span>
+                      </div>
+                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: "100%" }}
+                          animate={{ width: "11%" }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                          className="bg-green-500 h-full rounded-full"
+                        ></motion.div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-slate-200 mt-6 text-[10px] text-slate-400 font-mono">
+                  <span>Reduction: ~89% time savings</span>
+                </div>
+              </div>
+
+              {/* Card 2: Cost Savings counter */}
+              <div className="bg-slate-50 border border-slate-200 shadow-2xl rounded-3xl p-6 flex flex-col justify-between text-left">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+                    <span className="text-xs font-mono font-bold text-indigo-500 uppercase tracking-wide">Financial Return</span>
+                    <Coins className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <h3 className="text-base font-bold text-slate-800">Calculated Monthly Benefit</h3>
+                  
+                  <div className="py-2 space-y-1">
+                    <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600 font-sans tracking-tight">
+                      $<AnimatedCounter target={costSavingsValue} />
+                    </div>
+                    <span className="text-xs text-slate-500">Operator cost + error recovery saved</span>
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-slate-200 mt-6 text-[10px] text-slate-400 font-mono">
+                  <span>Based on {poVolume} PO volume</span>
+                </div>
+              </div>
+
+              {/* Card 3: Capacity Released */}
+              <div className="bg-slate-50 border border-slate-200 shadow-2xl rounded-3xl p-6 flex flex-col justify-between text-left">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+                    <span className="text-xs font-mono font-bold text-indigo-500 uppercase tracking-wide">Efficiency Release</span>
+                    <Activity className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <h3 className="text-base font-bold text-slate-800">Labor Hours Reallocated</h3>
+                  
+                  <div className="py-2 space-y-1">
+                    <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-650 font-sans tracking-tight">
+                      <AnimatedCounter target={hoursSavedValue} /> hrs
+                    </div>
+                    <span className="text-xs text-slate-500">Reallocated to strategic tasks</span>
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-slate-200 mt-6 text-[10px] text-slate-400 font-mono">
+                  <span>Calculated: {hoursSavedValue} hrs/month</span>
+                </div>
+              </div>
+
+              {/* Card 4: STP Meter (gauge style) */}
+              <div className="bg-slate-50 border border-slate-200 shadow-2xl rounded-3xl p-6 flex flex-col justify-between text-left">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+                    <span className="text-xs font-mono font-bold text-indigo-500 uppercase tracking-wide">Automation Meter</span>
+                    <TrendUp className="w-4 h-4 text-slate-400" />
+                  </div>
+                  <h3 className="text-base font-bold text-slate-800">Straight-Through Processing</h3>
+                  
+                  {/* Circle Progress */}
+                  <div className="flex items-center space-x-6 py-1">
+                    <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-full h-full transform -rotate-90">
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="4" />
+                        <motion.circle 
+                          cx="32" 
+                          cy="32" 
+                          r="28" 
+                          fill="none" 
+                          stroke="#6366f1" 
+                          strokeWidth="4" 
+                          strokeDasharray="176"
+                          initial={{ strokeDashoffset: 176 }}
+                          animate={{ strokeDashoffset: 176 - (176 * 94.2) / 100 }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <span className="absolute text-[10px] font-mono font-bold text-slate-800">94%</span>
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-slate-800 block">Auto-pilot Transactions</span>
+                      <span className="text-[10px] text-slate-500 leading-normal block">Transactions completed without any manual key-in intervention.</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-slate-200 mt-6 text-[10px] text-slate-400 font-mono">
+                  <span>Goal threshold: 90%+ auto-processing</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
-        
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      </section>
+
+      {/* ================= FAQ KNOWLEDGE BASE SECTION ================= */}
+      <section className="py-24 relative overflow-hidden bg-slate-50 border-b border-slate-200/60">
+        <div className="absolute inset-0 bg-dot-pattern opacity-25 pointer-events-none"></div>
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+          
+          <div className="text-center mb-16 space-y-4">
+            <span className="text-indigo-650 font-mono text-xs uppercase tracking-wider font-semibold">Enterprise Knowledge Base</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">Frequently Asked Questions</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto text-base font-normal">
+              Technical answers covering integrations, security protocols, development timeline sprint plans, and pricing logic.
+            </p>
+          </div>
+
+          {/* Search and Category Filters */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
+            
+            {/* Category tabs */}
+            <div className="flex bg-white border border-slate-200 rounded-xl p-1 overflow-x-auto space-x-1">
+              {[
+                { id: "all", label: "All Questions" },
+                { id: "general", label: "General RPA vs AI" },
+                { id: "technical", label: "Technical & DBs" },
+                { id: "performance", label: "Performance & ROI" }
+              ].map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setFaqCategory(cat.id)
+                    setActiveFaq(0)
+                  }}
+                  className={`px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all whitespace-nowrap ${faqCategory === cat.id ? "bg-indigo-600 text-white" : "text-slate-500 hover:text-slate-900"}`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Search Input */}
+            <div className="relative max-w-sm w-full">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <MagnifyingGlass className="h-5 w-5 text-slate-400" />
+              </span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setActiveFaq(0)
+                }}
+                placeholder="Search knowledge base..."
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm font-sans text-left"
+              />
+            </div>
+
+          </div>
+
+          {/* FAQ split grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start min-h-[380px]">
+            
+            {/* Left Col: list of questions */}
+            <div className="lg:col-span-5 space-y-3 max-h-[460px] overflow-y-auto pr-2">
+              {filteredFaqs.length > 0 ? (
+                filteredFaqs.map((faq, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveFaq(idx)}
+                    className={`w-full px-5 py-4 rounded-xl border text-left transition-all duration-300 font-sans ${activeFaq === idx ? "bg-indigo-50 border-indigo-200/80 text-slate-900" : "bg-white border-slate-200 text-slate-655 hover:bg-slate-50"}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold leading-normal">{faq.q}</span>
+                      <CaretRight className={`w-4 h-4 ml-3 flex-shrink-0 transition-transform ${activeFaq === idx ? "rotate-90 text-indigo-500" : "text-slate-400"}`} />
+                    </div>
+                  </button>
+                ))
+              ) : (
+                <div className="text-center py-12 text-slate-500 bg-white border border-slate-200 rounded-xl">
+                  <span>No questions matching search term.</span>
+                </div>
+              )}
+            </div>
+
+            {/* Right Col: Detailed answer card */}
+            <div className="lg:col-span-7">
+              {filteredFaqs.length > 0 && filteredFaqs[activeFaq] && (
+                <motion.div
+                  key={activeFaq}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="bg-white border border-slate-200/80 shadow-2xl rounded-3xl p-6 md:p-8 shadow-2xl relative min-h-[320px] flex flex-col justify-between text-left"
+                >
+                  <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+
+                  <div className="space-y-4 relative z-10">
+                    <div className="flex items-center space-x-2 text-indigo-650 font-mono text-xs uppercase tracking-wide">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-550"></span>
+                      <span>Verified System Answer</span>
+                    </div>
+                    
+                    <h3 className="text-xl md:text-2xl font-bold text-slate-800 font-sans leading-snug">
+                      {filteredFaqs[activeFaq].q}
+                    </h3>
+                    
+                    <p className="text-slate-600 text-base leading-relaxed pt-2 font-normal">
+                      {filteredFaqs[activeFaq].a}
+                    </p>
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-4 mt-8 flex justify-between items-center text-xs text-slate-450 font-mono relative z-10">
+                    <span className="uppercase">Category: {filteredFaqs[activeFaq].category}</span>
+                    <span>Knowledge base active</span>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ================= FINAL CTA SECTION ================= */}
+      <section className="py-24 relative overflow-hidden text-center border-t border-slate-200/60 bg-gradient-to-br from-green-500 via-blue-500 to-purple-600">
+        {/* Glow and background circles */}
+        <div className="absolute top-20 left-20 w-80 h-80 bg-white/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+        <div className="absolute bottom-20 right-20 w-80 h-80 bg-white/10 rounded-full blur-[120px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '2.5s' }}></div>
+
+        {/* SVG architecture blueprint circles in background */}
+        <svg className="absolute inset-0 w-full h-full opacity-10 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50%" cy="50%" r="300" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="5 15" />
+          <circle cx="50%" cy="50%" r="200" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+        </svg>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
+            className="space-y-6"
           >
-            {/* Badge */}
-            <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 text-white px-6 py-3 rounded-full text-sm font-medium mb-8">
-              <Zap className="w-4 h-4 mr-2 text-green-300" />
-              Ready to Choose Agentflow?
+            <div className="inline-flex items-center space-x-2 bg-white/10 border border-white/20 px-5 py-2 rounded-full text-white text-xs font-mono font-bold uppercase tracking-wider">
+              <span>Ready for Cognitive Integration?</span>
             </div>
-            
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to Get Started?
+
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight font-sans">
+              Ready to Replace Manual ERP Work?
             </h2>
-            
-            <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-              You can unlock the potential of AI and start automating your business today. We have options for everyone, even if you don't have developers on staff.
+
+            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+              Connect your SAP S/4HANA or Business One environment directly to our pre-built accelerators and launch your first AI agent workflow within weeks.
             </p>
-            
-            <p className="text-lg text-white/80 mb-8 max-w-3xl mx-auto leading-relaxed">
-              By integrating our secure LLMs, you can supercharge your customer service and see your business become more efficient. It's time to stop worrying about complex issues and start automating your workflows to accelerate time-to-value for your business.
-            </p>
-            
-            <p className="text-lg text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Explore our AI-powered agents in the marketplace and discover how to optimize your business processes and enhance productivity seamlessly.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-4">
+              <Link
+                to="/live-demo"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-white text-indigo-650 px-10 py-5 rounded-xl font-bold hover:bg-indigo-50 shadow-2xl transition-all duration-300 transform hover:scale-[1.02]"
+              >
+                <span>Schedule a Demo</span>
+              </Link>
               <Link
                 to="/contact"
-                className="group inline-flex items-center bg-gradient-to-r from-green-400 to-blue-500 text-white px-12 py-6 rounded-full font-semibold hover:from-green-500 hover:to-blue-600 transition-all duration-300 shadow-2xl hover:shadow-green-400/25 transform hover:scale-105"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-transparent hover:bg-white/10 text-white border border-white/40 px-10 py-5 rounded-xl font-bold transition-all duration-300 transform hover:scale-[1.02]"
               >
-                <MessageCircle className="w-5 h-5 mr-3" />
-                <span className="text-lg">Choose Agentflow</span>
-                <ArrowUpRight className="w-5 h-5 ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <span>Contact Sales</span>
               </Link>
             </div>
-            
-            {/* Trust Indicators */}
-            <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-white/70">
+
+            {/* Floating Trust Indicators */}
+            <div className="pt-10 flex flex-wrap justify-center items-center gap-8 md:gap-12 text-white font-mono text-xs uppercase tracking-wide">
               <div className="flex items-center space-x-2">
-                <CheckCircle className="w-5 h-5 text-green-300" />
-                <span className="text-sm font-medium">Free Consultation</span>
+                <CheckCircle className="w-5 h-5 text-white" />
+                <span className="font-semibold text-white">Free Consultation</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Shield className="w-5 h-5 text-blue-300" />
-                <span className="text-sm font-medium">Secure & Compliant</span>
+                <ShieldCheck className="w-5 h-5 text-white" />
+                <span className="font-semibold text-white">Secure & Compliant</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Clock className="w-5 h-5 text-purple-300" />
-                <span className="text-sm font-medium">Quick Setup</span>
+                <Clock className="w-5 h-5 text-white" />
+                <span className="font-semibold text-white">Quick Setup</span>
               </div>
             </div>
+
           </motion.div>
         </div>
+
       </section>
+
     </div>
   )
 }
 
-export default AISalesAgent 
+export default Compare
