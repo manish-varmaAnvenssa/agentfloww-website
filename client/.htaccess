@@ -1,42 +1,22 @@
-Options -MultiViews
+Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
 
-# ----------------------------------------------------------------------
-# Security Headers
-# ----------------------------------------------------------------------
-<IfModule mod_headers.c>
-    Header always set X-Content-Type-Options "nosniff"
-    Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set X-XSS-Protection "1; mode=block"
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
-</IfModule>
-
-# ----------------------------------------------------------------------
-# Block Direct Access to Sensitive Files & Extensions
-# ----------------------------------------------------------------------
-<FilesMatch "(^#.*#|\.(bak|conf|dist|fla|in[ci]|log|psd|sh|sql|sw[op]|env|json|lock|md|zip|tar|gz|git.*)|~)$">
-    <IfModule mod_authz_core.c>
-        Require all denied
-    </IfModule>
-    <IfModule !mod_authz_core.c>
-        Order allow,deny
-        Deny from all
-    </IfModule>
+# Force correct MIME types (overrides any PHP handler)
+<FilesMatch "\.css$">
+    ForceType text/css
+</FilesMatch>
+<FilesMatch "\.js$">
+    ForceType application/javascript
 </FilesMatch>
 
-# Forward Authorization Header to PHP in CGI/FastCGI environments (fixes Token missing errors)
-RewriteCond %{HTTP:Authorization} .
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteRule ^assets/ - [L]
+RewriteRule ^images/ - [L]
+RewriteRule ^uploads/ - [L]
+RewriteRule \.(css|js|png|jpg|jpeg|svg|webp|ico|woff|woff2|gif|mp4|pdf|txt|xml)$ - [L]
 
-# 1. If the requested file or directory exists on disk, serve it directly and stop
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
+RewriteRule ^api/(.*)$ /api.php?route=$1 [QSA,L]
 
-# 2. Route all API requests (which do not exist on disk) to api.php
-RewriteRule ^/?api/(.*)$ /api.php?route=$1 [QSA,L]
-
-# 3. Fallback all other client-side routing to index.html (SPA routing)
-RewriteRule ^(.*)$ index.html [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ /index.html [L]

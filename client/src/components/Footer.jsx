@@ -5,15 +5,13 @@ const Footer = () => {
   const currentYear = new Date().getFullYear()
 
   const solutions = [
-    { name: 'Compare AI Solutions', href: '/compare' },
-    { name: 'Measurable ROI', href: '/measurable-roi' },
+    { name: 'Products', href: '/products' },
     { name: 'AI Insights & Blogs', href: '/blogs' },
     { name: 'Live Demo', href: '/live-demo' },
   ]
 
   const company = [
     { name: 'About Us', href: '/about' },
-    { name: 'Pricing', href: '/pricing' },
     { name: 'Contact Us', href: '/contact' },
   ]
 
