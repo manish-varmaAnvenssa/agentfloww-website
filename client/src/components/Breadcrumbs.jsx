@@ -5,8 +5,8 @@ import { House, CaretRight } from './Icons'
 const Breadcrumbs = () => {
   const location = useLocation()
   
-  // Don't show breadcrumbs on homepage
-  if (location.pathname === '/') return null
+  // Don't show breadcrumbs on homepage or blog detail pages (blog detail has its own integrated breadcrumbs)
+  if (location.pathname === '/' || location.pathname.startsWith('/blogs/')) return null
 
   // Split paths and remove empty strings
   const pathnames = location.pathname.split('/').filter((x) => x)

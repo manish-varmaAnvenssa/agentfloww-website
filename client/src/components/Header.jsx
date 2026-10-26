@@ -75,14 +75,15 @@ const Header = () => {
   return (
     <header className="bg-white shadow-sm backdrop-blur-md fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Logo />
-          </Link>
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center space-x-8">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <Logo />
+            </Link>
 
-          {/* Desktop Navigation - Now on left side */}
-          <nav className="hidden md:flex items-center space-x-8 ml-10">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
               <div key={item.name} className="relative group">
                 {item.hasDropdown ? (
@@ -173,18 +174,19 @@ const Header = () => {
               </div>
             ))}
           </nav>
+        </div>
 
-          {/* Desktop Actions - Only show for authenticated users */}
-          {user && (
-            <div className="hidden md:flex items-center space-x-4">
-              <button
-                onClick={logout}
-                className="text-sm font-medium transition-colors duration-200 text-gray-600 hover:text-gray-900"
-              >
-                Logout
-              </button>
-            </div>
-          )}
+        {/* Desktop Actions - Positioned cleanly on the right */}
+        {user && (
+          <div className="hidden md:flex items-center">
+            <button
+              onClick={logout}
+              className="px-3.5 py-1.5 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition duration-150 shadow-2xs"
+            >
+              Logout
+            </button>
+          </div>
+        )}
 
           {/* Mobile menu button */}
           <button

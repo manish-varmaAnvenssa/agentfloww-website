@@ -141,6 +141,11 @@ const initDatabase = async () => {
         seo_keywords TEXT,
         canonical_url TEXT,
         og_image TEXT,
+        key_takeaways TEXT,
+        ebook_title VARCHAR(255) DEFAULT '',
+        ebook_description TEXT,
+        ebook_file VARCHAR(255) DEFAULT '',
+        ebook_cover VARCHAR(255) DEFAULT '',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
@@ -158,6 +163,42 @@ const initDatabase = async () => {
         FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+
+    // E-Book Downloads table (for lead capture)
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS ebook_downloads (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        blog_id INT NULL,
+        blog_title VARCHAR(255) DEFAULT '',
+        ebook_title VARCHAR(255) DEFAULT '',
+        name VARCHAR(100) NOT NULL,
+        email VARCHAR(100) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE SET NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // Ensure columns exist on existing blogs table if table was already created
+    const addCol = async (col, def) => {
+      try {
+        await db.exec(`ALTER TABLE blogs ADD COLUMN ${col} ${def}`);
+        console.log(`✅ Added column ${col} to blogs table`);
+      } catch (err) {
+        // Column likely already exists
+      }
+    };
+    await addCol('key_takeaways', 'TEXT');
+    await addCol('ebook_title', 'VARCHAR(255) DEFAULT ""');
+    await addCol('ebook_description', 'TEXT');
+    await addCol('ebook_file', 'VARCHAR(255) DEFAULT ""');
+    await addCol('ebook_cover', 'VARCHAR(255) DEFAULT ""');
+
+    try {
+      await db.exec('ALTER TABLE ebook_downloads ADD COLUMN phone VARCHAR(30) DEFAULT ""');
+      console.log('✅ Added column phone to ebook_downloads table');
+    } catch (e) {
+      // Column likely already exists
+    }
 
     console.log('✅ Database tables created successfully!');
 

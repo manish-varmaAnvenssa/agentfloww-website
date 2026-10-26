@@ -16,7 +16,7 @@ const slugify = (text) => {
 const seedData = async () => {
   // Ensure database setup initialized
   await initDatabase();
-  
+
   const { getDatabase, db } = require('./database');
 
   // 1. Seed Categories
@@ -30,7 +30,7 @@ const seedData = async () => {
 
   const categoryIdMap = {};
   const insertCat = db.prepare('INSERT OR IGNORE INTO categories (name, slug, description, color) VALUES (?, ?, ?, ?)');
-  
+
   for (const cat of categories) {
     const slug = slugify(cat.name);
     await insertCat.run(cat.name, slug, cat.description, cat.color);
