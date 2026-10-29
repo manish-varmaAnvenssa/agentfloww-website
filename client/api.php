@@ -1343,7 +1343,7 @@ if ($parts[0] === 'blogs') {
             $categoryId = array_key_exists('category_id', $input) ? $input['category_id'] : $existing['category_id'];
             $authorName = $input['author_name'] ?? $existing['author_name'];
             $status = $input['status'] ?? $existing['status'];
-            $publishDate = $input['publish_date'] ?? $existing['publish_date'];
+            $publishDate = !empty($input['publish_date']) ? date('Y-m-d H:i:s', strtotime($input['publish_date'])) : $existing['publish_date'];
             $readTime = isset($input['read_time']) ? (int)$input['read_time'] : calculateReadTime($content);
             $isFeatured = isset($input['is_featured']) ? ($input['is_featured'] ? 1 : 0) : $existing['is_featured'];
             $seoTitle = $input['seo_title'] ?? $existing['seo_title'];
@@ -1560,7 +1560,7 @@ if ($parts[0] === 'blogs') {
         $tags = $input['tags'] ?? [];
         $authorName = $input['author_name'] ?? 'AgentFlow AI';
         $status = $input['status'] ?? 'published';
-        $publishDate = $input['publish_date'] ?? date('Y-m-d H:i:s');
+        $publishDate = !empty($input['publish_date']) ? date('Y-m-d H:i:s', strtotime($input['publish_date'])) : date('Y-m-d H:i:s');
         $readTime = isset($input['read_time']) ? (int)$input['read_time'] : calculateReadTime($content);
         $isFeatured = isset($input['is_featured']) ? ($input['is_featured'] ? 1 : 0) : 0;
         $seoTitle = $input['seo_title'] ?? $title;

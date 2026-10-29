@@ -60,6 +60,17 @@ const calculateReadTime = (content) => {
   return Math.max(1, Math.ceil(words / wordsPerMinute));
 };
 
+const formatMySqlDate = (d) => {
+  try {
+    const dateObj = d ? new Date(d) : new Date();
+    return isNaN(dateObj.getTime())
+      ? new Date().toISOString().slice(0, 19).replace('T', ' ')
+      : dateObj.toISOString().slice(0, 19).replace('T', ' ');
+  } catch (e) {
+    return new Date().toISOString().slice(0, 19).replace('T', ' ');
+  }
+};
+
 // GET featured blogs (Public - Top 3 featured or latest published)
 router.get('/featured', async (req, res) => {
   try {
@@ -382,7 +393,7 @@ router.post('/', [
 
     const computedReadTime = read_time || calculateReadTime(content);
     const computedExcerpt = excerpt || content.replace(/<[^>]+>/g, ' ').slice(0, 160) + '...';
-    const computedPublishDate = publish_date || new Date().toISOString();
+    const computedPublishDate = formatMySqlDate(publish_date);
     const finalKeyTakeaways = typeof key_takeaways === 'object' && key_takeaways !== null 
       ? JSON.stringify(key_takeaways) 
       : (key_takeaways || '');
@@ -553,7 +564,7 @@ router.put('/:id', [
       category_id !== undefined ? category_id : existing.category_id,
       author_name !== undefined ? author_name : existing.author_name,
       status !== undefined ? status : existing.status,
-      publish_date !== undefined ? publish_date : existing.publish_date,
+      publish_date !== undefined ? formatMySqlDate(publish_date) : existing.publish_date,
       computedReadTime,
       is_featured !== undefined ? (is_featured ? 1 : 0) : existing.is_featured,
       seo_title !== undefined ? seo_title : existing.seo_title,
