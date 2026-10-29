@@ -68,7 +68,7 @@ router.post('/', [
       name, 
       email, 
       company || null, 
-      phone, 
+      phone || null, 
       industry || 'Blog CTA Lead', 
       use_case || null, 
       preferred_date || null, 
@@ -86,7 +86,7 @@ router.post('/', [
       `).run(
         name,
         email,
-        phone,
+        phone || null,
         company || 'Website Lead',
         `Booked Demo Request: ${use_case || 'Quick Demo requested from Blog Detail page'}`
       );

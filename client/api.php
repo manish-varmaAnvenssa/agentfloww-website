@@ -695,8 +695,10 @@ if ($parts[0] === 'demo') {
         if (empty($name)) sendError('Name is required', 400);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) sendError('Please enter a valid email', 400);
         
-        $phoneVal = validatePhoneNumber($phone);
-        if ($phoneVal !== true) sendError($phoneVal, 400);
+        if (!empty($phone)) {
+            $phoneVal = validatePhoneNumber($phone);
+            if ($phoneVal !== true) sendError($phoneVal, 400);
+        }
 
         $stmt = $pdo->prepare("
             INSERT INTO demos (name, email, company, phone, industry, use_case, preferred_date, preferred_time, status)
@@ -706,7 +708,7 @@ if ($parts[0] === 'demo') {
             $name, 
             $email, 
             $company, 
-            $phone, 
+            !empty($phone) ? $phone : null, 
             $industry, 
             $useCase, 
             !empty($preferredDate) ? $preferredDate : null, 

@@ -170,7 +170,7 @@ const Contact = () => {
       icon: MapPin,
       title: 'India Office',
       addresses: [
-        'Awfis Binarius, Deepak Nitrate Road, Shastrinagar, Yerawada, Pune, Maharashtra 411006',
+        '1st Floor, Nucleus Mall, 1st Church Rd, opposite Police Commissioner Office, Camp, Pune, Maharashtra 411001',
         'A 3/17 A W H O SALUNKE, VIHAR KONDHWA ROAD, Srpf, Pune City, Pune- 411022, Maharashtra, India'
       ],
       color: 'from-orange-500 to-red-500'
