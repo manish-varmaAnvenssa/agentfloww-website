@@ -1517,9 +1517,6 @@ const Home = () => {
             className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8 px-4"
           >
             <div className="flex items-center justify-center min-w-[160px]">
-              <img src="/images/logo/sap.png" alt="SAP" className="h-12 md:h-14 w-auto object-contain opacity-90 hover:opacity-100 transition-all duration-300 transform hover:scale-108 cursor-pointer" />
-            </div>
-            <div className="flex items-center justify-center min-w-[160px]">
               <img src="/images/logo/oracle.png" alt="Oracle" className="h-12 md:h-14 w-auto object-contain opacity-90 hover:opacity-100 transition-all duration-300 transform hover:scale-108 cursor-pointer" />
             </div>
             <div className="flex items-center justify-center min-w-[160px]">
