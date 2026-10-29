@@ -23,7 +23,7 @@ router.post('/register', [
     const db = getDatabase();
 
     // Check if user already exists
-    const existingUser = db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username);
+    const existingUser = await db.prepare('SELECT id FROM users WHERE LOWER(email) = LOWER(?) OR LOWER(username) = LOWER(?)').get(email, username);
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -37,10 +37,10 @@ router.post('/register', [
       VALUES (?, ?, ?, ?, ?)
     `);
     
-    const result = insertUser.run(username, email, hashedPassword, role, 1);
+    const result = await insertUser.run(username, email, hashedPassword, role, 1);
     
     // Get the created user (without password)
-    const newUser = db.prepare('SELECT id, username, email, role, avatar, is_active, created_at FROM users WHERE id = ?').get(result.lastInsertRowid);
+    const newUser = await db.prepare('SELECT id, username, email, role, avatar, is_active, created_at FROM users WHERE id = ?').get(result.lastInsertRowid);
 
     // Generate JWT token
     const token = jwt.sign(
@@ -76,7 +76,7 @@ router.post('/login', [
     const db = getDatabase();
 
     // Find user by email
-    const user = db.prepare('SELECT * FROM users WHERE email = ? AND is_active = 1').get(email);
+    const user = await db.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?) AND is_active = 1').get(email);
     
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
@@ -122,7 +122,7 @@ router.get('/me', async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     const db = getDatabase();
 
-    const user = db.prepare('SELECT id, username, email, role, avatar, is_active, created_at FROM users WHERE id = ? AND is_active = 1').get(decoded.userId);
+    const user = await db.prepare('SELECT id, username, email, role, avatar, is_active, created_at FROM users WHERE id = ? AND is_active = 1').get(decoded.userId);
     
     if (!user) {
       return res.status(401).json({ message: 'User not found' });

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const { getDatabase } = require('../database');
 
 const auth = async (req, res, next) => {
   try {
@@ -9,12 +9,16 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ message: 'No token, authorization denied' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId).select('-password');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const db = getDatabase();
+    const user = await db.prepare('SELECT id, username, email, role, avatar, is_active FROM users WHERE id = ? AND is_active = 1').get(decoded.userId);
     
-    if (!user || !user.isActive) {
+    if (!user) {
       return res.status(401).json({ message: 'Token is not valid' });
     }
+
+    // Adapt database is_active to match isActive expected check if any
+    user.isActive = user.is_active;
 
     req.user = user;
     next();

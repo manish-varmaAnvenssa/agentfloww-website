@@ -10,37 +10,23 @@ router.get('/dashboard', async (req, res) => {
     const db = getDatabase();
     
     // Get counts
-    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
-    const contactCount = db.prepare('SELECT COUNT(*) as count FROM contacts').get().count;
-    const demoCount = db.prepare('SELECT COUNT(*) as count FROM demos').get().count;
+    const [userCountRow, contactCountRow, demoCountRow] = await Promise.all([
+      db.prepare('SELECT COUNT(*) as count FROM users').get(),
+      db.prepare('SELECT COUNT(*) as count FROM contacts').get(),
+      db.prepare('SELECT COUNT(*) as count FROM demos').get()
+    ]);
+
+    const userCount = userCountRow ? userCountRow.count : 0;
+    const contactCount = contactCountRow ? contactCountRow.count : 0;
+    const demoCount = demoCountRow ? demoCountRow.count : 0;
     
     // Get recent contacts
-    const recentContacts = db.prepare(`
-      SELECT * FROM contacts 
-      ORDER BY created_at DESC 
-      LIMIT 5
-    `).all();
-    
-    // Get recent demo requests
-    const recentDemos = db.prepare(`
-      SELECT * FROM demos 
-      ORDER BY created_at DESC 
-      LIMIT 5
-    `).all();
-    
-    // Get contact status counts
-    const contactStats = db.prepare(`
-      SELECT status, COUNT(*) as count 
-      FROM contacts 
-      GROUP BY status
-    `).all();
-    
-    // Get demo status counts
-    const demoStats = db.prepare(`
-      SELECT status, COUNT(*) as count 
-      FROM demos 
-      GROUP BY status
-    `).all();
+    const [recentContacts, recentDemos, contactStats, demoStats] = await Promise.all([
+      db.prepare(`SELECT * FROM contacts ORDER BY created_at DESC LIMIT 5`).all(),
+      db.prepare(`SELECT * FROM demos ORDER BY created_at DESC LIMIT 5`).all(),
+      db.prepare(`SELECT status, COUNT(*) as count FROM contacts GROUP BY status`).all(),
+      db.prepare(`SELECT status, COUNT(*) as count FROM demos GROUP BY status`).all()
+    ]);
 
     res.json({
       stats: {
@@ -65,7 +51,7 @@ router.get('/users', async (req, res) => {
   try {
     const db = getDatabase();
     
-    const users = db.prepare(`
+    const users = await db.prepare(`
       SELECT id, username, email, role, avatar, is_active, created_at, updated_at 
       FROM users 
       ORDER BY created_at DESC
@@ -96,7 +82,7 @@ router.post('/users', [
     const db = getDatabase();
 
     // Check if user already exists
-    const existingUser = db.prepare('SELECT id FROM users WHERE email = ? OR username = ?').get(email, username);
+    const existingUser = await db.prepare('SELECT id FROM users WHERE LOWER(email) = LOWER(?) OR LOWER(username) = LOWER(?)').get(email, username);
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -111,10 +97,10 @@ router.post('/users', [
       VALUES (?, ?, ?, ?, ?)
     `);
     
-    const result = insertUser.run(username, email, hashedPassword, role, 1);
+    const result = await insertUser.run(username, email, hashedPassword, role, 1);
     
     // Get the created user (without password)
-    const newUser = db.prepare('SELECT id, username, email, role, avatar, is_active, created_at FROM users WHERE id = ?').get(result.lastInsertRowid);
+    const newUser = await db.prepare('SELECT id, username, email, role, avatar, is_active, created_at FROM users WHERE id = ?').get(result.lastInsertRowid);
 
     res.status(201).json({
       message: 'User created successfully',
@@ -145,7 +131,7 @@ router.put('/users/:id', [
     const db = getDatabase();
 
     // Check if user exists
-    const existingUser = db.prepare('SELECT id FROM users WHERE id = ?').get(id);
+    const existingUser = await db.prepare('SELECT id FROM users WHERE id = ?').get(id);
     if (!existingUser) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -181,14 +167,14 @@ router.put('/users/:id', [
     const updateQuery = `UPDATE users SET ${updateFields.join(', ')} WHERE id = ?`;
     const updateUser = db.prepare(updateQuery);
     
-    const result = updateUser.run(...updateValues);
+    const result = await updateUser.run(...updateValues);
 
     if (result.changes === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     // Get updated user
-    const updatedUser = db.prepare('SELECT id, username, email, role, avatar, is_active, created_at FROM users WHERE id = ?').get(id);
+    const updatedUser = await db.prepare('SELECT id, username, email, role, avatar, is_active, created_at FROM users WHERE id = ?').get(id);
 
     res.json({
       message: 'User updated successfully',
@@ -208,14 +194,14 @@ router.delete('/users/:id', async (req, res) => {
     const db = getDatabase();
 
     // Check if user exists
-    const existingUser = db.prepare('SELECT id FROM users WHERE id = ?').get(id);
+    const existingUser = await db.prepare('SELECT id FROM users WHERE id = ?').get(id);
     if (!existingUser) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     // Delete user
     const deleteUser = db.prepare('DELETE FROM users WHERE id = ?');
-    const result = deleteUser.run(id);
+    const result = await deleteUser.run(id);
 
     if (result.changes === 0) {
       return res.status(404).json({ message: 'User not found' });
@@ -229,4 +215,4 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

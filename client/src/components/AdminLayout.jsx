@@ -5,7 +5,8 @@ import {
   Mail, 
   Users, 
   LogOut,
-  Play
+  Play,
+  FileText
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -16,6 +17,11 @@ const AdminLayout = () => {
 
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { 
+      name: 'Blogs', 
+      href: '/admin/blogs', 
+      icon: FileText
+    },
     { 
       name: 'Contact', 
       href: '/admin/contact', 

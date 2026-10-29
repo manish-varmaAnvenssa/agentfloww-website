@@ -54,11 +54,11 @@ router.post('/', [
       VALUES (?, ?, ?, ?, ?, ?)
     `);
     
-    const result = insertContact.run(name, email, phone, company, message, 'new');
+    const result = await insertContact.run(name, email, phone, company, message, 'new');
     console.log('Contact inserted with ID:', result.lastInsertRowid);
 
     // Get the created contact
-    const newContact = db.prepare('SELECT * FROM contacts WHERE id = ?').get(result.lastInsertRowid);
+    const newContact = await db.prepare('SELECT * FROM contacts WHERE id = ?').get(result.lastInsertRowid);
 
     res.status(201).json({
       message: 'Contact form submitted successfully',
@@ -76,7 +76,7 @@ router.get('/', async (req, res) => {
   try {
     const db = getDatabase();
     
-    const contacts = db.prepare(`
+    const contacts = await db.prepare(`
       SELECT * FROM contacts 
       ORDER BY created_at DESC
     `).all();
@@ -95,7 +95,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const db = getDatabase();
     
-    const contact = db.prepare('SELECT * FROM contacts WHERE id = ?').get(id);
+    const contact = await db.prepare('SELECT * FROM contacts WHERE id = ?').get(id);
     
     if (!contact) {
       return res.status(404).json({ message: 'Contact not found' });
@@ -130,14 +130,14 @@ router.patch('/:id/status', [
       WHERE id = ?
     `);
     
-    const result = updateContact.run(status, id);
+    const result = await updateContact.run(status, id);
 
     if (result.changes === 0) {
       return res.status(404).json({ message: 'Contact not found' });
     }
 
     // Get updated contact
-    const updatedContact = db.prepare('SELECT * FROM contacts WHERE id = ?').get(id);
+    const updatedContact = await db.prepare('SELECT * FROM contacts WHERE id = ?').get(id);
 
     res.json({
       message: 'Contact status updated successfully',
@@ -157,7 +157,7 @@ router.delete('/:id', async (req, res) => {
     const db = getDatabase();
 
     const deleteContact = db.prepare('DELETE FROM contacts WHERE id = ?');
-    const result = deleteContact.run(id);
+    const result = await deleteContact.run(id);
 
     if (result.changes === 0) {
       return res.status(404).json({ message: 'Contact not found' });
@@ -171,4 +171,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

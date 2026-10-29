@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ChevronDown } from 'lucide-react'
+import { List, X, ChevronDown } from './Icons'
 import { useAuth } from '../contexts/AuthContext'
 
 const Header = () => {
@@ -23,12 +23,21 @@ const Header = () => {
 
   const navigation = [
     { 
-      name: 'Compare', 
-      href: '/compare',
-      hasDropdown: false,
+      name: 'Products', 
+      href: '/products',
+      hasDropdown: true,
+      dropdownItems: [
+        { name: 'AI Agent Platform', href: '/products/ai-agent-platform' },
+        { name: 'SAP AI Agent', href: '/products/sap-ai-agent' },
+        { name: 'AI ERP Automation for Manufacturing', href: '/products/ai-erp-automation-for-manufacturing' },
+        { name: 'Manufacturing AI Software', href: '/products/manufacturing-ai-software' },
+        { name: 'Browser AI Agent', href: '/products/browser-ai-agent' },
+        { name: 'Autonomous AI Agents', href: '/products/autonomous-ai-agents' },
+        { name: 'RPA AI Agent', href: '/products/rpa-ai-agent' }
+      ]
     },
     { name: 'About Us', href: '/about' },
-    { name: 'Pricing', href: '/pricing' },
+    { name: 'Blogs', href: '/blogs' },
     { name: 'Contact', href: '/contact' },
     { name: 'Live Demo', href: '/live-demo' },
   ]
@@ -56,7 +65,7 @@ const Header = () => {
         <img 
           src="/images/logo/Agentflow svg.svg" 
           alt="Agentflow Logo" 
-          className="h-8 w-auto mt-1"
+          className="h-12 md:h-14 w-auto mt-1"
           onError={() => setImageError(true)}
         />
       </div>
@@ -66,14 +75,15 @@ const Header = () => {
   return (
     <header className="bg-white shadow-sm backdrop-blur-md fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Logo />
-          </Link>
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center space-x-8">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <Logo />
+            </Link>
 
-          {/* Desktop Navigation - Now on left side */}
-          <nav className="hidden md:flex items-center space-x-8 ml-10">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (
               <div key={item.name} className="relative group">
                 {item.hasDropdown ? (
@@ -117,112 +127,42 @@ const Header = () => {
                     onMouseLeave={() => setOpenDropdown(null)}
                   >
                     {item.name === 'Products' && (
-                                            <div className="p-6 lg:p-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                          <Link to="/ai-sales-agent" className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-xs font-bold">AI</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">AI Agent for Sales</div>
-                              <div className="text-sm text-gray-500 mt-1">Automated sales conversations</div>
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Lead Generation</span>
-                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">24/7 Support</span>
-                              </div>
-                            </div>
-                          </Link>
-                          
-                          <Link to="/ai-social-media-manager" className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-xs font-bold">SM</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">AI Social Media Manager Agent</div>
-                              <div className="text-sm text-gray-500 mt-1">Complete social media automation</div>
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Content Creation</span>
-                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Auto Scheduling</span>
-                              </div>
-                            </div>
-                          </Link>
-                          
-                          <Link to="/ai-quote-generation-agent" className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-xs font-bold">QG</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">AI Quote Generation Agent</div>
-                              <div className="text-sm text-gray-500 mt-1">Smart quote creation and automation</div>
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Auto Generation</span>
-                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">CRM Integration</span>
-                              </div>
-                            </div>
-                          </Link>
-                          
-                          <Link to="/ai-invoice-generator-agent" className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-xs font-bold">IG</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">AI Invoice Generator Agent</div>
-                              <div className="text-sm text-gray-500 mt-1">Professional invoice automation</div>
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Auto Billing</span>
-                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Tax Calculation</span>
-                              </div>
-                            </div>
-                          </Link>
-                          
-                          <Link to="/improving-customer-experience" className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-xs font-bold">CX</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">Improving Customer Experience</div>
-                              <div className="text-sm text-gray-500 mt-1">Enhanced customer interactions</div>
-                            </div>
-                          </Link>
-                          
-                          <Link to="/conversational-intelligence" className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-xs font-bold">CI</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">Conversational Intelligence</div>
-                              <div className="text-sm text-gray-500 mt-1">Smart conversation analytics</div>
-                            </div>
-                          </Link>
-                          
-                          <Link to="#" className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-xs font-bold">PC</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">Personalize Chat Agent</div>
-                              <div className="text-sm text-gray-500 mt-1">Customized chat experiences</div>
-                            </div>
-                          </Link>
-                          
-                          <Link to="#" className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-xs font-bold">AA</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">AI Automation Agency</div>
-                              <div className="text-sm text-gray-500 mt-1">Complete automation solutions</div>
-                            </div>
-                          </Link>
-                          
-                          <Link to="#" className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                            <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-xs font-bold">AB</span>
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">AI Agents for Business</div>
-                              <div className="text-sm text-gray-500 mt-1">Enterprise AI solutions</div>
-                            </div>
+                      <div className="p-6 lg:p-8 flex flex-col md:flex-row gap-8">
+                        <div className="flex-1">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-3">
+                            {item.dropdownItems.map((dropdownItem) => (
+                              <Link 
+                                key={dropdownItem.name}
+                                to={dropdownItem.href} 
+                                className="flex items-start p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                              >
+                                <div className="font-bold text-gray-900 text-base">{dropdownItem.name}</div>
+                              </Link>
+                            ))}
+                          </div>
+                          <div className="mt-6 pt-6 border-t border-gray-100">
+                            <Link 
+                              to="/products" 
+                              className="text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
+                            >
+                              View all products 
+                              <span aria-hidden="true">&rarr;</span>
+                            </Link>
+                          </div>
+                        </div>
+                        {/* Right-side promo card */}
+                        <div className="w-full md:w-64 bg-slate-50 rounded-xl p-6 border border-slate-100 flex flex-col justify-between">
+                          <div>
+                            <h3 className="font-bold text-gray-900 mb-2">Book a Discovery Session</h3>
+                            <p className="text-sm text-gray-600 mb-4">
+                              Map the right automation approach for your workflows during a discovery session.
+                            </p>
+                          </div>
+                          <Link 
+                            to="/contact?product=discovery-session"
+                            className="bg-indigo-600 text-white text-sm font-medium py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors text-center"
+                          >
+                            Book Session
                           </Link>
                         </div>
                       </div>
@@ -234,25 +174,26 @@ const Header = () => {
               </div>
             ))}
           </nav>
+        </div>
 
-          {/* Desktop Actions - Only show for authenticated users */}
-          {user && (
-            <div className="hidden md:flex items-center space-x-4">
-              <button
-                onClick={logout}
-                className="text-sm font-medium transition-colors duration-200 text-gray-600 hover:text-gray-900"
-              >
-                Logout
-              </button>
-            </div>
-          )}
+        {/* Desktop Actions - Positioned cleanly on the right */}
+        {user && (
+          <div className="hidden md:flex items-center">
+            <button
+              onClick={logout}
+              className="px-3.5 py-1.5 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition duration-150 shadow-2xs"
+            >
+              Logout
+            </button>
+          </div>
+        )}
 
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-2 rounded-md transition-colors duration-200 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMenuOpen ? <X size={24} /> : <List size={24} />}
           </button>
         </div>
       </div>

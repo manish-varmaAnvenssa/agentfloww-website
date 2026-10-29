@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
+import axios from 'axios'
 import api from '../utils/api'
 import { loginUser } from '../utils/api'
 
@@ -25,6 +26,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = localStorage.getItem('token')
       if (token) {
+        // Set global axios Authorization default header for raw axios imports
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+        
         // For now, we'll check if user data exists in localStorage
         const userData = localStorage.getItem('user')
         if (userData) {
@@ -34,6 +38,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
+      delete axios.defaults.headers.common['Authorization']
     } finally {
       setLoading(false)
     }
@@ -44,11 +49,12 @@ export const AuthProvider = ({ children }) => {
       const result = await loginUser({ email, password })
       
       if (result.success) {
-        // Create a simple token (you can implement proper JWT later)
-        const token = btoa(`${email}:${Date.now()}`)
-        localStorage.setItem('token', token)
+        localStorage.setItem('token', result.token)
         localStorage.setItem('user', JSON.stringify(result.user))
         setUser(result.user)
+        
+        // Set global axios Authorization default header for raw axios imports
+        axios.defaults.headers.common['Authorization'] = `Bearer ${result.token}`
         
         toast.success('Login successful!')
         
@@ -68,6 +74,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
+    
+    // Clear global axios Authorization default header
+    delete axios.defaults.headers.common['Authorization']
+    
     toast.success('Logged out successfully')
     // Let the component handle navigation
   }

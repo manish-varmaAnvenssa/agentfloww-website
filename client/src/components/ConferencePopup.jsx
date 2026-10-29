@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Calendar, Clock, MapPin, Phone, Globe, X } from 'lucide-react'
+import { Calendar, Clock, MapPin, Phone, Globe, X } from './Icons'
 
 const ConferencePopup = () => {
   const [isVisible, setIsVisible] = useState(false)
@@ -90,7 +90,7 @@ const ConferencePopup = () => {
                 >
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                   <span className="text-blue-700 font-semibold text-xs uppercase tracking-wide">
-                    🚀 Live Event
+                    Live Event
                   </span>
                 </motion.div>
                 
@@ -174,19 +174,11 @@ const ConferencePopup = () => {
               </div>
 
               {/* Call to Action */}
-              <motion.div 
-                className="bg-gradient-to-r from-orange-50 to-red-50 p-3 rounded-lg border border-orange-200"
-                animate={{ 
-                  boxShadow: isHovered 
-                    ? "0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
-                    : "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
-                }}
-                transition={{ duration: 0.2 }}
-              >
+              <div className="bg-orange-50 p-3 rounded-lg border border-orange-200">
                 <p className="text-xs font-semibold text-center text-orange-800 leading-relaxed">
-                  🌟 Don't miss this opportunity to shape the future of intelligent business automation!
+                  Don't miss this opportunity to shape the future of intelligent business automation!
                 </p>
-              </motion.div>
+              </div>
             </div>
 
             {/* Animated Border */}

@@ -1,4 +1,128 @@
+DirectoryIndex index.html index.php
+Options -MultiViews
 RewriteEngine On
+RewriteBase /
+
+# ----------------------------------------------------------------------
+# Security Headers
+# ----------------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    
+    # Prevent aggressive caching of index.html & index.php
+    <FilesMatch "(index\.html|index\.php)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </FilesMatch>
+</IfModule>
+
+# Force correct MIME types (overrides any PHP handler for static assets)
+<FilesMatch "\.css$">
+    ForceType text/css
+</FilesMatch>
+<FilesMatch "\.js$">
+    ForceType application/javascript
+</FilesMatch>
+
+# ----------------------------------------------------------------------
+# Block Direct Access to Sensitive Files & Extensions
+# ----------------------------------------------------------------------
+<FilesMatch "(^#.*#|\.(bak|conf|dist|fla|in[ci]|log|psd|sh|sql|sw[op]|env|lock|git.*)|~)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Forward Authorization Header to PHP in CGI/FastCGI environments
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# ----------------------------------------------------------------------
+# PHP Upload Directives (eBook & Media Upload Support up to 64M)
+# ----------------------------------------------------------------------
+<IfModule mod_php.c>
+    php_value upload_max_filesize 64M
+    php_value post_max_size 64M
+    php_value memory_limit 256M
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 64M
+    php_value post_max_size 64M
+    php_value memory_limit 256M
+</IfModule>
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 64M
+    php_value post_max_size 64M
+    php_value memory_limit 256M
+</IfModule>
+
+# ----------------------------------------------------------------------
+# 1. Dynamic Sitemap Routing
+# ----------------------------------------------------------------------
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+# ----------------------------------------------------------------------
+# 2. Existing Files & Assets
+# ----------------------------------------------------------------------
+RewriteRule ^images/ - [L]
+RewriteRule ^uploads/ - [L]
+RewriteRule \.(css|js|png|jpg|jpeg|svg|webp|ico|woff|woff2|gif|mp4|pdf|txt|xml|json)$ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ----------------------------------------------------------------------
+# 3. Prerendered HTML subdirectories (e.g. /products/sap-ai-agent/)
+# ----------------------------------------------------------------------
+RewriteCond %{REQUEST_URI} !^/?$
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}/index.html -f
+RewriteRule ^(.*)$ $1/index.html [L]
+
+# ----------------------------------------------------------------------
+# 4. Route all API requests to api.php
+# ----------------------------------------------------------------------
+RewriteRule ^/?api/(.*)$ api.php?route=$1 [QSA,L]
+
+# ----------------------------------------------------------------------
+# 5. Fallback all remaining routes to index.php (Dynamic SEO & Prerendering)
+# ----------------------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.html [L]
+RewriteRule ^ index.php [L]
+
+# Enable compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# Set cache headers
+<IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+</IfModule>
