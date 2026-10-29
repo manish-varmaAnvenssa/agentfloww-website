@@ -38,6 +38,36 @@ if ($isLocal) {
 
 // Database Connection
 function ensureTablesExist($pdo) {
+    // Auto-migrate eBook columns on blogs table if not exist
+    $ebookCols = [
+        'key_takeaways' => 'TEXT',
+        'ebook_title' => "VARCHAR(255) DEFAULT ''",
+        'ebook_description' => 'TEXT',
+        'ebook_file' => "VARCHAR(255) DEFAULT ''",
+        'ebook_cover' => "VARCHAR(255) DEFAULT ''"
+    ];
+    foreach ($ebookCols as $col => $colDef) {
+        try {
+            $pdo->exec("ALTER TABLE blogs ADD COLUMN $col $colDef");
+        } catch (Exception $e) {}
+    }
+
+    try {
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS ebook_downloads (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                blog_id INT NULL,
+                blog_title VARCHAR(255) DEFAULT '',
+                ebook_title VARCHAR(255) DEFAULT '',
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                phone VARCHAR(30) DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE SET NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        ");
+    } catch (Exception $e) {}
+
     try {
         $pdo->query("SELECT 1 FROM email_otps LIMIT 1");
     } catch (PDOException $e) {
@@ -1076,6 +1106,78 @@ if ($parts[0] === 'blogs') {
         }
     }
 
+    // eBook File Upload (POST /api/blogs/upload-ebook)
+    if (($parts[1] ?? '') === 'upload-ebook' && $method === 'POST') {
+        requireAdmin();
+        if (!isset($_FILES['ebook'])) {
+            sendError('No eBook file uploaded', 400);
+        }
+
+        $file = $_FILES['ebook'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            sendError('File upload error code: ' . $file['error'], 400);
+        }
+
+        // Limit 50MB
+        if ($file['size'] > 50 * 1024 * 1024) {
+            sendError('eBook size cannot exceed 50MB', 400);
+        }
+
+        $allowedExts = ['pdf', 'epub', 'docx', 'doc', 'zip', 'png', 'jpg', 'jpeg', 'webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowedExts)) {
+            sendError('Only documents (PDF, EPUB, DOCX, DOC, ZIP) or images are allowed for eBooks', 400);
+        }
+
+        $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '-', pathinfo($file['name'], PATHINFO_FILENAME));
+        $filename = 'ebook-' . time() . '-' . uniqid() . '.' . $ext;
+        $destination = UPLOAD_DIR . '/' . $filename;
+
+        if (move_uploaded_file($file['tmp_name'], $destination)) {
+            sendJSON([
+                'success' => true,
+                'url' => '/uploads/' . $filename,
+                'filename' => $file['name'],
+                'size' => $file['size']
+            ]);
+        } else {
+            sendError('Failed to save uploaded eBook file', 500);
+        }
+    }
+
+    // eBook Download Lead Capture (POST /api/blogs/ebook-download)
+    if (($parts[1] ?? '') === 'ebook-download' && $method === 'POST') {
+        $input = getRequestBody();
+        $name = trim($input['name'] ?? '');
+        $email = trim($input['email'] ?? '');
+        $phone = trim($input['phone'] ?? '');
+        $blogId = !empty($input['blog_id']) ? (int)$input['blog_id'] : null;
+        $ebookTitle = trim($input['ebook_title'] ?? '');
+
+        if (empty($name)) sendError('Name is required', 400);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) sendError('A valid email address is required', 400);
+
+        $blogTitle = '';
+        if ($blogId) {
+            $bStmt = $pdo->prepare("SELECT title FROM blogs WHERE id = ?");
+            $bStmt->execute([$blogId]);
+            $bRow = $bStmt->fetch();
+            if ($bRow) $blogTitle = $bRow['title'];
+        }
+
+        $stmt = $pdo->prepare("
+            INSERT INTO ebook_downloads (blog_id, blog_title, ebook_title, name, email, phone)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([$blogId, $blogTitle, $ebookTitle, $name, $email, $phone]);
+
+        sendJSON([
+            'success' => true,
+            'message' => 'Download lead recorded successfully',
+            'id' => $pdo->lastInsertId()
+        ], 201);
+    }
+
     // Related blogs (blogs/:slug/related)
     if (isset($parts[1]) && ($parts[2] ?? '') === 'related' && $method === 'GET') {
         $slug = $parts[1];
@@ -1250,19 +1352,27 @@ if ($parts[0] === 'blogs') {
             $canonicalUrl = $input['canonical_url'] ?? $existing['canonical_url'];
             $ogImage = $input['og_image'] ?? $existing['og_image'];
 
+            $keyTakeaways = $input['key_takeaways'] ?? $existing['key_takeaways'] ?? '';
+            $ebookTitle = $input['ebook_title'] ?? $existing['ebook_title'] ?? '';
+            $ebookDescription = $input['ebook_description'] ?? $existing['ebook_description'] ?? '';
+            $ebookFile = $input['ebook_file'] ?? $existing['ebook_file'] ?? '';
+            $ebookCover = $input['ebook_cover'] ?? $existing['ebook_cover'] ?? '';
+
             $stmt = $pdo->prepare("
                 UPDATE blogs SET
                   title = ?, slug = ?, excerpt = ?, content = ?, featured_image = ?, gallery_images = ?,
                   category_id = ?, author_name = ?, status = ?, publish_date = ?, read_time = ?,
                   is_featured = ?, seo_title = ?, seo_description = ?, seo_keywords = ?,
-                  canonical_url = ?, og_image = ?, updated_at = CURRENT_TIMESTAMP
+                  canonical_url = ?, og_image = ?, key_takeaways = ?, ebook_title = ?,
+                  ebook_description = ?, ebook_file = ?, ebook_cover = ?, updated_at = CURRENT_TIMESTAMP
                 WHERE id = ?
             ");
             $stmt->execute([
                 $title, $slug, $excerpt, $content, $featuredImage, $galleryImages,
                 $categoryId, $authorName, $status, $publishDate, $readTime,
                 $isFeatured, $seoTitle, $seoDescription, $seoKeywords,
-                $canonicalUrl, $ogImage, $id
+                $canonicalUrl, $ogImage, $keyTakeaways, $ebookTitle,
+                $ebookDescription, $ebookFile, $ebookCover, $id
             ]);
 
             // Handle Tags
@@ -1487,24 +1597,33 @@ if ($parts[0] === 'blogs') {
             $excerpt = substr(strip_tags($content), 0, 160) . '...';
         }
 
+        $keyTakeaways = $input['key_takeaways'] ?? '';
+        $ebookTitle = $input['ebook_title'] ?? '';
+        $ebookDescription = $input['ebook_description'] ?? '';
+        $ebookFile = $input['ebook_file'] ?? '';
+        $ebookCover = $input['ebook_cover'] ?? '';
+
         $stmt = $pdo->prepare("
             INSERT INTO blogs (
                 title, slug, excerpt, content, featured_image, gallery_images,
                 category_id, author_name, status, publish_date, read_time,
                 is_featured, seo_title, seo_description, seo_keywords,
-                canonical_url, og_image
+                canonical_url, og_image, key_takeaways, ebook_title,
+                ebook_description, ebook_file, ebook_cover
             ) VALUES (
                 ?, ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
                 ?, ?, ?, ?,
-                ?, ?
+                ?, ?, ?, ?,
+                ?, ?, ?
             )
         ");
         $stmt->execute([
             $title, $slug, $excerpt, $content, $featuredImage, $galleryImages,
             $categoryId, $authorName, $status, $publishDate, $readTime,
             $isFeatured, $seoTitle, $seoDescription, $seoKeywords,
-            $canonicalUrl, $ogImage
+            $canonicalUrl, $ogImage, $keyTakeaways, $ebookTitle,
+            $ebookDescription, $ebookFile, $ebookCover
         ]);
         $blogId = $pdo->lastInsertId();
 
