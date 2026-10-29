@@ -1,6 +1,10 @@
 <?php
 // CORS & Headers Setup
 ob_start();
+@ini_set('upload_max_filesize', '64M');
+@ini_set('post_max_size', '64M');
+@ini_set('memory_limit', '256M');
+@ini_set('max_execution_time', '300');
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
@@ -38,21 +42,27 @@ if ($isLocal) {
 
 // Database Connection
 function ensureTablesExist($pdo) {
-    // Auto-migrate eBook columns on blogs table if not exist
-    $ebookCols = [
-        'key_takeaways' => 'TEXT',
-        'ebook_title' => "VARCHAR(255) DEFAULT ''",
-        'ebook_description' => 'TEXT',
-        'ebook_file' => "VARCHAR(255) DEFAULT ''",
-        'ebook_cover' => "VARCHAR(255) DEFAULT ''"
-    ];
-    foreach ($ebookCols as $col => $colDef) {
-        try {
-            $pdo->exec("ALTER TABLE blogs ADD COLUMN $col $colDef");
-        } catch (Exception $e) {}
-    }
-
     try {
+        // Fast check: if ebook_title already exists, return immediately (zero locks!)
+        $check = $pdo->query("SHOW COLUMNS FROM blogs LIKE 'ebook_title'");
+        if ($check && $check->rowCount() > 0) {
+            return;
+        }
+
+        // Columns missing: add them once
+        $ebookCols = [
+            'key_takeaways' => 'TEXT',
+            'ebook_title' => "VARCHAR(255) DEFAULT ''",
+            'ebook_description' => 'TEXT',
+            'ebook_file' => "VARCHAR(255) DEFAULT ''",
+            'ebook_cover' => "VARCHAR(255) DEFAULT ''"
+        ];
+        foreach ($ebookCols as $col => $colDef) {
+            try {
+                $pdo->exec("ALTER TABLE blogs ADD COLUMN $col $colDef");
+            } catch (Exception $e) {}
+        }
+
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS ebook_downloads (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -267,9 +277,16 @@ function getCustomHeaders() {
 }
 
 function getBearerToken() {
-    $headers = getCustomHeaders();
-    $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
-    if (preg_match('/Bearer\s(\S+)/i', $authHeader, $matches)) {
+    $authHeader = '';
+    if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+    } elseif (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+        $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+    } else {
+        $headers = getCustomHeaders();
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+    }
+    if (preg_match('/Bearer\s+(\S+)/i', $authHeader, $matches)) {
         return $matches[1];
     }
     return null;
@@ -360,7 +377,13 @@ function calculateReadTime($content) {
 }
 
 function validatePhoneNumber($phone) {
+    if (empty(trim($phone ?? ''))) {
+        return true;
+    }
     $cleanNumber = preg_replace('/[^\d]/', '', $phone);
+    if (empty($cleanNumber)) {
+        return true;
+    }
     
     if (strpos($phone, '+91') === 0) {
         if (strlen($cleanNumber) !== 12) {
@@ -640,8 +663,10 @@ if ($parts[0] === 'contact') {
         if (strlen($name) < 2 || strlen($name) > 100) sendError('Name must be between 2 and 100 characters', 400);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) sendError('Please enter a valid email', 400);
         
-        $phoneVal = validatePhoneNumber($phone);
-        if ($phoneVal !== true) sendError($phoneVal, 400);
+        if (!empty($phone)) {
+            $phoneVal = validatePhoneNumber($phone);
+            if ($phoneVal !== true) sendError($phoneVal, 400);
+        }
         
         if (empty($company) || strlen($company) > 100) sendError('Company name is required and must be less than 100 characters', 400);
         if (empty($message) || strlen($message) > 1000) sendError('Message cannot be empty and must be less than 1000 characters', 400);
@@ -726,8 +751,10 @@ if ($parts[0] === 'demo') {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) sendError('Please enter a valid email', 400);
         
         if (!empty($phone)) {
+            if (!empty($phone)) {
             $phoneVal = validatePhoneNumber($phone);
             if ($phoneVal !== true) sendError($phoneVal, 400);
+        }
         }
 
         $stmt = $pdo->prepare("
@@ -1079,7 +1106,17 @@ if ($parts[0] === 'blogs') {
 
         $file = $_FILES['image'];
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            sendError('File upload error code: ' . $file['error'], 400);
+            $uploadErrors = [
+                UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the server upload_max_filesize limit',
+                UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the form MAX_FILE_SIZE limit',
+                UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
+                UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+                UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder on server',
+                UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk (check uploads folder permissions)',
+                UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload'
+            ];
+            $msg = $uploadErrors[$file['error']] ?? ('File upload error code: ' . $file['error']);
+            sendError($msg, 400);
         }
 
         // Limit 5MB

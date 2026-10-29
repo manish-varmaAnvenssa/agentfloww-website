@@ -1,0 +1,587 @@
+{
+  "ai-agent-platform": {
+    "id": "ai-agent-platform",
+    "url": "/products/ai-agent-platform",
+    "titleTag": "AI Agent Platform for Enterprise Workflow Automation | Agentfloww",
+    "metaDescription": "Build, deploy and govern AI agents for business workflows: SAP, ERP, browser and RPA agents with integrations, approvals, audit logs and monitoring.",
+    "h1": "AI Agent Platform for Enterprise Workflow Automation",
+    "primaryCta": "Explore the AI Agent Platform",
+    "heroDescription": "One platform to configure, connect, control and monitor AI agents for your business workflows—with permissions, human approvals and audit trails built in.",
+    "heroImage": "/images/products/ai-agent-platform.jpeg",
+    "problemH2": "Starting with one AI agent is easy. Running agents safely across the business is the hard part.",
+    "problemText": "Many teams can build a single AI demo. Running agents in real workflows also requires system access, permissions, validation, human approvals, logging and monitoring. Agentfloww brings these together so defined workflows can move from pilot to production under clear controls.",
+    "howItWorksH2": "How the AI Agent Platform Works",
+    "howItWorksText": [
+      "The AI Agent Platform is designed to automate defined business workflows by combining AI capabilities, system integrations and controlled execution."
+    ],
+    "implementationSteps": [
+      {
+        "title": "Choose the first workflow",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Define systems, permissions and approvals",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Configure the agent",
+        "desc": "Set up the agent, permissions, and system connections."
+      },
+      {
+        "title": "Connect approved integrations",
+        "desc": "Set up the agent, permissions, and system connections."
+      },
+      {
+        "title": "Test edge cases",
+        "desc": "Validate with different scenarios and handle exceptions."
+      },
+      {
+        "title": "Deploy in a controlled pilot",
+        "desc": "Validate with different scenarios and handle exceptions."
+      },
+      {
+        "title": "Monitor and add workflows",
+        "desc": "Run in a controlled environment and monitor execution."
+      }
+    ],
+    "coreCapabilities": [
+      "Agent configuration for defined business workflows",
+      "Agent types for SAP, ERP, browser, RPA and autonomous workflows",
+      "Integrations with ERP, email, documents, databases and APIs",
+      "Permissions that define what each agent is allowed to do",
+      "Human-in-the-loop approvals and exception escalation",
+      "Logging, audit trails and monitoring"
+    ],
+    "useCases": [
+      "Run SAP, ERP, browser and RPA agents from one governed environment.",
+      "Define what each agent can access and which actions need approval.",
+      "Connect agents to approved systems, documents and data sources.",
+      "Route uncertain or failed tasks to a human reviewer.",
+      "Monitor agent activity and review logs of what was done.",
+      "Start with one workflow and add more agents over time."
+    ],
+    "integrationsText": "Can be designed around approved ERP systems, SAP environments, browser-accessible applications, databases, documents, email and APIs, subject to technical discovery.",
+    "whyPhrase": "practical AI agent platform deployment",
+    "faq": [
+      {
+        "question": "What is an AI agent platform?",
+        "answer": "A centralized environment to build, manage, and govern AI agents securely across different business processes."
+      },
+      {
+        "question": "Which types of agents can run on the platform?",
+        "answer": "SAP, ERP, browser, RPA, and autonomous agents."
+      },
+      {
+        "question": "How do you control what an agent is allowed to do?",
+        "answer": "Through strict permissions, access controls, and validation rules defined during setup."
+      },
+      {
+        "question": "Can humans review or approve agent actions?",
+        "answer": "Yes, human-in-the-loop approvals can be enforced for critical actions or uncertain outputs."
+      },
+      {
+        "question": "Can we start with one workflow and add more later?",
+        "answer": "Yes, we recommend starting with a pilot workflow before expanding."
+      }
+    ]
+  },
+  "sap-ai-agent": {
+    "id": "sap-ai-agent",
+    "url": "/products/sap-ai-agent",
+    "titleTag": "SAP AI Agent for Enterprise Workflow Automation | Agentfloww",
+    "metaDescription": "Automate SAP workflows with an AI agent across procurement, sales orders, invoices, goods receipts and approvals. SAP automation software built for validation and audit trails.",
+    "h1": "SAP AI Agent for Enterprise Workflow Automation",
+    "primaryCta": "Book a SAP AI Agent Discovery Session",
+    "heroDescription": "Automate repetitive SAP workflows with intelligent agents that can navigate, process, validate and coordinate business tasks across your SAP environment.",
+    "heroImage": "/images/products/sap-ai-agent.jpeg",
+    "problemH2": "SAP workflows should not depend on repetitive manual work",
+    "problemText": "Teams often move between emails, documents, spreadsheets and SAP screens to complete routine transactions. Agentfloww can help automate defined workflows while keeping validation, approvals and auditability at the center.",
+    "howItWorksH2": "How SAP AI Agent Works",
+    "howItWorksText": [
+      "SAP AI Agent is designed to automate defined business workflows by combining AI capabilities, system integrations and controlled execution."
+    ],
+    "implementationSteps": [
+      {
+        "title": "Discover the workflow",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Map rules and exceptions",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Connect through the approved SAP integration layer",
+        "desc": "Set up the agent, permissions, and system connections."
+      },
+      {
+        "title": "Test in a safe environment",
+        "desc": "Validate with different scenarios and handle exceptions."
+      },
+      {
+        "title": "Deploy with controlled approvals",
+        "desc": "Run in a controlled environment and monitor execution."
+      },
+      {
+        "title": "Monitor and optimize",
+        "desc": "Run in a controlled environment and monitor execution."
+      }
+    ],
+    "coreCapabilities": [
+      "Sales order and transaction workflow automation",
+      "Invoice and document processing",
+      "Purchase requisition and procurement workflows",
+      "Goods receipt and purchase order workflows",
+      "Natural-language interaction with defined SAP workflows",
+      "Validation, exception handling and audit trails"
+    ],
+    "useCases": [
+      "Extract information from incoming business documents and prepare structured SAP transactions.",
+      "Automate repetitive procurement steps from request through approval.",
+      "Assist teams with sales-order and operational transaction creation.",
+      "Validate information before write-back into approved SAP workflows.",
+      "Surface workflow exceptions so teams can review them instead of manually checking every transaction."
+    ],
+    "integrationsText": "Where applicable: SAP Business One, SAP S/4HANA, SAP Service Layer, SAP Build Process Automation and approved enterprise systems. Final integration scope should be confirmed during discovery.",
+    "whyPhrase": "practical SAP workflow automation",
+    "faq": [
+      {
+        "question": "Which SAP environments can Agentfloww automate?",
+        "answer": "Agentfloww is designed to integrate with SAP Business One, SAP S/4HANA, and other enterprise systems via approved integration layers, subject to discovery."
+      },
+      {
+        "question": "Can SAP automation include human approval steps?",
+        "answer": "Yes. Defined workflows can include controlled validation gates and human-in-the-loop approvals before any write-back occurs."
+      },
+      {
+        "question": "How do you validate transactions before write-back?",
+        "answer": "Validation rules are mapped during implementation. The agent checks data against these rules and surfaces exceptions for human review before execution."
+      },
+      {
+        "question": "What happens when the automation encounters an exception?",
+        "answer": "When an exception or edge case is detected, the agent safely halts the specific task and escalates it to the appropriate human team for review."
+      },
+      {
+        "question": "Can an SAP automation pilot start with one workflow?",
+        "answer": "Yes. We recommend starting with a single, well-defined workflow in a safe environment before expanding across approved processes."
+      }
+    ]
+  },
+  "ai-erp-automation-for-manufacturing": {
+    "id": "ai-erp-automation-for-manufacturing",
+    "url": "/products/ai-erp-automation-for-manufacturing",
+    "titleTag": "AI ERP Automation for Manufacturing | Agentfloww",
+    "metaDescription": "AI ERP automation for manufacturing: automate procurement, MRP, vendor management, approvals and inventory across SAP, Oracle, Dynamics 365, NetSuite and Odoo.",
+    "h1": "AI ERP Automation for Manufacturing",
+    "primaryCta": "Discuss Your ERP Automation Workflow",
+    "heroDescription": "Purpose-built ERP automation for manufacturers—faster procurement, tighter cost control and less manual work across the ERP workflows your teams use every day.",
+    "heroImage": "/images/products/ai-erp-automation-for-manufacturing.jpeg",
+    "problemH2": "Manufacturing runs on the ERP. Manual ERP work slows manufacturing down.",
+    "problemText": "Manufacturing teams spend time entering purchase data, matching invoices to goods receipts, chasing approvals and updating inventory across ERP screens, emails and spreadsheets. Agentfloww is designed to automate defined ERP workflows while preserving business rules and controlled approvals.",
+    "howItWorksH2": "How AI ERP Automation for Manufacturing Works",
+    "howItWorksText": [
+      "AI ERP Automation for Manufacturing is designed to automate defined business workflows by combining AI capabilities, system integrations and controlled execution."
+    ],
+    "implementationSteps": [
+      {
+        "title": "Audit the current workflow",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Identify automation opportunities",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Define permissions and validation rules",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Build integrations",
+        "desc": "Set up the agent, permissions, and system connections."
+      },
+      {
+        "title": "Test edge cases",
+        "desc": "Validate with different scenarios and handle exceptions."
+      },
+      {
+        "title": "Deploy in stages",
+        "desc": "Run in a controlled environment and monitor execution."
+      },
+      {
+        "title": "Monitor",
+        "desc": "Run in a controlled environment and monitor execution."
+      }
+    ],
+    "coreCapabilities": [
+      "Procurement and purchase-order workflow automation",
+      "MRP and material-planning workflow support",
+      "Vendor management and approval workflows",
+      "Invoice matching against goods receipts",
+      "Inventory and operational workflow automation",
+      "ERP data retrieval and reporting through controlled natural-language interfaces"
+    ],
+    "useCases": [
+      "Automate purchase request, approval and purchase order workflows.",
+      "Match supplier invoices to goods receipts and log the result in the ERP.",
+      "Support MRP, vendor management and inventory workflows.",
+      "Move information between email, documents and the ERP.",
+      "Retrieve ERP information through controlled natural-language requests.",
+      "Monitor workflow failures and route exceptions to the right team."
+    ],
+    "integrationsText": "Built to work with SAP (S/4HANA and Business One), Oracle, Microsoft Dynamics 365, Oracle NetSuite and Odoo, subject to technical discovery and integration availability.",
+    "whyPhrase": "practical ERP automation for manufacturers",
+    "faq": [
+      {
+        "question": "Can Agentfloww automate more than one ERP?",
+        "answer": "Integration capabilities depend on the available APIs and approved enterprise environments. Multi-ERP workflows are subject to discovery."
+      },
+      {
+        "question": "What manufacturing ERP processes are suitable for automation?",
+        "answer": "Repetitive tasks in procurement, finance, inventory updates, and operational reporting are often suitable for automation."
+      },
+      {
+        "question": "Can ERP automation work with existing approval rules?",
+        "answer": "Yes. Agentfloww is designed to respect existing business rules and route transactions through your established approval workflows."
+      },
+      {
+        "question": "How are permissions and write-back actions controlled?",
+        "answer": "Permissions are strictly defined during implementation. The agent only executes actions it is explicitly authorized to perform."
+      },
+      {
+        "question": "Can we start with a single department or workflow?",
+        "answer": "Yes. Piloting with one defined workflow is the recommended approach to validate permissions and test edge cases before scaling."
+      }
+    ]
+  },
+  "manufacturing-ai-software": {
+    "id": "manufacturing-ai-software",
+    "url": "/products/manufacturing-ai-software",
+    "titleTag": "Manufacturing AI Software for Operations and ERP Workflows | Agentfloww",
+    "metaDescription": "Manufacturing AI software that automates procurement, inventory, quality, vehicle and weighbridge workflows and operational reporting, connected to SAP and other ERP systems.",
+    "h1": "AI Software for Manufacturing Operations",
+    "primaryCta": "Automate a Manufacturing Workflow",
+    "heroDescription": "Bring AI-powered workflow automation to manufacturing operations—from inventory and quality to vehicle and weighbridge workflows, production processes and operational reporting.",
+    "heroImage": "/images/products/manufacturing-ai-software.jpeg",
+    "problemH2": "Manufacturing operations depend on connected decisions",
+    "problemText": "Manufacturing teams coordinate information across procurement, inventory, production, finance and ERP systems. When those workflows rely heavily on manual updates, teams can lose time and visibility. Agentfloww focuses on connecting and automating defined operational workflows.",
+    "howItWorksH2": "How Manufacturing AI Software Works",
+    "howItWorksText": [
+      "Manufacturing AI Software is designed to automate defined business workflows by combining AI capabilities, system integrations and controlled execution."
+    ],
+    "implementationSteps": [
+      {
+        "title": "Map the manufacturing process",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Identify repetitive handoffs",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Connect systems and data",
+        "desc": "Set up the agent, permissions, and system connections."
+      },
+      {
+        "title": "Build validation rules",
+        "desc": "Set inputs, expected outputs and business rules for the agent."
+      },
+      {
+        "title": "Pilot in one workflow",
+        "desc": "Validate with different scenarios and handle exceptions."
+      },
+      {
+        "title": "Expand across approved processes",
+        "desc": "Run in a controlled environment and monitor execution."
+      }
+    ],
+    "coreCapabilities": [
+      "Procurement and material workflow automation",
+      "Inventory and batch/lot workflow automation",
+      "Vehicle and weighbridge workflows with SAP GRPO sync",
+      "Quality inspection with tolerance-based pass/fail and NCR workflows",
+      "Operational data retrieval and reporting",
+      "Exception detection and workflow escalation"
+    ],
+    "useCases": [
+      "Automate purchase-request and material workflows.",
+      "Connect inventory and batch information to operational workflows.",
+      "Digitize inbound and outbound vehicle tracking and sync goods receipts to SAP.",
+      "Support quality inspection and non-conformance (NCR) workflows.",
+      "Surface operational exceptions for human review.",
+      "Provide structured operational information through AI-assisted interfaces."
+    ],
+    "integrationsText": "Can be designed around SAP Business One (including the SAP Service Layer), other ERP systems, CRM, email, documents, databases and approved manufacturing systems.",
+    "whyPhrase": "practical manufacturing workflow automation",
+    "faq": [
+      {
+        "question": "What manufacturing processes can be automated?",
+        "answer": "Defined operational workflows like procurement, inventory updates, and document-driven production processes can be automated."
+      },
+      {
+        "question": "Can manufacturing automation connect to our ERP?",
+        "answer": "Yes, integrations can be designed around approved enterprise ERP environments, confirmed during technical discovery."
+      },
+      {
+        "question": "Can automation cover procurement and inventory together?",
+        "answer": "Connected workflows across procurement and inventory can be mapped and automated, subject to your existing systems."
+      },
+      {
+        "question": "How are production workflow exceptions handled?",
+        "answer": "Exceptions are surfaced immediately to operational teams for review, ensuring no critical production data is written back without validation."
+      },
+      {
+        "question": "Can we begin with one plant or one process?",
+        "answer": "Yes. A targeted pilot in one plant or process allows us to build validation rules and test in a safe environment before broader deployment."
+      }
+    ]
+  },
+  "browser-ai-agent": {
+    "id": "browser-ai-agent",
+    "url": "/products/browser-ai-agent",
+    "titleTag": "Browser AI Agent for Web Workflow Automation | Agentfloww",
+    "metaDescription": "Automate browser-based business workflows with AI agents that can navigate web applications, process information and complete multi-step tasks.",
+    "h1": "Browser AI Agents for Multi-Step Web Automation",
+    "primaryCta": "Automate a Browser Workflow",
+    "heroDescription": "Let AI agents handle defined browser-based workflows across web applications, forms, portals and repetitive digital tasks.",
+    "heroImage": "/images/products/browser-ai-agent.jpeg",
+    "problemH2": "Browser work is often repetitive, fragmented and time-consuming",
+    "problemText": "Teams use multiple web portals and business applications every day. Repetitive navigation, data entry and information collection can consume significant working time. A browser AI agent can automate defined multi-step tasks while keeping important decisions under appropriate controls.",
+    "howItWorksH2": "How Browser AI Agent Works",
+    "howItWorksText": [
+      "Browser AI Agent is designed to automate defined business workflows by combining AI capabilities, system integrations and controlled execution."
+    ],
+    "implementationSteps": [
+      {
+        "title": "Record the manual browser workflow",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Define inputs, outputs and rules",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Configure the agent",
+        "desc": "Set up the agent, permissions, and system connections."
+      },
+      {
+        "title": "Test edge cases",
+        "desc": "Validate with different scenarios and handle exceptions."
+      },
+      {
+        "title": "Run controlled pilot",
+        "desc": "Validate with different scenarios and handle exceptions."
+      },
+      {
+        "title": "Monitor execution and exceptions",
+        "desc": "Set inputs, expected outputs and business rules for the agent."
+      }
+    ],
+    "coreCapabilities": [
+      "Web application navigation",
+      "Multi-step browser workflows",
+      "Data extraction and structured processing",
+      "Form and portal automation",
+      "Document-to-browser workflows",
+      "Task completion with defined validation and escalation rules"
+    ],
+    "useCases": [
+      "Read information from approved web portals and transfer it into business workflows.",
+      "Complete repetitive forms using validated data.",
+      "Collect information from multiple pages and organize it into a structured output.",
+      "Execute recurring browser tasks across enterprise applications.",
+      "Route uncertain or failed tasks to a human reviewer.",
+      "Connect browser actions to broader ERP or business workflows where appropriate."
+    ],
+    "integrationsText": "Designed for approved browser-accessible business applications and portals. Specific compatibility, authentication and security requirements must be assessed before implementation.",
+    "whyPhrase": "practical browser workflow automation",
+    "faq": [
+      {
+        "question": "What types of browser workflows can an AI agent automate?",
+        "answer": "The agent can automate repetitive digital tasks like data extraction, form filling, and multi-step portal navigation."
+      },
+      {
+        "question": "Can the agent work with enterprise web applications?",
+        "answer": "Yes, it is designed for approved enterprise web applications, subject to compatibility and security assessments during discovery."
+      },
+      {
+        "question": "How are authentication and permissions handled?",
+        "answer": "Authentication methods and permissions are defined strictly during implementation to ensure secure access to authorized portals only."
+      },
+      {
+        "question": "What happens if a page or workflow changes?",
+        "answer": "If a web layout changes unexpectedly, the agent halts the task and escalates the exception for human review and reconfiguration."
+      },
+      {
+        "question": "Can a browser agent hand a task back to a human?",
+        "answer": "Yes. Clear escalation paths are built in so uncertain or failed tasks are routed to a human reviewer."
+      }
+    ]
+  },
+  "autonomous-ai-agents": {
+    "id": "autonomous-ai-agents",
+    "url": "/products/autonomous-ai-agents",
+    "titleTag": "Autonomous AI Agents for Business Workflows | Agentfloww",
+    "metaDescription": "Deploy autonomous AI agents to understand business tasks, coordinate workflows, use approved tools and escalate exceptions with human oversight.",
+    "h1": "Autonomous AI Agents for Business Operations",
+    "primaryCta": "Design an Autonomous AI Agent",
+    "heroDescription": "Build AI agents that can understand business objectives, plan multi-step tasks, use approved tools and coordinate workflows—with controls for human oversight.",
+    "heroImage": "/images/products/autonomous-ai-agents.jpeg",
+    "problemH2": "Business processes rarely fit into one simple automation",
+    "problemText": "Real business work can involve multiple systems, decisions, documents and exceptions. Autonomous agents can coordinate several steps rather than automating only one isolated action, while governance and approval rules determine what the agent can do.",
+    "howItWorksH2": "How Autonomous AI Agents Works",
+    "howItWorksText": [
+      "Autonomous AI Agents is designed to automate defined business workflows by combining AI capabilities, system integrations and controlled execution."
+    ],
+    "implementationSteps": [
+      {
+        "title": "Define the business objective",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Identify tools and permissions",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Design agent roles and workflow states",
+        "desc": "Set up the agent, permissions, and system connections."
+      },
+      {
+        "title": "Add validation and approval gates",
+        "desc": "Execute and monitor the workflow securely."
+      },
+      {
+        "title": "Test edge cases",
+        "desc": "Validate with different scenarios and handle exceptions."
+      },
+      {
+        "title": "Deploy with monitoring",
+        "desc": "Run in a controlled environment and monitor execution."
+      },
+      {
+        "title": "Optimize",
+        "desc": "Run in a controlled environment and monitor execution."
+      }
+    ],
+    "coreCapabilities": [
+      "Goal-driven multi-step task execution",
+      "Agent planning and workflow orchestration",
+      "Tool and system interaction",
+      "Context and document retrieval",
+      "Human-in-the-loop approvals",
+      "Exception handling, logging and monitoring"
+    ],
+    "useCases": [
+      "Coordinate a workflow that spans email, documents, ERP and business applications.",
+      "Break a business request into multiple validated actions.",
+      "Retrieve information from approved sources before taking an action.",
+      "Route ambiguous decisions to a human reviewer.",
+      "Monitor recurring workflows and surface exceptions.",
+      "Coordinate specialized agents for different steps of a business process."
+    ],
+    "integrationsText": "Can be designed around approved APIs, ERP systems, browser workflows, databases, documents and business communication tools.",
+    "whyPhrase": "practical autonomous AI agent deployment",
+    "faq": [
+      {
+        "question": "What makes an AI agent autonomous?",
+        "answer": "An autonomous agent can plan multi-step tasks and intelligently select tools to achieve a defined business goal, rather than just following strict linear rules."
+      },
+      {
+        "question": "Can autonomous agents work across multiple systems?",
+        "answer": "Yes, they can coordinate workflows across email, documents, and approved enterprise systems, subject to discovery."
+      },
+      {
+        "question": "How do you control what an agent is allowed to do?",
+        "answer": "Governance is established through strict permissions and validation gates that define exactly which actions the agent can take."
+      },
+      {
+        "question": "When does a human take over?",
+        "answer": "Human reviewers take over during defined approval gates or whenever the agent encounters an ambiguous decision or exception."
+      },
+      {
+        "question": "Can autonomous agents be deployed for one workflow first?",
+        "answer": "Yes. Deploying for a single workflow allows teams to map rules and test edge cases in a controlled path to production."
+      }
+    ]
+  },
+  "rpa-ai-agent": {
+    "id": "rpa-ai-agent",
+    "url": "/products/rpa-ai-agent",
+    "titleTag": "RPA AI Agent for Intelligent Workflow Automation | Agentfloww",
+    "metaDescription": "Combine RPA-style task automation with AI agents for workflows that require document understanding, decisions, browser actions and exception handling.",
+    "h1": "RPA AI Agents for Intelligent Process Automation",
+    "primaryCta": "Explore RPA + AI Automation",
+    "heroDescription": "Extend traditional RPA with AI agents that can understand documents, interpret business context, handle browser workflows and escalate exceptions.",
+    "heroImage": "/images/products/rpa-ai-agent.jpeg",
+    "problemH2": "Not every workflow can be handled by fixed rules alone",
+    "problemText": "Traditional RPA works well for predictable, rule-based tasks. Business workflows can also contain documents, natural-language inputs and exceptions. An RPA AI Agent approach combines deterministic automation with AI capabilities where interpretation is required.",
+    "howItWorksH2": "How RPA AI Agent Works",
+    "howItWorksText": [
+      "RPA AI Agent is designed to automate defined business workflows by combining AI capabilities, system integrations and controlled execution."
+    ],
+    "implementationSteps": [
+      {
+        "title": "Identify the repetitive workflow",
+        "desc": "Understand and document the workflow, objective or task."
+      },
+      {
+        "title": "Separate deterministic steps from interpretation steps",
+        "desc": "Set inputs, expected outputs and business rules for the agent."
+      },
+      {
+        "title": "Assign rules/RPA and AI appropriately",
+        "desc": "Set inputs, expected outputs and business rules for the agent."
+      },
+      {
+        "title": "Add validation",
+        "desc": "Execute and monitor the workflow securely."
+      },
+      {
+        "title": "Test exceptions",
+        "desc": "Set inputs, expected outputs and business rules for the agent."
+      },
+      {
+        "title": "Deploy and monitor",
+        "desc": "Run in a controlled environment and monitor execution."
+      }
+    ],
+    "coreCapabilities": [
+      "RPA-style repetitive task execution",
+      "AI document and text understanding",
+      "Browser-based automation",
+      "Decision support for defined workflows",
+      "Exception detection and human escalation",
+      "Logging, validation and controlled actions"
+    ],
+    "useCases": [
+      "Process structured and semi-structured business documents.",
+      "Combine browser automation with AI-based interpretation.",
+      "Automate repetitive back-office tasks while routing exceptions to people.",
+      "Extract information and prepare downstream system actions.",
+      "Connect existing RPA-style workflows with AI capabilities.",
+      "Automate processes where rules cover most cases but AI is useful for variable inputs and exceptions."
+    ],
+    "integrationsText": "Can complement existing RPA tools, ERP systems, browser workflows, email, documents and APIs, subject to the target environment.",
+    "whyPhrase": "practical RPA and AI automation",
+    "faq": [
+      {
+        "question": "When should we use RPA AI instead of traditional RPA?",
+        "answer": "RPA AI is ideal when a workflow involves variable inputs, document understanding, or decisions that require context rather than rigid rules."
+      },
+      {
+        "question": "Can an RPA AI agent work with existing automation?",
+        "answer": "Yes, it can complement and connect with existing RPA tools and workflows, subject to the technical environment."
+      },
+      {
+        "question": "How are AI decisions validated?",
+        "answer": "Decisions are validated against defined business rules, and any edge cases are routed to a human for confirmation."
+      },
+      {
+        "question": "Can the system escalate uncertain cases?",
+        "answer": "Yes. Clear escalation protocols ensure that uncertain tasks cannot proceed without human intervention."
+      },
+      {
+        "question": "Can we modernize an existing RPA workflow gradually?",
+        "answer": "Yes. You can isolate specific interpretation steps in a workflow to pilot AI capabilities while keeping the rest of the process deterministic."
+      }
+    ]
+  }
+}

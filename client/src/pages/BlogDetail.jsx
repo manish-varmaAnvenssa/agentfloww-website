@@ -341,6 +341,7 @@ const BlogDetail = () => {
         await axios.post('/api/demo', {
           name: formData.name.trim(),
           email: formData.email.trim(),
+          phone: '',
           industry: 'Left Sidebar Lead',
           use_case: `Demo requested via left sidebar on blog: "${blog?.title || 'Blog'}"`
         })
