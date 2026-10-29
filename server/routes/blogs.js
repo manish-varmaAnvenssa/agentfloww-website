@@ -60,6 +60,17 @@ const calculateReadTime = (content) => {
   return Math.max(1, Math.ceil(words / wordsPerMinute));
 };
 
+const formatMySqlDate = (d) => {
+  try {
+    const dateObj = d ? new Date(d) : new Date();
+    return isNaN(dateObj.getTime())
+      ? new Date().toISOString().slice(0, 19).replace('T', ' ')
+      : dateObj.toISOString().slice(0, 19).replace('T', ' ');
+  } catch (e) {
+    return new Date().toISOString().slice(0, 19).replace('T', ' ');
+  }
+};
+
 // GET featured blogs (Public - Top 3 featured or latest published)
 router.get('/featured', async (req, res) => {
   try {
@@ -351,7 +362,12 @@ router.post('/', [
       seo_description = '',
       seo_keywords = '',
       canonical_url = '',
-      og_image = ''
+      og_image = '',
+      key_takeaways = null,
+      ebook_title = '',
+      ebook_description = '',
+      ebook_file = '',
+      ebook_cover = ''
     } = req.body;
 
     let finalSlug = req.body.slug ? slugify(req.body.slug) : slugify(title);
@@ -377,19 +393,22 @@ router.post('/', [
 
     const computedReadTime = read_time || calculateReadTime(content);
     const computedExcerpt = excerpt || content.replace(/<[^>]+>/g, ' ').slice(0, 160) + '...';
-    const computedPublishDate = publish_date || new Date().toISOString();
+    const computedPublishDate = formatMySqlDate(publish_date);
+    const finalKeyTakeaways = typeof key_takeaways === 'object' && key_takeaways !== null 
+      ? JSON.stringify(key_takeaways) 
+      : (key_takeaways || '');
 
     const stmt = db.prepare(`
       INSERT INTO blogs (
         title, slug, excerpt, content, featured_image, gallery_images,
         category_id, author_name, status, publish_date, read_time,
         is_featured, seo_title, seo_description, seo_keywords,
-        canonical_url, og_image
+        canonical_url, og_image, key_takeaways, ebook_title, ebook_description, ebook_file, ebook_cover
       ) VALUES (
         ?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?,
         ?, ?, ?, ?,
-        ?, ?
+        ?, ?, ?, ?, ?, ?, ?
       )
     `);
 
@@ -410,7 +429,12 @@ router.post('/', [
       seo_description || computedExcerpt,
       seo_keywords || '',
       canonical_url || '',
-      og_image || featured_image
+      og_image || featured_image,
+      finalKeyTakeaways,
+      ebook_title || '',
+      ebook_description || '',
+      ebook_file || '',
+      ebook_cover || ''
     );
 
     const blogId = result.lastInsertRowid;
@@ -482,6 +506,11 @@ router.put('/:id', [
       seo_keywords,
       canonical_url,
       og_image,
+      key_takeaways,
+      ebook_title,
+      ebook_description,
+      ebook_file,
+      ebook_cover,
       tags
     } = req.body;
 
@@ -493,6 +522,9 @@ router.put('/:id', [
     }
 
     const computedReadTime = read_time !== undefined ? read_time : calculateReadTime(content || existing.content);
+    const finalKeyTakeaways = key_takeaways !== undefined 
+      ? (typeof key_takeaways === 'object' && key_takeaways !== null ? JSON.stringify(key_takeaways) : key_takeaways) 
+      : existing.key_takeaways;
 
     const stmt = db.prepare(`
       UPDATE blogs SET
@@ -513,6 +545,11 @@ router.put('/:id', [
         seo_keywords = ?,
         canonical_url = ?,
         og_image = ?,
+        key_takeaways = ?,
+        ebook_title = ?,
+        ebook_description = ?,
+        ebook_file = ?,
+        ebook_cover = ?,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `);
@@ -527,7 +564,7 @@ router.put('/:id', [
       category_id !== undefined ? category_id : existing.category_id,
       author_name !== undefined ? author_name : existing.author_name,
       status !== undefined ? status : existing.status,
-      publish_date !== undefined ? publish_date : existing.publish_date,
+      publish_date !== undefined ? formatMySqlDate(publish_date) : existing.publish_date,
       computedReadTime,
       is_featured !== undefined ? (is_featured ? 1 : 0) : existing.is_featured,
       seo_title !== undefined ? seo_title : existing.seo_title,
@@ -535,6 +572,11 @@ router.put('/:id', [
       seo_keywords !== undefined ? seo_keywords : existing.seo_keywords,
       canonical_url !== undefined ? canonical_url : existing.canonical_url,
       og_image !== undefined ? og_image : existing.og_image,
+      finalKeyTakeaways,
+      ebook_title !== undefined ? ebook_title : existing.ebook_title,
+      ebook_description !== undefined ? ebook_description : existing.ebook_description,
+      ebook_file !== undefined ? ebook_file : existing.ebook_file,
+      ebook_cover !== undefined ? ebook_cover : existing.ebook_cover,
       id
     );
 
@@ -752,6 +794,113 @@ router.post('/upload', upload.single('image'), (req, res) => {
   } catch (error) {
     console.error('File upload error:', error);
     res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Multer storage for eBooks (PDF, EPUB, DOCX, ZIP)
+const uploadEbook = multer({
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit for eBooks
+  fileFilter: (req, file, cb) => {
+    const filetypes = /pdf|epub|docx|doc|zip|png|jpg|jpeg|webp/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    if (extname) {
+      return cb(null, true);
+    }
+    cb(new Error('Only documents (PDF, EPUB, DOCX, DOC, ZIP) or images are allowed for eBooks!'));
+  }
+});
+
+// POST /api/blogs/upload-ebook - Upload eBook document
+router.post('/upload-ebook', uploadEbook.single('ebook'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No eBook file uploaded' });
+    }
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.json({ 
+      success: true, 
+      url: fileUrl, 
+      filename: req.file.originalname,
+      size: req.file.size 
+    });
+  } catch (error) {
+    console.error('eBook upload error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/blogs/ebook-download - Capture lead and allow free download
+router.post('/ebook-download', async (req, res) => {
+  try {
+    const { name, email, phone, blog_id, ebook_title } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ message: 'Name is required' });
+    }
+    if (!email || !email.trim() || !/\S+@\S+\.\S+/.test(email)) {
+      return res.status(400).json({ message: 'A valid email address is required' });
+    }
+
+    const db = getDatabase();
+
+    // Fetch blog title if blog_id provided
+    let blogTitle = '';
+    if (blog_id) {
+      const blog = await db.prepare('SELECT title FROM blogs WHERE id = ?').get(blog_id);
+      if (blog) blogTitle = blog.title;
+    }
+
+    // 1. Store in ebook_downloads table
+    try {
+      await db.prepare(`
+        INSERT INTO ebook_downloads (blog_id, blog_title, ebook_title, name, email, phone)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).run(
+        blog_id || null, 
+        blogTitle || '', 
+        ebook_title || 'Enterprise AI eBook', 
+        name.trim(), 
+        email.trim(),
+        phone ? phone.trim() : ''
+      );
+    } catch (dbErr) {
+      // Fallback without phone if column not added yet
+      await db.prepare(`
+        INSERT INTO ebook_downloads (blog_id, blog_title, ebook_title, name, email)
+        VALUES (?, ?, ?, ?, ?)
+      `).run(
+        blog_id || null, 
+        blogTitle || '', 
+        ebook_title || 'Enterprise AI eBook', 
+        name.trim(), 
+        email.trim()
+      );
+    }
+
+    // 2. Also register in contacts table so admin sees it in the leads dashboard
+    try {
+      await db.prepare(`
+        INSERT INTO contacts (name, email, phone, company, message, status)
+        VALUES (?, ?, ?, ?, ?, 'new')
+      `).run(
+        name.trim(),
+        email.trim(),
+        phone ? phone.trim() : null,
+        'eBook Lead',
+        `Downloaded Free eBook: "${ebook_title || 'Enterprise AI eBook'}" from blog: "${blogTitle || 'Blog Resource'}"`
+      );
+    } catch (contactErr) {
+      console.warn('Could not mirror eBook lead to contacts:', contactErr.message);
+    }
+
+    res.json({
+      success: true,
+      message: 'Thank you! Your download is ready.'
+    });
+  } catch (error) {
+    console.error('Error handling eBook lead download:', error);
+    res.status(500).json({ message: 'Failed to process download request' });
   }
 });
 

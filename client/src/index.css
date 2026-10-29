@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+.font-procol-heading,
+.font-serif-heading {
+  font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+  font-optical-sizing: auto;
+  font-feature-settings: 'lnum' 1, 'pnum' 1;
+  word-spacing: 0.06em;
+  letter-spacing: 0.005em;
+}
+
 /* Prevent scroll restoration and ensure header stays at top */
 html {
   scroll-behavior: smooth;

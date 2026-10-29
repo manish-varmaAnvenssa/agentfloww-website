@@ -69,10 +69,17 @@ const uploadsPath = __dirname.includes('.builds')
   : path.join(__dirname, 'public', 'uploads');
 app.use('/uploads', express.static(uploadsPath));
 
-// Rate limiting
+// Rate limiting - relaxed for standard browsing and development
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 5000, // Allow sufficient requests for SPA browsing
+  skip: (req) => {
+    // Skip rate limiting in development or for local loopback
+    const ip = req.ip || req.connection?.remoteAddress || '';
+    return ip.includes('127.0.0.1') || ip.includes('::1') || ip.includes('localhost') || process.env.NODE_ENV !== 'production';
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use(limiter);
 
@@ -138,4 +145,4 @@ const initDatabase = require('./init-database');
     console.error('❌ Failed to initialize database. Server NOT started.', error.message);
     process.exit(1);
   }
-})();
+})();

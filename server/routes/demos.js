@@ -10,10 +10,12 @@ router.post('/', [
   body('email').isEmail().normalizeEmail().withMessage('Please enter a valid email'),
   body('company').optional().trim().isLength({ max: 100 }).withMessage('Company name too long'),
   body('phone')
+    .optional({ checkFalsy: true })
     .trim()
     .isLength({ min: 1, max: 20 })
-    .withMessage('Phone number is required and must be less than 20 characters')
+    .withMessage('Phone number must be less than 20 characters')
     .custom((value) => {
+      if (!value) return true;
       const cleanNumber = value.replace(/[^\d+]/g, '');
       if (cleanNumber.startsWith('+')) {
         if (cleanNumber.length < 8 || cleanNumber.length > 16) {
@@ -21,13 +23,12 @@ router.post('/', [
         }
       } else {
         if (cleanNumber.length < 7 || cleanNumber.length > 15) {
-          throw new Error('Phone number must be 8-15 digits');
+          throw new Error('Phone number must be 7-15 digits');
         }
       }
       return true;
-    })
-    .withMessage('Please enter a valid phone number'),
-  body('industry').trim().isLength({ min: 1, max: 100 }).withMessage('Industry is required and must be less than 100 characters'),
+    }),
+  body('industry').optional().trim().isLength({ max: 100 }).withMessage('Industry must be less than 100 characters'),
   body('use_case').optional().trim().isLength({ max: 500 }).withMessage('Use case description too long'),
   body('preferred_date').optional().isISO8601().withMessage('Please enter a valid date'),
   body('preferred_time').optional().trim().isLength({ max: 20 }).withMessage('Preferred time too long')
@@ -67,8 +68,8 @@ router.post('/', [
       name, 
       email, 
       company || null, 
-      phone, 
-      industry, 
+      phone || null, 
+      industry || 'Blog CTA Lead', 
       use_case || null, 
       preferred_date || null, 
       preferred_time || null, 
@@ -76,6 +77,22 @@ router.post('/', [
     );
 
     console.log('Demo inserted with ID:', result.lastInsertRowid);
+
+    // Also mirror to contacts table so admin sees it in general inquiries as well
+    try {
+      await db.prepare(`
+        INSERT INTO contacts (name, email, phone, company, message, status)
+        VALUES (?, ?, ?, ?, ?, 'new')
+      `).run(
+        name,
+        email,
+        phone || null,
+        company || 'Website Lead',
+        `Booked Demo Request: ${use_case || 'Quick Demo requested from Blog Detail page'}`
+      );
+    } catch (contactErr) {
+      console.warn('Could not mirror demo lead to contacts:', contactErr.message);
+    }
 
     // Get the created demo request
     const newDemo = await db.prepare('SELECT * FROM demos WHERE id = ?').get(result.lastInsertRowid);

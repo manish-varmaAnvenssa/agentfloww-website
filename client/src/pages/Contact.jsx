@@ -169,8 +169,10 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'India Office',
-      address: 'Awfis Binarius, Deepak Nitrate Road, Shastrinagar, Yerawada, Pune, Maharashtra 411006',
-      city: '',
+      addresses: [
+        '1st Floor, Nucleus Mall, 1st Church Rd, opposite Police Commissioner Office, Camp, Pune, Maharashtra 411001',
+        'A 3/17 A W H O SALUNKE, VIHAR KONDHWA ROAD, Srpf, Pune City, Pune- 411022, Maharashtra, India'
+      ],
       color: 'from-orange-500 to-red-500'
     },
     {
@@ -495,7 +497,7 @@ const Contact = () => {
                   <div className="space-y-6">
                     {officeLocations.map((office, index) => (
                       <motion.div
-                        key={office.title}
+                        key={`${office.title}-${index}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
@@ -504,8 +506,18 @@ const Contact = () => {
                         <div className="w-10 h-10 flex-shrink-0"></div>
                         <div>
                           <h4 className="text-lg font-semibold text-gray-900 mb-1">{office.title}</h4>
-                          <p className="text-gray-600">{office.address}</p>
-                          <p className="text-gray-600">{office.city}</p>
+                          {office.addresses ? (
+                            <div className="space-y-3">
+                              {office.addresses.map((addr, addrIdx) => (
+                                <p key={addrIdx} className="text-gray-600">{addr}</p>
+                              ))}
+                            </div>
+                          ) : (
+                            <>
+                              <p className="text-gray-600">{office.address}</p>
+                              {office.city && <p className="text-gray-600">{office.city}</p>}
+                            </>
+                          )}
                         </div>
                       </motion.div>
                     ))}

@@ -46,11 +46,13 @@ api.interceptors.response.use(
     
     if (error.response?.status === 401) {
       const isLoginRequest = error.config?.url?.includes('/auth/login');
-      if (!isLoginRequest) {
-        console.log('Unauthorized - redirecting to login');
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        window.location.href = '/login'
+      const isAuthPage = typeof window !== 'undefined' && window.location.pathname.includes('/login');
+      const isAdminRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+      if (!isLoginRequest && !isAuthPage && isAdminRoute) {
+        console.log('Unauthorized admin request - redirecting to login');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/admin/login';
       }
     }
     return Promise.reject(error)

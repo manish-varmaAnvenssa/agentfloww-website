@@ -72,7 +72,12 @@ const AdminBlog = () => {
     seo_description: '',
     seo_keywords: '',
     canonical_url: '',
-    og_image: ''
+    og_image: '',
+    key_takeaways: '',
+    ebook_title: '',
+    ebook_description: '',
+    ebook_file: '',
+    ebook_cover: ''
   })
   const [showSeoSettings, setShowSeoSettings] = useState(false)
   const [tagInput, setTagInput] = useState('')
@@ -157,7 +162,22 @@ const AdminBlog = () => {
       seo_description: blog.seo_description || '',
       seo_keywords: blog.seo_keywords || '',
       canonical_url: blog.canonical_url || '',
-      og_image: blog.og_image || ''
+      og_image: blog.og_image || '',
+      key_takeaways: (() => {
+        if (!blog.key_takeaways) return ''
+        if (typeof blog.key_takeaways === 'string') {
+          try {
+            const parsed = JSON.parse(blog.key_takeaways)
+            if (Array.isArray(parsed)) return parsed.map(item => item.lead ? `${item.lead} ${item.text}` : item.text).join('\n')
+          } catch {}
+          return blog.key_takeaways
+        }
+        return ''
+      })(),
+      ebook_title: blog.ebook_title || '',
+      ebook_description: blog.ebook_description || '',
+      ebook_file: blog.ebook_file || '',
+      ebook_cover: blog.ebook_cover || ''
     })
     setActiveTab('editor')
   }
@@ -182,7 +202,12 @@ const AdminBlog = () => {
       seo_description: '',
       seo_keywords: '',
       canonical_url: '',
-      og_image: ''
+      og_image: '',
+      key_takeaways: '',
+      ebook_title: '',
+      ebook_description: '',
+      ebook_file: '',
+      ebook_cover: ''
     })
     setActiveTab('editor')
   }
@@ -237,7 +262,9 @@ const AdminBlog = () => {
     try {
       const payload = {
         ...formData,
-        category_id: formData.category_id ? parseInt(formData.category_id, 10) : null
+        category_id: formData.category_id ? parseInt(formData.category_id, 10) : null,
+        // Send key_takeaways as plain string; server stores as TEXT and frontend parses it
+        key_takeaways: formData.key_takeaways || ''
       }
 
       if (editingBlogId) {
@@ -944,6 +971,22 @@ const AdminBlog = () => {
               />
             </div>
 
+            {/* Key Takeaways */}
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                Key Takeaways
+              </label>
+              <p className="text-[11px] text-gray-400 mb-2">One bullet per line. Prefix with <strong>Bold Title:</strong> to add a lead label. If left blank, the app auto-generates takeaways.</p>
+              <textarea
+                rows="4"
+                value={formData.key_takeaways}
+                onChange={(e) => setFormData(prev => ({ ...prev, key_takeaways: e.target.value }))}
+                placeholder={`Autonomous Process Execution: Explore how multi-agent architectures...
+Measurable Impact: Eliminates repetitive manual overhead by up to 80%...`}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
             {/* Tags Input */}
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
@@ -989,6 +1032,151 @@ const AdminBlog = () => {
                 onChange={(contentHtml) => setFormData(prev => ({ ...prev, content: contentHtml }))}
                 placeholder="Write your blog post with formatted headings, images, code snippets, quotes, and lists..."
               />
+            </div>
+
+            {/* eBook / Resource Section */}
+            <div className="border border-indigo-100 rounded-2xl overflow-hidden">
+              <div className="px-6 py-4 bg-gradient-to-r from-indigo-50 to-purple-50 flex items-center justify-between">
+                <span className="flex items-center space-x-2 text-xs font-bold text-indigo-800">
+                  <Layers size={16} className="text-indigo-600" />
+                  <span>Free eBook / Resource Attachment (Optional)</span>
+                </span>
+                <span className="text-[10px] text-indigo-400">Shows as a download card in the blog sidebar</span>
+              </div>
+              <div className="p-6 bg-white space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5">eBook Title</label>
+                    <input
+                      type="text"
+                      value={formData.ebook_title}
+                      onChange={(e) => setFormData(prev => ({ ...prev, ebook_title: e.target.value }))}
+                      placeholder="e.g. The Enterprise AI Automation Playbook"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5">eBook Description (short)</label>
+                    <input
+                      type="text"
+                      value={formData.ebook_description}
+                      onChange={(e) => setFormData(prev => ({ ...prev, ebook_description: e.target.value }))}
+                      placeholder="e.g. 40-page guide to automating ERP with AI agents"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
+
+                {/* eBook File Upload */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">eBook File (PDF, EPUB, DOCX — up to 50MB)</label>
+                  <div className="flex items-center gap-3">
+                    <div
+                      onClick={() => document.getElementById('ebook-file-input').click()}
+                      className="flex-1 border-2 border-dashed border-indigo-200 hover:border-indigo-500 hover:bg-indigo-50/30 rounded-xl p-4 text-center cursor-pointer transition-all"
+                    >
+                      <input
+                        type="file"
+                        id="ebook-file-input"
+                        accept=".pdf,.epub,.docx,.doc,.zip"
+                        onChange={async (e) => {
+                          const file = e.target.files[0]
+                          if (!file) return
+                          const fd = new FormData()
+                          fd.append('ebook', file)
+                          try {
+                            setSaving(true)
+                            const res = await axios.post('/api/blogs/upload-ebook', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+                            if (res.data.success) {
+                              setFormData(prev => ({ ...prev, ebook_file: res.data.url }))
+                              showMessage('success', `eBook uploaded: ${res.data.filename}`)
+                            }
+                          } catch (err) {
+                            showMessage('error', err.response?.data?.message || 'Failed to upload eBook')
+                          } finally {
+                            setSaving(false)
+                          }
+                        }}
+                        className="hidden"
+                      />
+                      {formData.ebook_file ? (
+                        <div className="flex items-center justify-center space-x-2 text-indigo-700">
+                          <Check size={16} className="text-green-500" />
+                          <span className="text-xs font-bold truncate max-w-[200px]">{formData.ebook_file.split('/').pop()}</span>
+                        </div>
+                      ) : (
+                        <div className="text-xs text-gray-500">
+                          <p className="font-bold text-indigo-600">Click to upload eBook file</p>
+                          <p className="text-[10px] mt-0.5">PDF, EPUB, DOCX, ZIP — max 50MB</p>
+                        </div>
+                      )}
+                    </div>
+                    {formData.ebook_file && (
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, ebook_file: '' }))}
+                        className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                        title="Remove eBook file"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
+                  {formData.ebook_file && (
+                    <p className="mt-1.5 text-[10px] text-gray-400 font-mono truncate">File: {formData.ebook_file}</p>
+                  )}
+                </div>
+
+                {/* eBook Cover Image Upload */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">eBook Cover Image (Optional)</label>
+                  <div className="flex items-center gap-3">
+                    <div
+                      onClick={() => document.getElementById('ebook-cover-input').click()}
+                      className="flex-1 border-2 border-dashed border-gray-200 hover:border-indigo-400 rounded-xl p-4 text-center cursor-pointer transition-all"
+                    >
+                      <input
+                        type="file"
+                        id="ebook-cover-input"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files[0]
+                          if (!file) return
+                          const fd = new FormData()
+                          fd.append('ebook', file)
+                          try {
+                            setSaving(true)
+                            const res = await axios.post('/api/blogs/upload-ebook', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+                            if (res.data.success) {
+                              setFormData(prev => ({ ...prev, ebook_cover: res.data.url }))
+                              showMessage('success', 'Cover image uploaded!')
+                            }
+                          } catch (err) {
+                            showMessage('error', 'Failed to upload cover image')
+                          } finally {
+                            setSaving(false)
+                          }
+                        }}
+                        className="hidden"
+                      />
+                      {formData.ebook_cover ? (
+                        <img src={formData.ebook_cover} alt="eBook Cover" className="h-16 object-contain mx-auto rounded" />
+                      ) : (
+                        <p className="text-xs text-gray-400">Click to upload cover image</p>
+                      )}
+                    </div>
+                    {formData.ebook_cover && (
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, ebook_cover: '' }))}
+                        className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Publishing Settings & Featured Toggle */}

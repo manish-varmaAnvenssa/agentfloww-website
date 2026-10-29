@@ -366,7 +366,7 @@ const BlogListing = () => {
                 className="group bg-white rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden"
               >
                 {/* Image Box */}
-                <div className="relative h-52 w-full overflow-hidden bg-slate-100">
+                <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
                   <img
                     src={blog.featured_image || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80'}
                     alt={blog.title}
