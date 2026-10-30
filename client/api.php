@@ -226,7 +226,9 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false
     ]);
-    ensureTablesExist($pdo);
+    // Table and schema verification is done on setup/admin login or on-demand
+    // to prevent DDL metadata locks and 429 Too Many Requests under public traffic.
+    // ensureTablesExist($pdo);
 } catch (PDOException $e) {
     sendError('Database connection failed: ' . $e->getMessage(), 500);
 }
