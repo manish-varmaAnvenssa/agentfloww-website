@@ -2493,7 +2493,7 @@ const Home = () => {
                 <Envelope size={32} />
               </div>
               <h3 className="text-lg font-bold text-white mb-3 md:text-left">Contact Info</h3>
-              <p className="text-gray-300 mb-1 text-sm md:text-left font-mono">Email: aditya@agentfloww.com</p>
+              <p className="text-gray-300 mb-1 text-sm md:text-left font-mono">Email: Sales@agentfloww.com</p>
               <p className="text-gray-300 mb-1 text-sm md:text-left font-mono">Web: www.agentfloww.com</p>
               <div className="md:text-left mt-4">
                 <Link to="/contact" className="inline-flex items-center text-cyan-400 hover:text-cyan-300 font-semibold transition-colors duration-200 group">

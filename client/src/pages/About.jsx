@@ -746,7 +746,6 @@ const TiltCard = ({ children, className = "" }) => {
 // --- 6. Image-based Logo Marquee ---
 const LogoWall = () => {
   const logos = [
-    { src: '/images/logo/sap.png', brandName: 'SAP', heightClass: 'h-12 md:h-14' },
     { src: '/images/logo/oracle.png', brandName: 'Oracle', heightClass: 'h-12 md:h-14' },
     { src: '/images/logo/dynamics.png', brandName: 'Dynamics 365', heightClass: 'h-16 md:h-20' },
     { src: '/images/logo/netsuite.png', brandName: 'NetSuite', heightClass: 'h-16 md:h-20' },

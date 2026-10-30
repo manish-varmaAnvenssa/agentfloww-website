@@ -83,8 +83,13 @@ const AdminContact = () => {
   const filteredContacts = contacts.filter(contact => {
     const matchesSearch = contact.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          contact.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         contact.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          contact.message?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === 'all' || contact.status === statusFilter
+    const matchesStatus = statusFilter === 'all' 
+      ? true 
+      : statusFilter === 'ebook' 
+        ? contact.company === 'eBook Lead'
+        : contact.status === statusFilter
     return matchesSearch && matchesStatus
   })
 
@@ -172,7 +177,8 @@ const AdminContact = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             >
-              <option value="all">All Status</option>
+              <option value="all">All Submissions</option>
+              <option value="ebook">📘 eBook Leads</option>
               <option value="new">New</option>
               <option value="read">Read</option>
               <option value="replied">Replied</option>
@@ -223,7 +229,13 @@ const AdminContact = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{contact.company || 'N/A'}</div>
+                      {contact.company === 'eBook Lead' ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                          📘 eBook Lead
+                        </span>
+                      ) : (
+                        <div className="text-sm text-gray-900">{contact.company || 'N/A'}</div>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-900">
