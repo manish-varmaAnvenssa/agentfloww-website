@@ -42,27 +42,8 @@ if ($isLocal) {
 
 // Database Connection
 function ensureTablesExist($pdo) {
+    // 1. Ensure ebook_downloads table always exists
     try {
-        // Fast check: if ebook_title already exists, return immediately (zero locks!)
-        $check = $pdo->query("SHOW COLUMNS FROM blogs LIKE 'ebook_title'");
-        if ($check && $check->rowCount() > 0) {
-            return;
-        }
-
-        // Columns missing: add them once
-        $ebookCols = [
-            'key_takeaways' => 'TEXT',
-            'ebook_title' => "VARCHAR(255) DEFAULT ''",
-            'ebook_description' => 'TEXT',
-            'ebook_file' => "VARCHAR(255) DEFAULT ''",
-            'ebook_cover' => "VARCHAR(255) DEFAULT ''"
-        ];
-        foreach ($ebookCols as $col => $colDef) {
-            try {
-                $pdo->exec("ALTER TABLE blogs ADD COLUMN $col $colDef");
-            } catch (Exception $e) {}
-        }
-
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS ebook_downloads (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -73,9 +54,28 @@ function ensureTablesExist($pdo) {
                 email VARCHAR(100) NOT NULL,
                 phone VARCHAR(30) DEFAULT '',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE SET NULL
+                INDEX idx_ebook_downloads_created (created_at)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         ");
+    } catch (Exception $e) {}
+
+    // 2. Ensure eBook columns exist on blogs table
+    try {
+        $check = $pdo->query("SHOW COLUMNS FROM blogs LIKE 'ebook_title'");
+        if (!$check || $check->rowCount() === 0) {
+            $ebookCols = [
+                'key_takeaways' => 'TEXT',
+                'ebook_title' => "VARCHAR(255) DEFAULT ''",
+                'ebook_description' => 'TEXT',
+                'ebook_file' => "VARCHAR(255) DEFAULT ''",
+                'ebook_cover' => "VARCHAR(255) DEFAULT ''"
+            ];
+            foreach ($ebookCols as $col => $colDef) {
+                try {
+                    $pdo->exec("ALTER TABLE blogs ADD COLUMN $col $colDef");
+                } catch (Exception $e) {}
+            }
+        }
     } catch (Exception $e) {}
 
     try {
@@ -1202,16 +1202,62 @@ if ($parts[0] === 'blogs') {
             if ($bRow) $blogTitle = $bRow['title'];
         }
 
-        $stmt = $pdo->prepare("
-            INSERT INTO ebook_downloads (blog_id, blog_title, ebook_title, name, email, phone)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-        $stmt->execute([$blogId, $blogTitle, $ebookTitle, $name, $email, $phone]);
+        // 1. Ensure ebook_downloads table exists
+        try {
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS ebook_downloads (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    blog_id INT NULL,
+                    blog_title VARCHAR(255) DEFAULT '',
+                    ebook_title VARCHAR(255) DEFAULT '',
+                    name VARCHAR(100) NOT NULL,
+                    email VARCHAR(100) NOT NULL,
+                    phone VARCHAR(30) DEFAULT '',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_ebook_downloads_created (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            ");
+        } catch (Exception $e) {}
+
+        // 2. Insert into ebook_downloads table
+        $downloadId = null;
+        try {
+            $stmt = $pdo->prepare("
+                INSERT INTO ebook_downloads (blog_id, blog_title, ebook_title, name, email, phone)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([$blogId, $blogTitle, $ebookTitle, $name, $email, $phone]);
+            $downloadId = $pdo->lastInsertId();
+        } catch (Exception $e) {
+            try {
+                $stmt = $pdo->prepare("
+                    INSERT INTO ebook_downloads (blog_id, blog_title, ebook_title, name, email)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
+                $stmt->execute([$blogId, $blogTitle, $ebookTitle, $name, $email]);
+                $downloadId = $pdo->lastInsertId();
+            } catch (Exception $e2) {}
+        }
+
+        // 3. Mirror to contacts table so Admin sees it in /admin/contact!
+        try {
+            $stmtC = $pdo->prepare("
+                INSERT INTO contacts (name, email, phone, company, message, status)
+                VALUES (?, ?, ?, ?, ?, 'new')
+            ");
+            $stmtC->execute([
+                $name,
+                $email,
+                !empty($phone) ? $phone : null,
+                'eBook Lead',
+                'Downloaded Free eBook: "' . ($ebookTitle ?: 'Enterprise AI eBook') . '" from blog: "' . ($blogTitle ?: 'Blog Resource') . '"'
+            ]);
+        } catch (Exception $ce) {}
 
         sendJSON([
             'success' => true,
             'message' => 'Download lead recorded successfully',
-            'id' => $pdo->lastInsertId()
+            'id' => $downloadId
         ], 201);
     }
 
