@@ -71,34 +71,27 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 
 # ----------------------------------------------------------------------
-# 2. Existing Files & Assets
+# 2. Existing Static Files & Media Assets
 # ----------------------------------------------------------------------
 RewriteRule ^images/ - [L]
 RewriteRule ^uploads/ - [L]
 RewriteRule \.(css|js|png|jpg|jpeg|svg|webp|ico|woff|woff2|gif|mp4|pdf|txt|xml|json)$ - [L]
 
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
+# Serve existing physical files directly
+RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
 # ----------------------------------------------------------------------
-# 3. Prerendered HTML subdirectories (e.g. /products/sap-ai-agent/)
-# ----------------------------------------------------------------------
-RewriteCond %{REQUEST_URI} !^/?$
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}/index.html -f
-RewriteRule ^(.*)$ $1/index.html [L]
-
-# ----------------------------------------------------------------------
-# 4. Route all API requests to api.php
+# 3. Route all API requests to api.php
 # ----------------------------------------------------------------------
 RewriteRule ^/?api/(.*)$ api.php?route=$1 [QSA,L]
 
 # ----------------------------------------------------------------------
-# 5. Fallback all remaining routes to index.php (Dynamic SEO & Prerendering)
+# 4. Fallback all remaining routes to index.html (React SPA Routing)
 # ----------------------------------------------------------------------
+RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [L]
+RewriteRule ^.*$ /index.html [L]
 
 # Enable compression
 <IfModule mod_deflate.c>
