@@ -815,8 +815,8 @@ const LiveDemo = () => {
                 <div className="rounded-2xl p-4" style={{ background: `${B.primary}08`, border: `1px solid ${B.border}` }}>
                   <p className="text-xs text-gray-600">
                     Not ready to schedule? Reach out at{' '}
-                    <a href="mailto:aditya@agentfloww.com" className="font-semibold hover:underline" style={{ color: B.text }}>
-                      aditya@agentfloww.com
+                    <a href="mailto:Sales@agentfloww.com" className="font-semibold hover:underline" style={{ color: B.text }}>
+                      Sales@agentfloww.com
                     </a>
                   </p>
                 </div>

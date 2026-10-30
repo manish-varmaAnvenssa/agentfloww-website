@@ -138,8 +138,8 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email Us',
-      content: 'aditya@agentfloww.com',
-      href: 'mailto:aditya@agentfloww.com',
+      content: 'Sales@agentfloww.com',
+      href: 'mailto:Sales@agentfloww.com',
       color: 'from-blue-500 to-cyan-500'
     },
     {

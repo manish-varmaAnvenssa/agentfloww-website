@@ -605,7 +605,7 @@ if ($parts[0] === 'otp') {
         $subject = "Your Verification Code - Agentfloww";
         $message = "Hello,\n\nYour verification code is: $otp\n\nThis code will expire in 10 minutes.\n\nBest regards,\nAgentfloww Team";
         $headers = "From: no-reply@agentfloww.com\r\n" .
-                   "Reply-To: aditya@agentfloww.com\r\n" .
+                   "Reply-To: Sales@agentfloww.com\r\n" .
                    "X-Mailer: PHP/" . phpversion() . "\r\n" .
                    "Content-Type: text/plain; charset=UTF-8";
 
