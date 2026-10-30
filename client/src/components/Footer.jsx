@@ -129,7 +129,7 @@ const Footer = () => {
         {/* Trademark & Non-Affiliation Disclaimer */}
         <div className="border-t border-white/10 mt-12 pt-6">
           <p className="text-[11px] leading-relaxed text-gray-500 text-center md:text-left">
-            <strong className="text-gray-400">Disclaimer:</strong> SAP®, Oracle®, Microsoft Dynamics®, NetSuite®, and Odoo® are registered trademarks or service marks of their respective owners. Agentfloww is an independent enterprise AI workflow software platform and is not affiliated with, endorsed by, sponsored by, or associated with any of these trademark holders.
+            <strong className="text-gray-400">Disclaimer:</strong> Oracle®, Microsoft Dynamics®, NetSuite®, and Odoo® are registered trademarks or service marks of their respective owners. Agentfloww is an independent enterprise AI workflow software platform and is not affiliated with, endorsed by, sponsored by, or associated with any of these trademark holders.
           </p>
         </div>
 
