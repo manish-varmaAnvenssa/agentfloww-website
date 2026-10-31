@@ -796,6 +796,7 @@ const Home = () => {
         <title>Agentfloww | AI-Powered Manufacturing Automation</title>
         <meta name="description" content="Agentfloww delivers AI-powered automation for Manufacturing, with smarter procurement, faster ERP, and zero busywork. SAP, Oracle, Microsoft Dynamics, NetSuite, AI Agents, and ERP automation." />
         <meta name="keywords" content="Manufacturing AI, ERP Automation, ERP AI Agents, AI Procurement, Manufacturing Intelligence, SAP, Oracle, Dynamics, NetSuite, Odoo" />
+        <link rel="canonical" href="https://agentfloww.com/" />
       </Helmet>
 
       {/* Hero Section with Integrated Navigation */}

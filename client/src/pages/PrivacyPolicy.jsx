@@ -72,6 +72,7 @@ const PrivacyPolicy = () => {
       <Helmet>
         <title>Privacy Policy - Agentflow</title>
         <meta name="description" content="Learn about how Agentflow protects your privacy and handles your personal information." />
+        <link rel="canonical" href="https://agentfloww.com/privacy-policy" />
       </Helmet>
 
       <div className="min-h-screen bg-white">

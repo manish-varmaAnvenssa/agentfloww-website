@@ -149,6 +149,7 @@ const BlogListing = () => {
         <title>AI Insights & Knowledge Hub | AgentFlow Blogs</title>
         <meta name="description" content="Explore practical AI guides, automation strategies, enterprise ERP integration insights, and industry case studies from AgentFlow." />
         <meta name="keywords" content="AI blog, enterprise automation articles, ERP AI guides, machine learning insights, AgentFlow resources" />
+        <link rel="canonical" href="https://agentfloww.com/blogs" />
       </Helmet>
 
       {/* Premium Hero Section matching Company Design System */}

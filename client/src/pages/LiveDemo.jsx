@@ -685,6 +685,7 @@ const LiveDemo = () => {
       <Helmet>
         <title>Live Demo — Agentfloww | AI-Powered ERP Automation</title>
         <meta name="description" content="Book a personalized live demonstration and discover how Agentfloww's AI agents can automate your ERP, procurement, finance, logistics, and manufacturing workflows." />
+        <link rel="canonical" href="https://agentfloww.com/live-demo" />
       </Helmet>
 
       <div className="bg-white overflow-hidden">

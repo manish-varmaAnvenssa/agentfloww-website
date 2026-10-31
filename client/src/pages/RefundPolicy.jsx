@@ -42,6 +42,7 @@ const RefundPolicy = () => {
       <Helmet>
         <title>Refund and Cancellation Policy - Agentflow</title>
         <meta name="description" content="Learn about Agentflow's refund and cancellation policies, processing times, and eligibility criteria." />
+        <link rel="canonical" href="https://agentfloww.com/refund-policy" />
       </Helmet>
 
       <div className="min-h-screen bg-white">

@@ -130,6 +130,7 @@ const TermsOfService = () => {
       <Helmet>
         <title>Terms of Services - Agentflow</title>
         <meta name="description" content="Read Agentflow's terms of service, including definitions, scope of services, client obligations, payment terms, and prohibited articles." />
+        <link rel="canonical" href="https://agentfloww.com/terms-of-service" />
       </Helmet>
 
       <div className="min-h-screen bg-white">

@@ -741,7 +741,7 @@ const BlogDetail = () => {
         <title>{blog.seo_title || blog.title} | AgentFlow Blog</title>
         <meta name="description" content={blog.seo_description || blog.excerpt} />
         {blog.seo_keywords && <meta name="keywords" content={blog.seo_keywords} />}
-        <link rel="canonical" href={blog.canonical_url || currentUrl} />
+        <link rel="canonical" href={blog.canonical_url || `https://agentfloww.com/blogs/${slug}`} />
 
         {/* Open Graph Metadata */}
         <meta property="og:type" content="article" />

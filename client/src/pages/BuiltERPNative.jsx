@@ -109,6 +109,7 @@ const BuiltERPNative = () => {
       <Helmet>
         <title>Built ERP-Native | Agentfloww Technical Architecture</title>
         <meta name="description" content="Agentfloww is built ERP-native, featuring direct Service Layer integration, ERP Process Automation, Enterprise connectivity, and AI agents purpose-built for manufacturing ERP systems." />
+        <link rel="canonical" href="https://agentfloww.com/built-erp-native" />
       </Helmet>
 
       {/* Hero Section */}

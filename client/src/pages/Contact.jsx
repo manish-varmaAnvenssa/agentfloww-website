@@ -223,6 +223,7 @@ const Contact = () => {
       <Helmet>
         <title>Contact Us - Agentfloww</title>
         <meta name="description" content="Get in touch with the Agentfloww team. We're here to help you build amazing AI-powered digital experiences." />
+        <link rel="canonical" href="https://agentfloww.com/contact" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 relative overflow-hidden">

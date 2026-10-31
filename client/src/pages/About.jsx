@@ -828,6 +828,7 @@ const About = () => {
       <Helmet>
         <title>About Us - Agentfloww</title>
         <meta name="description" content="Redefining enterprise automation. Meet Agentfloww's leadership, values, global presence, and the visionary AI Operating System built for modern business processes." />
+        <link rel="canonical" href="https://agentfloww.com/about" />
       </Helmet>
 
       <div className="min-h-screen bg-white text-gray-900 selection:bg-purple-100 selection:text-purple-800">
