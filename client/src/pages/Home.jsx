@@ -2287,7 +2287,7 @@ const Home = () => {
               <span className="text-indigo-600 font-bold text-xs uppercase tracking-wider font-mono">Trust & Compliance</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              Governed AI agents. Infrastructure your CISO and CIO require
+              Intelligent AI Automation. Engineered for Enterprise Trust.
             </h2>
             <p className="text-base md:text-lg text-gray-650 max-w-3xl mx-auto leading-relaxed">
               Built for scale, trust and compliance with globally recognized security certifications.
