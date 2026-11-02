@@ -64,6 +64,11 @@ import {
   X
 } from '../components/Icons'
 
+import iso27001Logo from '../assets/compliance/iso-27001.webp'
+import soc1Logo from '../assets/compliance/soc-1.webp'
+import soc2Logo from '../assets/compliance/soc-2.webp'
+import gdprLogo from '../assets/compliance/gdpr.webp'
+
 const Zf = ["ERP Agentic AI", "Conversational ERP", "Browser AI", "Predictive Analytics"];
 
 const Rf = [
@@ -2273,81 +2278,77 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Section 11: Pre-Built ERP Accelerators */}
+      {/* Section 11: Governed AI Agents / Security & Compliance */}
       <section className="py-20 bg-transparent relative overflow-hidden z-10 mesh-gradient-indigo blueprint-grid-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <div className="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-150 px-3 py-1 rounded-full mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-              <span className="text-indigo-600 font-bold text-xs uppercase tracking-wider font-mono">Launch Fast</span>
+              <span className="text-indigo-600 font-bold text-xs uppercase tracking-wider font-mono">Trust & Compliance</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Launch Fast - With Pre-Built ERP Accelerators</h2>
-            <p className="text-lg text-gray-650 max-w-3xl mx-auto leading-relaxed">
-              For manufacturers on SAP Business One, Agentfloww offers ready-to-deploy operational modules built on the SAP Service Layer.
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+              Governed AI agents. Infrastructure your CISO and CIO require
+            </h2>
+            <p className="text-base md:text-lg text-gray-650 max-w-3xl mx-auto leading-relaxed">
+              Built for scale, trust and compliance with globally recognized security certifications.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Gate Entry Management",
-                desc: "Digitized inbound/outbound vehicle tracking with SAP GRPO auto-sync, QR-based driver ID, and weighbridge integration.",
-                img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop",
-                icon: Warehouse,
-                badges: ["SAP GRPO Auto-Sync", "QR Driver ID", "Weighbridge API"]
-              },
-              {
-                title: "Job Work Management",
-                desc: "Subcontracting, BOM-based material issue/return, WIP tracking, and SAP production order write-back.",
-                img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop",
-                icon: Gear,
-                badges: ["Subcontracting", "BOM Management", "WIP Tracking"]
-              },
-              {
-                title: "Quality Control Management",
-                desc: "Centralized inspection, tolerance-based pass/fail, NCR automation, and SAP batch/lot synchronization.",
-                img: "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&h=600&fit=crop",
-                icon: CheckCircle,
-                badges: ["Inspections", "NCR Automation", "Batch Sync"]
-              }
-            ].map((module, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 20 }} 
-                whileInView={{ opacity: 1, y: 0 }} 
-                transition={{ duration: 0.6, delay: idx * 0.1 }} 
-                viewport={{ once: true }}
-                className="group cursor-pointer"
-              >
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-150 hover:border-purple-300 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 sweep-shine h-full flex flex-col justify-between">
-                  <div>
-                    <div className="bg-gray-105 rounded-lg h-44 mb-6 overflow-hidden relative">
-                      <img src={module.img} alt={module.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                      <div className="absolute inset-0 bg-purple-950/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="max-w-5xl mx-auto"
+          >
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-150 overflow-hidden">
+              <div className="grid grid-cols-2 md:grid-cols-4">
+                {[
+                  {
+                    name: "ISO 27001",
+                    img: iso27001Logo,
+                    alt: "ISO 27001 Information Security Management Certified"
+                  },
+                  {
+                    name: "AICPA SOC 1 TYPE I",
+                    img: soc1Logo,
+                    alt: "AICPA SOC 1 Type I Certified"
+                  },
+                  {
+                    name: "SOC 2 TYPE II",
+                    img: soc2Logo,
+                    alt: "SOC 2 Type II Certified"
+                  },
+                  {
+                    name: "GDPR",
+                    img: gdprLogo,
+                    alt: "GDPR Compliant"
+                  }
+                ].map((item, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex flex-col items-center justify-between p-6 sm:p-8 text-center group hover:bg-slate-50/50 transition-colors duration-300 ${
+                      idx % 2 === 0 ? 'border-r border-gray-150' : ''
+                    } ${idx < 2 ? 'border-b md:border-b-0 border-gray-150' : ''} ${
+                      idx < 3 ? 'md:border-r md:border-gray-150' : 'md:border-r-0'
+                    }`}
+                  >
+                    <div className="h-28 flex items-center justify-center mb-6">
+                      <img
+                        src={item.img}
+                        alt={item.alt}
+                        className="max-h-24 max-w-[130px] w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-108 drop-shadow-sm"
+                        loading="lazy"
+                      />
                     </div>
-                    <div className="text-purple-600 mb-3 flex justify-start">
-                      <module.icon size={26} className="group-hover:rotate-12 transition-transform duration-300" />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors">{module.title}</h3>
-                    <p className="text-gray-550 leading-relaxed text-xs mb-4">{module.desc}</p>
-                    
-                    {/* Integration Badges */}
-                    <div className="flex flex-wrap gap-1.5 mb-2">
-                      {module.badges.map((badge, bIdx) => (
-                        <span key={bIdx} className="text-[9px] font-bold font-mono px-2 py-0.5 rounded bg-indigo-55 border border-indigo-100 text-indigo-700">
-                          {badge}
-                        </span>
-                      ))}
-                    </div>
+                    <span className="text-xs font-semibold text-gray-500 font-mono tracking-wider uppercase group-hover:text-indigo-900 transition-colors">
+                      {item.name}
+                    </span>
                   </div>
-                  <div className="mt-6 pt-3 border-t border-gray-50 flex items-center text-xs font-bold text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity space-x-1">
-                    <span>Explore Module Details</span>
-                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
