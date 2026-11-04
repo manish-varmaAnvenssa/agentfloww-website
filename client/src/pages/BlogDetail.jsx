@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { 
+  Plus,
+  Minus,
   Calendar, 
   Clock, 
   Eye, 
@@ -26,6 +28,79 @@ import {
 } from 'lucide-react'
 import { YoutubeLogo, InstagramLogo } from '../components/Icons'
 import axios from 'axios'
+
+// Interactive FAQ Accordion Component (Procol Style with Numbers & Expand/Collapse)
+  const BlogFaqAccordion = ({ faqs, headingText, headingId }) => {
+    const [openIndex, setOpenIndex] = useState(0)
+
+    if (!faqs || faqs.length === 0) return null
+
+    return (
+      <section id={headingId || 'frequently-asked-questions'} className="my-14 pt-2 scroll-mt-28">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight mb-8">
+          {headingText || 'Frequently asked questions'}
+        </h2>
+
+        <div className="border-t border-gray-200 divide-y divide-gray-200">
+          {faqs.map((faq, index) => {
+            const isOpen = openIndex === index
+            const itemNum = String(index + 1).padStart(2, '0')
+
+            return (
+              <div key={faq.id || index} className="py-5 sm:py-6 transition-colors">
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  className="w-full text-left flex items-start justify-between gap-4 group focus:outline-none cursor-pointer"
+                  aria-expanded={isOpen}
+                >
+                  <div className="flex items-baseline gap-4 sm:gap-6 flex-1">
+                    <span className="font-mono text-sm sm:text-base font-semibold text-gray-400 group-hover:text-blue-600 transition-colors shrink-0 select-none">
+                      {itemNum}
+                    </span>
+                    <h3 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-snug">
+                      {faq.question}
+                    </h3>
+                  </div>
+
+                  <div className="shrink-0 mt-0.5 ml-2">
+                    {isOpen ? (
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-blue-600 text-white rounded flex items-center justify-center shadow-xs transition-transform duration-200">
+                        <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 text-gray-400 group-hover:text-gray-700 flex items-center justify-center transition-colors">
+                        <Plus className="w-4 h-4 stroke-[2]" />
+                      </div>
+                    )}
+                  </div>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1.0] }}
+                      className="overflow-hidden"
+                    >
+                      <div 
+                        className="pt-3 pb-2 pl-8 sm:pl-12 pr-4 text-sm sm:text-[15px] text-gray-600 leading-relaxed font-sans prose prose-sm max-w-none prose-p:my-2 prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-800"
+                        dangerouslySetInnerHTML={{ 
+                          __html: faq.answerHtml.trim().startsWith('<') ? faq.answerHtml : `<p>${faq.answerHtml}</p>` 
+                        }}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+    )
+  }
 
 const BlogDetail = () => {
   const { slug } = useParams()
@@ -77,14 +152,69 @@ const BlogDetail = () => {
     setTimeout(() => setCopied(false), 2500)
   }
 
-  // Automatically parse headings and inject unique IDs into article HTML
-  const { processedContent, headings } = useMemo(() => {
-    if (!blog?.content) return { processedContent: '', headings: [] }
+  // Automatically parse headings, extract FAQ accordion items, and inject unique IDs into article HTML
+  const { processedContent, headings, faqs, faqHeadingText, faqHeadingId } = useMemo(() => {
+    if (!blog?.content) return { processedContent: '', headings: [], faqs: [], faqHeadingText: '', faqHeadingId: '' }
     
     if (typeof window !== 'undefined' && typeof DOMParser !== 'undefined') {
       try {
         const parser = new DOMParser()
         const doc = parser.parseFromString(blog.content, 'text/html')
+
+        // 1. Detect and extract FAQ section
+        let extractedFaqs = []
+        let foundFaqHeadingText = 'Frequently asked questions'
+        let foundFaqHeadingId = 'frequently-asked-questions'
+
+        const allH2s = Array.from(doc.querySelectorAll('h2, h3'))
+        const faqHeadingEl = allH2s.find(h => /frequently asked|^s*faqs?s*$/i.test(h.textContent?.trim() || ''))
+
+        if (faqHeadingEl) {
+          foundFaqHeadingText = faqHeadingEl.textContent.trim() || 'Frequently asked questions'
+          foundFaqHeadingId = 'frequently-asked-questions'
+
+          let currentQ = null
+          const elementsToRemove = [faqHeadingEl]
+          let sibling = faqHeadingEl.nextElementSibling
+
+          while (sibling && sibling.tagName !== 'H2' && sibling.tagName !== 'H1') {
+            elementsToRemove.push(sibling)
+            const tag = sibling.tagName.toUpperCase()
+            const isH3orH4 = tag === 'H3' || tag === 'H4'
+            const isBoldP = (tag === 'P' || tag === 'DIV') && (
+              sibling.querySelector('strong, b') && 
+              (sibling.textContent.trim().endsWith('?') || sibling.children.length === 1)
+            )
+
+            if (isH3orH4 || isBoldP) {
+              if (currentQ) {
+                extractedFaqs.push(currentQ)
+              }
+              currentQ = {
+                id: `faq-${extractedFaqs.length + 1}`,
+                question: sibling.textContent.trim(),
+                answerHtml: ''
+              }
+            } else if (currentQ) {
+              currentQ.answerHtml += sibling.outerHTML
+            }
+            sibling = sibling.nextElementSibling
+          }
+
+          if (currentQ) {
+            extractedFaqs.push(currentQ)
+          }
+
+          if (extractedFaqs.length > 0) {
+            // Replace the entire FAQ block with a unique placeholder
+            const placeholder = doc.createElement('div')
+            placeholder.id = 'injected-faq-accordion-root'
+            faqHeadingEl.parentNode.insertBefore(placeholder, faqHeadingEl)
+            elementsToRemove.forEach(el => el.remove())
+          }
+        }
+
+        // 2. Parse remaining headings for Table of Contents
         const headingEls = doc.querySelectorAll('h2, h3, h4')
         const items = []
         const usedIds = new Map()
@@ -121,17 +251,46 @@ const BlogDetail = () => {
           })
         })
 
+        // If FAQ was extracted, ensure it is represented in the Table of Contents in the correct position!
+        if (extractedFaqs.length > 0) {
+          const elements = Array.from(doc.body.querySelectorAll('h2, h3, h4, #injected-faq-accordion-root'))
+          const orderedItems = []
+          elements.forEach(el => {
+            if (el.id === 'injected-faq-accordion-root') {
+              orderedItems.push({
+                id: foundFaqHeadingId,
+                text: foundFaqHeadingText,
+                level: 2
+              })
+            } else {
+              const matchedHeading = items.find(h => h.id === el.id)
+              if (matchedHeading) orderedItems.push(matchedHeading)
+            }
+          })
+
+          return {
+            processedContent: doc.body.innerHTML,
+            headings: orderedItems.length > 0 ? orderedItems : items,
+            faqs: extractedFaqs,
+            faqHeadingText: foundFaqHeadingText,
+            faqHeadingId: foundFaqHeadingId
+          }
+        }
+
         return {
           processedContent: doc.body.innerHTML,
-          headings: items
+          headings: items,
+          faqs: [],
+          faqHeadingText: '',
+          faqHeadingId: ''
         }
       } catch (e) {
         console.error('Error parsing headings from blog content:', e)
-        return { processedContent: blog.content, headings: [] }
+        return { processedContent: blog.content, headings: [], faqs: [], faqHeadingText: '', faqHeadingId: '' }
       }
     }
 
-    return { processedContent: blog.content, headings: [] }
+    return { processedContent: blog.content, headings: [], faqs: [], faqHeadingText: '', faqHeadingId: '' }
   }, [blog?.content])
 
   // Derive structured Key Takeaways from article metadata or content
@@ -245,7 +404,8 @@ const BlogDetail = () => {
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
 
-    return () => window.removeEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+
   }, [headings])
 
   // Scroll to anchor on load if URL has hash
@@ -742,6 +902,22 @@ const BlogDetail = () => {
         <meta name="description" content={blog.seo_description || blog.excerpt} />
         {blog.seo_keywords && <meta name="keywords" content={blog.seo_keywords} />}
         <link rel="canonical" href={blog.canonical_url || `https://agentfloww.com/blogs/${slug}`} />
+        {faqs && faqs.length > 0 && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": faqs.map(item => ({
+                "@type": "Question",
+                "name": item.question,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": item.answerHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+                }
+              }))
+            })}
+          </script>
+        )}
 
         {/* Open Graph Metadata */}
         <meta property="og:type" content="article" />
@@ -935,19 +1111,38 @@ const BlogDetail = () => {
                   </div>
                 </div>
               )
+              const renderContentWithFaq = (htmlContent) => {
+                if (!faqs || faqs.length === 0 || !htmlContent.includes('id="injected-faq-accordion-root"')) {
+                  return <div className={proseClass} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                }
+
+                const parts = htmlContent.split(/<div[^>]*id=["']injected-faq-accordion-root["'][^>]*>\s*<\/div>/i)
+                if (parts.length < 2) {
+                  return <div className={proseClass} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                }
+
+                return (
+                  <>
+                    <div className={proseClass} dangerouslySetInnerHTML={{ __html: parts[0] }} />
+                    <BlogFaqAccordion faqs={faqs} headingText={faqHeadingText} headingId={faqHeadingId} />
+                    <div className={proseClass} dangerouslySetInnerHTML={{ __html: parts[1] }} />
+                  </>
+                )
+              }
+
               if (splitIndex !== -1) {
                 return (
                   <>
                     <div className={proseClass} dangerouslySetInnerHTML={{ __html: firstPara }} />
                     {KeyTakeawaysBlock}
-                    <div className={proseClass} dangerouslySetInnerHTML={{ __html: restContent }} />
+                    {renderContentWithFaq(restContent)}
                   </>
                 )
               }
               return (
                 <>
                   {KeyTakeawaysBlock}
-                  <div className={proseClass} dangerouslySetInnerHTML={{ __html: processedContent }} />
+                  {renderContentWithFaq(processedContent)}
                 </>
               )
             })()}
