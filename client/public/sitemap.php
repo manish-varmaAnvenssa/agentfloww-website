@@ -59,6 +59,9 @@ try {
         $blogs = $stmt->fetchAll();
         foreach ($blogs as $blog) {
             if (empty($blog['slug'])) continue;
+            // Exclude duplicate HR blog post (canonical is /blogs/ai-agents-for-internal-hr-automation-employee-support)
+            if ($blog['slug'] === 'ai-agents-for-hr-automation-employee-support') continue;
+
             $rawDate = !empty($blog['updated_at']) ? $blog['updated_at'] : (!empty($blog['publish_date']) ? $blog['publish_date'] : $today);
             $modDate = substr($rawDate, 0, 10);
             $urls[] = [
@@ -85,4 +88,3 @@ foreach ($urls as $u) {
     echo "  </url>\n";
 }
 echo '</urlset>';
-

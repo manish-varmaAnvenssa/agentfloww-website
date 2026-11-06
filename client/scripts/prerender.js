@@ -59,8 +59,8 @@ if (fs.existsSync(distDir)) {
 }
 console.log('✓ sitemap.xml updated in public/ and dist/');
 
-// 4. Ensure .htaccess, api.php, sitemap.php are copied to dist/
-const filesToCopy = ['sitemap.php', '.htaccess', 'api.php'];
+// 4. Ensure .htaccess, api.php, sitemap.php, index.php are copied to dist/
+const filesToCopy = ['sitemap.php', '.htaccess', 'api.php', 'index.php'];
 for (const file of filesToCopy) {
   const src = path.join(publicDir, file);
   const dest = path.join(distDir, file);

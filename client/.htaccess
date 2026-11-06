@@ -24,7 +24,7 @@
 # ----------------------------------------------------------------------
 # 2. Basic Setup & Options
 # ----------------------------------------------------------------------
-DirectoryIndex index.html index.php
+DirectoryIndex index.php index.html
 Options -MultiViews
 RewriteEngine On
 RewriteBase /
@@ -80,6 +80,9 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 # 5. Routing Rules (Order is critical)
 # ----------------------------------------------------------------------
 
+# 301 Permanent Redirect for Duplicate HR Blog Post
+RewriteRule ^blogs/ai-agents-for-hr-automation-employee-support/?$ /blogs/ai-agents-for-internal-hr-automation-employee-support [R=301,L]
+
 # Dynamic Sitemap
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 
@@ -92,12 +95,12 @@ RewriteRule ^images/ - [L]
 RewriteRule \.(css|js|png|jpg|jpeg|svg|webp|ico|woff|woff2|gif|mp4|pdf|txt|xml|json)$ - [L]
 
 # Bypasses any old physical subfolder index.html files
-RewriteRule ^.+/index\.html$ /index.html [L]
+RewriteRule ^.+/index\.html$ /index.php [L]
 
-# React SPA Fallback: Route every inner page (e.g. /blogs/..., /products/...) to root /index.html
-RewriteRule ^index\.html$ - [L]
+# React SPA Fallback: Route every inner page (e.g. /blogs/..., /products/...) to index.php
+RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^.*$ /index.html [L]
+RewriteRule ^.*$ /index.php [L]
 
 # ----------------------------------------------------------------------
 # 6. Compression & Cache Expiry
