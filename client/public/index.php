@@ -24,6 +24,12 @@ $uriPath = parse_url($requestUri, PHP_URL_PATH);
 $uriPath = '/' . trim($uriPath, '/');
 if ($uriPath === '//') $uriPath = '/';
 
+// Immediate 301 Permanent Redirect for Duplicate HR Blog Post
+if ($uriPath === '/blogs/ai-agents-for-hr-automation-employee-support') {
+    header("Location: https://agentfloww.com/blogs/ai-agents-for-internal-hr-automation-employee-support", true, 301);
+    exit;
+}
+
 $baseUrl = 'https://agentfloww.com';
 $canonicalUrl = $baseUrl . ($uriPath === '/' ? '/' : $uriPath);
 $pageTitle = 'Agentfloww | AI-Powered Manufacturing Automation';

@@ -81,7 +81,7 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 # ----------------------------------------------------------------------
 
 # 301 Permanent Redirect for Duplicate HR Blog Post
-RewriteRule ^blogs/ai-agents-for-hr-automation-employee-support/?$ /blogs/ai-agents-for-internal-hr-automation-employee-support [R=301,L]
+RewriteRule ^blogs/ai-agents-for-hr-automation-employee-support/?$ https://agentfloww.com/blogs/ai-agents-for-internal-hr-automation-employee-support [R=301,L]
 
 # Dynamic Sitemap
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
